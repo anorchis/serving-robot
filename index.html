@@ -1465,7 +1465,7 @@ if(location.hash==='#admin' || location.hash==='#settings') setTimeout(openAdmin
 let adView='login';
 function bizMark(k){ BZ.mk=BZ.mk||{}; BZ.mk[k]=Date.now(); saveBZ(); }   // 영업 미션 줄 체크용 (관리자 로그인·포스터 업로드·동기화)
 /* 🌟 한글날 100주년 신메뉴: 이번 영업 우리 주문 메뉴 중에서만 고를 수 있어요 (그래서 네 태블릿이 겹치지 않아요) */
-// 홍보 준비에서 새 탭으로 여는 링크 (메뉴명 짓기·포스터: 제미나이 공유 앱 · 우리 반 패들렛)
+// 홍보 준비에서 새 탭으로 여는 링크 (새 이름 짓기·포스터: 제미나이 공유 앱 · 우리 반 패들렛)
 const LINK_POSTER='https://gemini.google.com/share/ae3138dbbf49?social_preview=false&skid=21390b04-b78c-4dd7-b215-2768c12e827c';
 const LINK_PADLET='https://padlet.com/aibus/padlet-8frpqu6p37gr2bgk';
 const LINK_POEM='https://gemini.google.com/share/44429b2578dc?social_preview=false&skid=28d3791a-c71c-46d4-84ea-27049e6671d0';   // n행시 짓기 앱
@@ -1475,7 +1475,7 @@ function newMenuCard(){
   const m=MS();
   const st0=stageStart('promo'), posterDone=((BZ.mk||{}).poster||0)>st0, syncDone=((BZ.mk||{}).sync_promo||0)>st0, nameDone=cand.includes(m.newFood)&&!!m.newName;   // 3번: 포스터 올리고 동기화까지 하면 ✓
   return `<div class="nm-card"><b>🌟 한글날 100주년 신메뉴 · 홍보 준비</b>
-    <div class="nm-links"><a href="${LINK_POSTER}" target="_blank" rel="noopener">✏️ 메뉴명 짓기 앱 ↗<small>구글 로그인 필요 · 새 탭</small></a><a href="${LINK_PADLET}" target="_blank" rel="noopener">📌 우리 패들렛 ↗<small>새 탭으로 열려요</small></a></div>
+    <div class="nm-links"><a href="${LINK_POSTER}" target="_blank" rel="noopener">✏️ 새 이름 짓기 ↗<small>구글 로그인 필요 · 새 탭</small></a><a href="${LINK_PADLET}" target="_blank" rel="noopener">📌 우리 패들렛 ↗<small>새 탭으로 열려요</small></a></div>
     <div class="nm-step ${nameDone?'ok':''}"><span>${nameDone?'✓':'1'}</span><div><b>새 이름 짓기</b><small>오늘 손님이 주문할 메뉴 중 하나를 골라 한글날 100주년 기념 새 이름을 붙여요 · 앱 전체에 바로 적용돼요</small></div></div>
     <div class="nm-pick">${cand.map(i=>`<button class="${m.newFood===i?'on':''}" data-nmf="${i}">${foodPic(i)}${FOODS[i]}</button>`).join('')}</div>
     <input class="inp nm-inp" id="nmName" placeholder="새 이름 예: 바삭바삭 황금 튀김" value="${esc(cand.includes(m.newFood)?m.newName:'')}">
