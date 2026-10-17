@@ -427,6 +427,8 @@ html.bz-on #bizStrip{display:block}
 .roam-links a small{font-weight:400;font-size:.7rem;color:#8a8f98}
 .snd-test{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
 .snd-test .btn{height:2.6rem;font-size:.85rem}
+.snd-help{padding-left:1.2rem;display:flex;flex-direction:column;gap:.35rem;font-size:.8rem;line-height:1.5;color:var(--ink)}
+.snd-tip{margin-top:.7rem;font-size:.75rem;color:var(--ink2);background:#fff8e6;border-radius:.5rem;padding:.55rem .7rem;line-height:1.5}
 .snd-warn{margin-top:.5rem;padding:.6rem .7rem;border-radius:.5rem;background:#fdecec;color:#c62828;font-weight:700;line-height:1.55}
 .snd-info{font-size:.72rem;color:var(--ink2);margin-top:.6rem;line-height:1.6}
 .nm-links{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.7rem 0 .2rem}
@@ -2032,6 +2034,15 @@ function renderSettings(){
     h += `<div class="card"><h3>🔈 소리 확인 <span class="r">폰·태블릿에서 소리가 안 날 때</span></h3><div class="box">
       <div class="snd-test"><button class="btn btn-out" data-snd="tick">짧은 소리</button><button class="btn btn-out" data-snd="chime">출발 알림음</button><button class="btn btn-out" data-snd="tts">음성</button></div>
       <div class="snd-info" id="sndInfo"></div></div></div>
+    <div class="card"><h3>🛠 음성(TTS)이 안 나올 때 <span class="r">안드로이드·갤럭시</span></h3><div class="box"><ol class="snd-help">
+      <li>위 「음성」을 눌렀을 때 <b>한국어 목소리 0개 · 오류: synthesis-failed</b>가 나오면 기기에 한국어 목소리가 없는 거예요</li>
+      <li>기기 <b>설정 → 일반 → 텍스트 음성 변환</b> (기기에 따라 「글자 읽어주기 / TTS 출력」)</li>
+      <li><b>기본 엔진</b>을 「<b>Google 음성 인식 및 합성</b>」으로 바꿔요 · 목록에 없으면 Play 스토어에서 「Google 음성 인식 및 합성」 설치</li>
+      <li>엔진 옆 <b>⚙ → 음성 데이터 설치 → 한국어(대한민국)</b> 받기 · 언어가 「한국어」인지 확인</li>
+      <li><b>크롬을 완전히 껐다가</b>(최근 앱에서 밀어서 닫기) 다시 열기</li>
+      <li>다시 「음성」을 눌러 <b>한국어 목소리 1개 이상 · 말하는 중 ✓</b>이 나오면 해결!</li>
+      <li>「말하는 중 ✓」인데 안 들리면 음량 버튼으로 <b>미디어 음량</b>을 올려요</li></ol>
+      <div class="snd-tip">💡 수업 전에 태블릿 네 대 모두 미리 해 두세요. 삼성 기기는 기본 엔진이 삼성 TTS라서 크롬이 한국어 목소리를 못 찾는 경우가 많아요.</div></div></div>
     <div class="card"><h3>음성 안내</h3><div class="box">${radios('tts',[[true,'켜기'],[false,'끄기']])}</div>
       <div class="box"><span class="chip">음량</span>${steps('volume',[[.2,'20%'],[.4,'40%'],[.6,'60%'],[.8,'80%'],[1,'100%']])}</div>
       <div class="box"><span class="chip">말하기 속도</span>${steps('ttsRate',[[.8,'0.8'],[.9,'0.9'],[1,'1.0'],[1.1,'1.1'],[1.2,'1.2'],[1.4,'1.4']])}</div>
