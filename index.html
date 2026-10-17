@@ -427,6 +427,7 @@ html.bz-on #bizStrip{display:block}
 .roam-links a small{font-weight:400;font-size:.7rem;color:#8a8f98}
 .snd-test{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
 .snd-test .btn{height:2.6rem;font-size:.85rem}
+.snd-warn{margin-top:.5rem;padding:.6rem .7rem;border-radius:.5rem;background:#fdecec;color:#c62828;font-weight:700;line-height:1.55}
 .snd-info{font-size:.72rem;color:var(--ink2);margin-top:.6rem;line-height:1.6}
 .nm-links{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.7rem 0 .2rem}
 .nm-links a{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.1rem;padding:.7rem .6rem;border-radius:.6rem;background:#fff;box-shadow:0 0 0 1.5px #f3dfb0 inset;color:var(--ink);text-decoration:none;font-weight:800;font-size:.82rem}
@@ -1443,7 +1444,7 @@ function showQR(k){
   $('#modal').onclick=e=>{ if(e.target.closest('[data-m="x"]')) closeModal(); if(e.target.closest('[data-m="here"]')){ closeModal(); openAdmin(); } };
 }
 function sndInfo(){ const el=$('#sndInfo'); if(!el) return; let vs=[]; try{ vs=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang)); }catch(e){}
-  el.innerHTML = `소리 장치: <b>${actx?actx.state:'아직 없음'}</b> · 한국어 목소리 <b>${vs.length}</b>개${vs.length?' ('+vs.slice(0,3).map(v=>esc(v.name)+(v.localService?'':'·인터넷')).join(', ')+')':''}<br>음성 상태: <b>${esc(ttsLog)}</b> · 앱 버전 ${VERSION}<br>소리가 하나도 안 나면 기기 음량·무음 모드를 확인하고, 화면을 한 번 누른 뒤 다시 눌러 봐요.`; }
+  el.innerHTML = `소리 장치: <b>${actx?actx.state:'아직 없음'}</b> · 한국어 목소리 <b>${vs.length}</b>개${vs.length?' ('+vs.slice(0,3).map(v=>esc(v.name)+(v.localService?'':'·인터넷')).join(', ')+')':''}<br>음성 상태: <b>${esc(ttsLog)}</b> · 앱 버전 ${VERSION}<br>소리가 하나도 안 나면 기기 음량·무음 모드를 확인하고, 화면을 한 번 누른 뒤 다시 눌러 봐요.${vs.length?'':'<div class="snd-warn">⚠️ 이 기기에 한국어 목소리가 없어서 음성이 안 나와요.<br>기기 설정 → 일반 → 텍스트 음성 변환 → 기본 엔진을 「Google 음성 인식 및 합성」으로 → ⚙ → 음성 데이터 설치 → 한국어 받기 → 크롬을 완전히 껐다 켜기</div>'}`; }
 function showLicense(){
   const L=[['qrcode-generator 1.4.4','Kazuhiko Arase','MIT License'], ['배민 한나체 Pro (BMHANNAPro)','(주)우아한형제들','배민글꼴 사용 허가 (무료 · 상업적 사용 가능)']];
   $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
