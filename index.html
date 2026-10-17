@@ -995,7 +995,9 @@ function playSong(){
   }catch(e){}
 }
 // 출발 알림음: 파#↗라↗레 ↘솔# (실제 서빙로봇 출발음)
+var lastChime=0;
 function chime(){
+  lastChime=Date.now();
   try{
     actx = actx || new (window.AudioContext||window.webkitAudioContext)();
     if(actx.state==='suspended') actx.resume();
@@ -1677,7 +1679,8 @@ function bizLines(id, P){
     {t:`${T}번 테이블에 닿으면 「도착했어요」 → 리뷰 쓴 손님에게 간식을 드리고 「로봇 보내기」 → ${waitPlace()}에 오면 「도착했어요」`} ];
 }
 function bizLineIdx(id){ return (BZ.li||{})[id]||0; }
-function tick(){ try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume();
+function tick(){ if(Date.now()-lastChime < 1600) return;   // 출발 알림음과 겹치면 「띡」은 빼요
+  try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume();
   const o=actx.createOscillator(), g=actx.createGain(), t=actx.currentTime; o.type='sine'; o.frequency.value=1318.5;
   g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.15*S.volume,t+.01); g.gain.exponentialRampToValueAtTime(.001,t+.25);
   o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+.3); }catch(e){} }
