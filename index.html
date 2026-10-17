@@ -1,0 +1,2172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>서빙로봇</title>
+<style>
+@font-face { font-family:'Hanna'; src:url('BMHANNAPro.ttf') format('truetype'); font-display:swap; }
+:root{
+  --blue:#1f7cf5; --blue-d:#1767d1; --blue-l:#e9f2fe; --blue-ll:#f4f8ff;
+  --ink:#1f2328; --ink2:#5b6370; --ink3:#9aa1ab; --line:#e4e7eb;
+  --key:#f2f3f5; --card:#f5f6f8; --red:#e5484d; --mint:#2cc2b5;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:clamp(10px, min(3.6vw, 2.15vh), 30px)}
+/* 반응형: 컴퓨터처럼 가로로 넓은 화면에서도 실제 로봇 화면(세로 10:16) 틀 안에 보여 줘요 */
+html,body{background:#dfe3e8}
+#frame{position:relative;height:100%;width:100%;margin:0 auto;background:#fff;overflow:hidden;transform:translateZ(0)}
+@media (min-aspect-ratio: 4/5){ #frame{width:min(100%, 62.5vh);box-shadow:0 0 24px rgba(0,0,0,.12)} }   /* 태블릿·폰(세로)은 꽉 채우고, 컴퓨터처럼 가로로 넓을 때만 로봇 화면 틀 */
+/* 왼쪽 위 메뉴(≡) 버튼: 화면에 메뉴 버튼이 없을 때 항상 보여 줘요 */
+#gMenu{position:absolute;top:calc(env(safe-area-inset-top) + .4rem);left:.9rem;z-index:45;display:none;width:2.6rem;height:2.6rem;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.75)}
+#gMenu.on{display:flex}
+/* 메뉴 버튼이 겹치지 않게 제목을 오른쪽으로 */
+.gd.set > .gd-set-head:first-child h2, #redit .body > h3{padding-left:2.6rem}
+html,body{height:100%;background:#fff;color:var(--ink);overflow:hidden;
+  font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+  -webkit-user-select:none;user-select:none;overscroll-behavior:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,textarea,select{font:inherit;color:inherit;-webkit-user-select:text;user-select:text}
+svg{display:block}
+.ico{width:1.6rem;height:1.6rem;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+.screen{position:fixed;inset:0;display:none;flex-direction:column;background:#fff;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.screen.on{display:flex}
+
+/* ── 상단바 ── */
+.topbar{height:3.4rem;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 .9rem}
+.topbar .grp{display:flex;align-items:center;gap:.9rem}
+.iconbtn{width:2.4rem;height:2.4rem;display:grid;place-items:center;border-radius:.6rem;color:var(--ink)}
+.iconbtn:active{background:var(--key)}
+.modeicons{display:flex;gap:.5rem}
+.modeicons .iconbtn{color:#c5cad1}
+.modeicons .iconbtn.on{color:var(--blue)}
+
+/* ── 서빙 홈 ── */
+.home-body{flex:1;display:flex;flex-direction:column;align-items:center;overflow:auto;padding:0 .9rem}
+.trays{width:min(60%, 16rem);display:flex;flex-direction:column;gap:.35rem;margin-top:.4rem}
+.tray{position:relative;height:2.7rem;border-radius:.3rem;border:1.5px solid transparent;background:#fff;
+  box-shadow:0 0 0 1px #eef0f3 inset;display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:.8rem}
+.tray .no{position:absolute;left:.8rem;font-size:.75rem;color:#c3c8cf}
+.tray.active{border-color:var(--blue);box-shadow:none}
+.tray.filled{background:var(--blue-l);box-shadow:none;color:var(--blue);font-size:1.25rem;font-weight:700}
+.tray.filled .no{color:var(--blue)}
+.tray .x{position:absolute;right:.4rem;width:1.9rem;height:1.9rem;display:grid;place-items:center;color:var(--blue)}
+.tray .x .ico{width:1.1rem;height:1.1rem}
+.tray .nm{font-size:.7rem;font-weight:500;margin-left:.4rem;color:var(--blue-d)}
+.badge{margin:1.3rem 0 .8rem;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--blue);color:#fff;
+  font-size:.8rem;font-weight:700;display:grid;place-items:center}
+.keypad{width:100%;display:grid;gap:.3rem}
+.key{height:3.3rem;border-radius:.25rem;background:var(--key);font-size:1.15rem;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;line-height:1.15;transition:background .12s}
+.key small{font-size:.62rem;color:var(--ink2);margin-top:.15rem}
+.key:active{background:#e3e6ea}
+.key.used{background:var(--blue-l);color:var(--blue);font-weight:700}
+.key.used small{color:var(--blue-d)}
+.numpad-wrap{width:min(80%, 20rem);display:flex;flex-direction:column;gap:.5rem}
+.numpad-input{height:2.8rem;border:1.5px solid var(--blue);border-radius:.3rem;display:flex;align-items:center;
+  justify-content:center;font-size:1.3rem;font-weight:700;color:var(--blue)}
+.numpad-input.empty{color:var(--ink3);font-size:.85rem;font-weight:400}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem}
+.bottombar{flex:none;display:flex;gap:.7rem;padding:.8rem .9rem 1rem}
+.btn{height:3rem;border-radius:.3rem;font-size:.95rem;display:flex;align-items:center;justify-content:center;gap:.4rem}
+.btn-out{border:1.5px solid var(--blue);color:var(--blue);background:#fff}
+.btn-out.on{background:var(--blue-l)}
+.btn-fill{background:var(--blue);color:#fff}
+.btn-fill:active{background:var(--blue-d)}
+.btn-gray{background:var(--key);color:var(--ink)}
+.soup-btn{flex:0 0 34%}
+.send-btn{flex:1}
+.modechip{margin-top:.6rem;font-size:.75rem;color:var(--blue);background:var(--blue-l);padding:.25rem .7rem;border-radius:1rem;display:none}
+.modechip.show{display:block}
+
+/* ── 이동중 / 복귀중 ── */
+#moving{align-items:center;justify-content:center;text-align:center}
+.mv-top{position:absolute;top:calc(env(safe-area-inset-top) + 4.5rem);left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:.4rem}
+.mv-hello{font-size:1.1rem;font-weight:700;color:var(--blue)}
+.mv-chip{font-size:.75rem;color:var(--blue);background:var(--blue-l);padding:.25rem .7rem;border-radius:1rem}
+.mv-num{font-size:7.5rem;font-weight:800;color:var(--blue);line-height:1;letter-spacing:-.02em}
+.mv-num.text{font-size:3.2rem;line-height:1.15;padding:0 1rem;word-break:keep-all}
+.mv-num.ret{font-size:4.4rem;line-height:1.1}
+.mv-num .ico{width:7rem;height:7rem;stroke-width:1.6}
+.mv-name{font-size:1.1rem;color:var(--blue-d);margin-top:.6rem;font-weight:600;min-height:1.4rem}
+.mv-state{font-size:2.6rem;font-weight:800;margin-top:1.6rem;letter-spacing:-.02em}
+.mv-state .dots span{animation:blink 1.4s infinite both}
+.mv-state .dots span:nth-child(2){animation-delay:.2s}.mv-state .dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.15}40%{opacity:1}}
+.mv-next{margin-top:1.4rem;font-size:.8rem;color:var(--ink3);display:flex;gap:.35rem;align-items:center;flex-wrap:wrap;justify-content:center;padding:0 1rem}
+.mv-next b{color:var(--ink2);font-weight:600;background:var(--key);padding:.15rem .5rem;border-radius:.3rem}
+.mv-done{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 1.2rem);left:0;right:0;display:none;flex-direction:column;align-items:center;gap:.5rem}
+.mv-done .btn{height:3.1rem;padding:0 2.2rem;font-weight:700;font-size:1.05rem}
+.mv-done .hint2{font-size:.8rem;color:var(--ink2)}
+#moving.manual .mv-done{display:flex}#moving.nopause .mv-done .hint2{display:none}#moving.manual #mvHint{display:none}
+.hint{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 1.4rem);left:0;right:0;text-align:center;font-size:.85rem;color:var(--ink2)}
+
+/* ── 돌아다니기 (실제 앱: 얼굴 + 로봇 출발 / 경로 확인·수정) ── */
+#roam .face-wrap{flex:1;display:flex;align-items:center;justify-content:center}
+.rface{width:min(62%,15rem);height:auto}
+#roam .bottom2{flex:none;display:flex;flex-direction:column;gap:.6rem;padding:.8rem .9rem 1.1rem}
+#roam .bottom2 .btn{height:3.1rem;font-weight:600}
+#rpath .head{display:flex;justify-content:flex-end;padding:.6rem .8rem 0}
+#rpath .box{margin:.6rem 1rem;background:var(--card);border-radius:.4rem;padding:1rem .9rem}
+#rpath .box h4{font-size:.85rem;font-weight:600;color:var(--ink2);margin-bottom:.7rem}
+.rp-row{display:flex;align-items:center;gap:.6rem;background:#fff;border:1.5px solid #dfe3e8;border-radius:.35rem;height:3rem;padding:0 .8rem;margin-bottom:.5rem;width:100%;font-size:.95rem}
+.rp-row.on{border-color:var(--blue)}
+.rp-row .rd{width:1.1rem;height:1.1rem;border-radius:50%;border:2px solid #c3c9d1;flex:none}
+.rp-row.on .rd{border:5px solid var(--blue)}
+.rp-row .nm{flex:1;text-align:left}
+.rp-row .go{width:2.2rem;height:2.2rem;display:grid;place-items:center;color:var(--ink2)}
+.rp-add{width:100%;height:2.6rem;font-size:.9rem;color:var(--ink)}
+#redit .body{flex:1;overflow:auto;padding:.4rem 1.1rem 0}
+#redit h3{font-size:1.15rem;font-weight:700;margin:.6rem 0 1.1rem}
+#redit .lb{font-size:.8rem;color:var(--ink2);margin:0 0 .4rem}
+#redit .rowx{display:flex;justify-content:space-between;align-items:center;margin:1rem 0 .8rem;font-size:.85rem}
+#redit select{border:none;background:none;font-size:.85rem}
+.re-path{background:var(--card);border-radius:.4rem;padding:.8rem;min-height:9rem}
+.re-path .tg{display:inline-block;font-size:.72rem;color:var(--blue);background:var(--blue-l);padding:.1rem .45rem;border-radius:.25rem;margin-bottom:.6rem}
+.re-stops{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem .5rem}
+.re-stop{position:relative;background:#fff;border-radius:.3rem;height:2.6rem;display:flex;align-items:center;justify-content:space-between;padding:0 .55rem;font-size:.95rem;font-weight:600}
+.re-stop small{font-size:.72rem;color:var(--ink2);font-weight:400}
+.re-stop .ord{position:absolute;top:-1rem;left:.1rem;font-size:.62rem;color:var(--ink3);font-weight:400}
+.re-stop .del{position:absolute;top:-.45rem;right:-.4rem;width:1.15rem;height:1.15rem;border-radius:50%;background:#9aa1ab;color:#fff;font-size:.7rem;display:grid;place-items:center;line-height:1}
+.re-empty{font-size:.8rem;color:var(--ink3);text-align:center;padding:1.6rem 0}
+#redit .tblpad{flex:none;background:var(--card);padding:.7rem .9rem .5rem}
+#redit .tblpad .lb{color:var(--blue)}
+#redit .tblpad .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}
+#redit .tblpad .key{height:2.6rem;background:#fff;font-size:1rem}
+#redit .foot{flex:none;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #eceef1}
+#redit .foot button{height:3.2rem;font-size:.95rem}
+#redit .foot .ok{color:var(--blue);font-weight:700}
+.rpause{position:fixed;inset:0;z-index:61;background:#fff;display:none;flex-direction:column;align-items:center}
+.rpause.on{display:flex}
+.rpause .mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem}
+.rpause h2{font-size:2.8rem;font-weight:800}
+.rpause .sec{font-size:1.6rem}
+.rpause .hint3{font-size:.85rem;color:var(--ink2);margin-bottom:.7rem}
+.rpause .acts{width:100%;display:flex;flex-direction:column;gap:.6rem;padding:0 .9rem 1.1rem}
+.rpause .acts .btn{height:3.1rem;font-weight:600}
+
+/* ── 홍보하기 (실제 앱: 미리보기 + 홍보 장소 / 홍보 시작 · 홍보 장소 바꾸기) ── */
+#promo .pm-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem}
+#promo .pm-tag{font-size:.75rem;color:var(--blue);border:1px solid #e3e6ea;border-radius:.3rem;padding:.25rem .8rem;background:#fff}
+#promo .ph-frame{position:relative;width:min(46%,11rem);aspect-ratio:10/16;border-radius:.6rem;overflow:hidden;border:.3rem solid #16181c}
+#promo .pm-place{font-size:.95rem;color:var(--ink)}
+#promo .bottom2{flex:none;display:flex;flex-direction:column;gap:.6rem;padding:.8rem .9rem 1.1rem}
+#promo .bottom2 .btn{height:3.1rem;font-weight:600}
+.mv-num.ret.wp{font-size:3rem;line-height:1.2;padding:0 1rem;word-break:keep-all}
+.mv-num.ret.wp small{font-size:.5em;color:var(--ink);font-weight:700;margin-left:.25em}   /* 「장소로」는 검은 작은 글씨 */
+.mv-num.ret.sm{font-size:3.3rem}
+
+html.screen-dim::after{content:'';position:fixed;inset:0;background:rgba(0,0,0,.3);pointer-events:none;z-index:999}   /* 화면 흐리게 */
+
+/* ── 영업 미션 띠 (실제 앱 화면 위에 얹는 진행 표시) ── */
+html.bz-on .screen{top:3.8rem}
+html.bz-on #gMenu{top:4.2rem}
+#bizStrip{position:absolute;top:0;left:0;right:0;z-index:46;display:none}
+html.bz-on #bizStrip{display:block}
+.bs-bar{width:100%;min-height:3.8rem;height:3.8rem;background:#2b2f36;color:#fff;display:flex;align-items:center;gap:.5rem;padding:0 .8rem;font-size:.82rem}
+.bs-bar .rd{background:#2cc2b5;border-radius:.3rem;padding:.12rem .45rem;font-weight:700;font-size:.7rem;flex:none}
+.bs-bar{cursor:pointer}
+.bs-bar .now{flex:1;text-align:left;font-weight:700;font-size:1.12rem;line-height:1.35;word-break:keep-all;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}   /* 할 일 글자만 크게, 두 줄까지 */
+.bs-bar .now .mtag{font-style:normal;font-size:.62rem;font-weight:700;color:#2b2f36;background:#9fe3dc;border-radius:.25rem;padding:.08rem .35rem;margin-right:.45rem;vertical-align:.18em}
+.bs-bar .now em{font-style:normal;font-weight:600;font-size:.7rem;color:#9fe3dc;margin-right:.45rem}
+.bs-bar .now b{color:#ffd166}
+.bs-man{flex:none;background:#2cc2b5;color:#fff;border-radius:1rem;padding:.3rem .7rem;font-size:.75rem;font-weight:700}
+.bs-bar.flash{animation:bsflash .7s}
+@keyframes bsflash{0%{background:#2cc2b5}100%{background:#2b2f36}}
+.bs-lines{list-style:none;display:flex;flex-direction:column;gap:.3rem;font-size:.82rem;line-height:1.45}
+.bs-lines li{display:flex;gap:.5rem;align-items:flex-start;padding:.35rem .45rem;border-radius:.5rem;color:var(--ink3)}
+.bs-lines li > b{flex:none;width:1.35rem;height:1.35rem;border-radius:50%;background:#e9e2d2;color:#fff;font-size:.68rem;display:grid;place-items:center}
+.bs-lines li.ok{color:#178f86}.bs-lines li.ok > b{background:#2cc2b5}
+.bs-lines li.now{background:#2b2f36;color:#fff;font-weight:700}.bs-lines li.now > b{background:#ffd166;color:#2b2f36}
+.bs-lines li.now span b{color:#ffd166}
+.bs-man2{margin-left:.3rem;background:#2cc2b5;color:#fff;border-radius:1rem;padding:.15rem .6rem;font-size:.72rem}
+.bs-skip{display:block;margin:.6rem auto 0;font-size:.7rem;color:var(--ink3)}
+.bs-ctl{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:.35rem;margin-top:.6rem}
+.bs-ctl button{height:2.3rem;border-radius:.5rem;background:#f3ecdc;font-size:.75rem;font-weight:700;color:var(--ink2)}
+.bs-dots{display:flex;gap:.25rem;flex:none}.bs-dots i{width:.55rem;height:.55rem;border-radius:50%;background:#5b6370}
+.bs-dots i.on{background:#2cc2b5}.bs-dots i.cur{background:#fff;box-shadow:0 0 0 2px #2cc2b5}
+.bs-bar .arw{transition:transform .2s;flex:none}#bizStrip.open .bs-bar .arw{transform:rotate(180deg)}
+.bs-dim{position:absolute;left:0;right:0;top:3.8rem;height:100vh;background:rgba(0,0,0,.35);display:none}
+#bizStrip.open .bs-dim{display:block}
+.bs-panel{position:absolute;left:0;right:0;top:3.8rem;max-height:calc(100vh - 6rem);overflow:auto;background:#fffaf0;display:none;padding:.9rem .9rem 1rem;box-shadow:0 10px 24px rgba(0,0,0,.18);border-radius:0 0 .9rem .9rem}
+#bizStrip.open .bs-panel{display:block}
+.bs-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem}
+.bs-head .fn{width:2.6rem;height:2.6rem;border-radius:50%;color:#fff;font-family:'Hanna',sans-serif;font-size:1.4rem;display:grid;place-items:center;flex:none}
+.bs-head .t{font-family:'Hanna',sans-serif;font-size:1.1rem}.bs-head .s{font-size:.72rem;color:var(--ink2)}
+.bs-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:.3rem;margin-bottom:.8rem}
+.bs-steps div{background:#fff;border-radius:.5rem;padding:.4rem .1rem;text-align:center;font-size:.66rem;color:var(--ink3);box-shadow:0 0 0 1px #efe6d2 inset}
+.bs-steps div b{display:block;font-size:1.1rem;line-height:1.3}
+.bs-steps div.on{background:#e6f8f6;color:#178f86;box-shadow:0 0 0 1px #9fe3dc inset}
+.bs-steps div.cur{background:#2b2f36;color:#fff;box-shadow:none}
+.bs-card{background:#fff;border-radius:.8rem;padding:.85rem;margin-bottom:.7rem;box-shadow:0 0 0 1px #f3ecdc inset}
+.bs-card h4{font-family:'Hanna',sans-serif;font-weight:400;font-size:1.05rem;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center}
+.bs-card h4 small{font-family:'Pretendard',sans-serif;font-size:.7rem;color:var(--ink2)}
+.bs-how{counter-reset:h;display:flex;flex-direction:column;gap:.35rem;font-size:.82rem;line-height:1.45}
+.bs-how li{list-style:none;counter-increment:h;display:flex;gap:.45rem;word-break:keep-all}
+.bs-how li::before{content:counter(h);flex:none;width:1.3rem;height:1.3rem;border-radius:50%;background:#2b2f36;color:#fff;font-size:.68rem;display:grid;place-items:center;margin-top:.05rem}
+.bs-go{width:100%;margin-top:.7rem}
+.bs-req{display:flex;flex-wrap:wrap;gap:.35rem;margin:.1rem 0 .6rem}
+.bs-req span{font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:1rem;background:#fff1e6;color:#c4561f}
+.bs-items{display:flex;flex-direction:column;gap:.4rem}
+.bs-item{display:flex;align-items:center;gap:.6rem;padding:.35rem .5rem;border-radius:.6rem;background:#faf6ee;width:100%;text-align:left}
+.bs-item .food{width:2.8rem}
+.bs-item .nm{flex:1;font-weight:700;font-size:.9rem;line-height:1.25}
+.bs-item .nm small{display:block;font-weight:400;font-size:.68rem;color:var(--ink2)}
+.bs-item .ck{font-size:.7rem;padding:.25rem .5rem;border-radius:1rem;background:#fff;box-shadow:0 0 0 1px #d8cdb6 inset;color:var(--ink2);flex:none}
+.bs-item.on{background:#e6f8f6}.bs-item.on .ck{background:#2cc2b5;color:#fff;box-shadow:none}
+.bs-note{font-size:.75rem;color:#c4561f;margin-top:.3rem}
+.bs-role{display:flex;gap:.4rem;font-size:.75rem;color:var(--ink2);margin-bottom:.7rem}
+.bs-role span{background:#fff;border-radius:.4rem;padding:.3rem .55rem;box-shadow:0 0 0 1px #efe6d2 inset}
+.bs-role b{color:var(--ink)}
+.bs-done{text-align:center;padding:.4rem 0}
+.bs-done .big{font-family:'Hanna',sans-serif;font-size:1.6rem;color:#178f86}
+.bs-teacher{display:block;margin:.4rem auto 0;font-size:.72rem;color:var(--ink3);text-decoration:underline}
+.gw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}
+.gw-grid .key{height:3.4rem;font-size:.95rem;line-height:1.2}
+.gw-grid .key small{display:block;font-size:.65rem;color:var(--ink2)}
+
+/* ── 도착 ── */
+.arr-body{flex:1;display:flex;flex-direction:column;align-items:center;overflow:auto;padding:.3rem 1rem 0}
+.arr-msg{text-align:center;font-size:1rem;line-height:1.55;font-weight:500;margin:.4rem 0 1.1rem;word-break:keep-all}
+.arr-trays{width:min(66%, 18rem);display:flex;flex-direction:column;gap:.4rem}
+.arr-tray{position:relative;height:4.2rem;border-radius:.3rem;box-shadow:0 0 0 1px #edf0f3 inset;background:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700;color:var(--blue)}
+.arr-tray .no{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);font-size:.7rem;color:#c3c8cf;font-weight:400}
+.arr-tray.hit{box-shadow:0 0 0 2px var(--blue) inset;background:var(--blue-ll);animation:pulse 1.6s infinite}
+.arr-tray.hit .no{color:var(--blue)}
+.arr-tray .sub{font-size:.75rem;font-weight:500;margin-left:.5rem;color:var(--blue-d)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 2px var(--blue) inset}50%{box-shadow:0 0 0 2px var(--blue) inset,0 0 0 .35rem rgba(31,124,245,.15)}}
+.kit-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.kit-grid button{position:relative;display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.5rem;border-radius:.7rem;border:2px solid #e3e6ea;background:#fff;font-size:.85rem}
+.kit-grid button img{width:70%;aspect-ratio:1;object-fit:cover;border-radius:.5rem}
+.kit-grid button small{font-size:.65rem;color:var(--ink3)}
+.kit-grid button.on{border-color:var(--blue);background:var(--blue-ll)}
+.kit-grid .ord{position:absolute;top:.35rem;left:.35rem;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:.8rem;display:grid;place-items:center}
+.kit-items{display:flex;flex-wrap:wrap;justify-content:center;gap:.7rem;margin-top:.6rem}
+.kit-items div{display:flex;flex-direction:column;align-items:center;gap:.2rem;width:6rem;font-size:.9rem}
+.kit-items .food{width:5rem}
+.arr-big{font-size:2.6rem;font-weight:800;color:var(--blue);margin:1.5rem 0 .5rem;text-align:center;word-break:keep-all}
+.arr-song{margin-top:1rem}
+
+/* ── 사이드 메뉴 ── */
+.dim{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+.dim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:min(72%, 22rem);background:#fff;z-index:51;transform:translateX(-102%);
+  transition:transform .22s ease;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + .8rem) 1rem calc(env(safe-area-inset-bottom) + 1rem)}
+.drawer.on{transform:none}
+.dr-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
+.logo{display:flex;align-items:center;gap:.35rem;font-weight:900;font-size:1.05rem;letter-spacing:-.03em}
+.logo .a{color:var(--mint)}.logo .b{color:#2b2f36}
+.logo .face{width:1.5rem;height:1.5rem}
+.dr-sec{font-size:.68rem;color:var(--ink3);margin:.6rem 0 .3rem}
+.dr-item{display:flex;align-items:center;justify-content:space-between;height:2.9rem;font-size:1.05rem;width:100%;text-align:left}
+.dr-item .ico{width:1.2rem;height:1.2rem;color:var(--ink2)}
+.dr-item.cur{color:var(--blue);font-weight:700}
+.dr-stat{margin-top:auto;font-size:.75rem;color:var(--ink2);background:var(--card);border-radius:.4rem;padding:.6rem .8rem;margin-bottom:.7rem;line-height:1.5}
+.dr-close{height:2.7rem;border:1px solid var(--line);border-radius:.3rem;width:100%;font-size:.9rem}
+
+/* ── 콘텐츠(돌아다니기·홍보) ── */
+.cv{position:absolute;inset:0;overflow:hidden;font-size:1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.cv .t1{font-family:'Hanna','Pretendard',sans-serif;font-size:2.7em;line-height:1.22;white-space:pre-wrap;word-break:keep-all;padding:0 .45em;letter-spacing:-.01em}
+.cv .t2{font-size:1.1em;line-height:1.45;white-space:pre-wrap;word-break:keep-all;padding:0 1.3em;font-weight:600}
+.cv .imgbox{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cv .imgbox img,.cv .imgbox video{width:100%;height:100%;object-fit:cover}
+.cv .imgbox.contain img,.cv .imgbox.contain video{object-fit:contain}
+.cv .sprite{aspect-ratio:1;height:100%;max-width:100%;background-image:url('food.png');background-size:500% 400%;background-repeat:no-repeat}
+.cv .pbg{position:absolute;inset:-6%;background-size:cover;background-position:center;filter:blur(18px) brightness(.95)}
+.cv .pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.cv.poster .hint2{bottom:2.5%;left:50%;right:auto;transform:translateX(-50%);background:rgba(255,255,255,.85);color:#2b2f36 !important;padding:.35em .9em;border-radius:1em;white-space:nowrap;opacity:1}
+.cv .hint2{position:absolute;bottom:4%;left:0;right:0;font-size:.8em;text-align:center;opacity:.85}
+.cv .ph{outline:2px dashed #3ec46d;outline-offset:.2em;min-width:6em;min-height:1.2em;cursor:text;-webkit-user-select:text;user-select:text}
+.cv .ph:empty:before{content:attr(data-ph);opacity:.55}
+.cv .ph:focus{outline-color:var(--blue)}
+.cv .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,.05) 45%,rgba(0,0,0,.35) 100%)}
+.cv .layer{position:relative;display:flex;flex-direction:column;align-items:center;gap:.8em;width:100%}
+#display .cv{cursor:pointer}
+
+/* ── 안내하기 ── */
+.guide-body{flex:1;overflow:auto;padding:0 .9rem 1rem}
+.guide-title{font-size:1.5rem;font-weight:800;text-align:center;margin:1rem 0 1.4rem;word-break:keep-all}
+.guide-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem}
+.guide-grid .key{height:3.6rem;font-size:1rem}
+.guide-sec{font-size:.75rem;color:var(--ink3);margin:1rem 0 .4rem}
+/* 안내하기 (실물: 출발지 설정 → 어서오세요 → 예약 → 인원 → 확인 완료) */
+.gd{flex:1;display:flex;flex-direction:column;padding:0 1.2rem calc(1.1rem + env(safe-area-inset-bottom));min-height:0}
+.gd-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;word-break:keep-all}
+.gd-q{font-size:2.1rem;font-weight:800;letter-spacing:-.02em;line-height:1.3}
+.gd-btns{display:flex;flex-direction:column;gap:.5rem}
+.gd-btns .btn{height:3.3rem;font-size:1.05rem;font-weight:600}
+.gd-btns .btn:disabled{opacity:.45}
+.gd-wel{font-size:3.6rem;font-weight:800;color:var(--blue);letter-spacing:-.03em}
+.gd-sub{font-size:1.05rem;color:var(--ink);margin-top:.5rem}
+.gd-hint{font-size:.9rem;color:var(--ink2);text-align:center;line-height:1.55;margin-bottom:1.6rem}
+.gd-start .lb{font-size:2.1rem;font-weight:800;letter-spacing:-.02em;line-height:1.3;color:var(--ink)}
+.gd-start .n{font-size:2.1rem;font-weight:800;color:var(--blue);line-height:1.3}
+.gd-start .n small.wp{font-size:1.1rem;font-weight:700;margin-left:.25em}
+.gd-start .n small{font-size:2.1rem;color:var(--ink);font-weight:800}
+.gd-cnt{font-size:.8rem;color:var(--ink2);text-align:center;margin-bottom:.5rem}
+.gd-sel{display:inline-flex;align-items:center;gap:.7rem;margin-top:1.3rem;font-size:1rem;color:var(--ink2)}
+.gd-sel button{display:inline-flex;align-items:center;gap:.6rem;border-bottom:1.5px solid var(--ink3);padding:.25rem .3rem .25rem .6rem;font-size:1.25rem;font-weight:700;color:var(--ink)}
+.gd-sel .ico{width:1.1rem;height:1.1rem;color:var(--ink2)}
+.gd-ok{color:var(--blue);font-weight:700;font-size:1rem;display:flex;flex-direction:column;align-items:center;gap:.3rem;margin-bottom:1.1rem}
+.gd-ok .ico{width:1.8rem;height:1.8rem;stroke-width:2.2}
+.gd-box{width:100%;background:var(--card);border-radius:.4rem;padding:1.3rem 1rem;display:flex;flex-direction:column;gap:1.1rem}
+.gd-box span{display:block;font-size:.75rem;color:var(--ink2)}
+.gd-box b{display:block;font-size:1.6rem;font-weight:800;margin-top:.2rem}
+.gd-staff{font-size:.75rem;color:var(--ink3);text-decoration:underline;padding:.6rem;align-self:center}
+.gd-set-head{display:flex;align-items:center;justify-content:space-between;height:3.4rem}
+.gd-set-head h2{font-size:1.05rem;font-weight:700}
+.gd-set-head .two{display:flex;gap:.35rem}
+.gd-set-head .two .btn{height:2.2rem;padding:0 1rem;font-size:.85rem;font-weight:700}
+.gd-set-sec{display:inline-block;font-size:.7rem;color:var(--blue);background:var(--blue-l);font-weight:600;padding:.1rem .4rem;border-radius:.2rem;margin-top:.2rem}
+.gd-set-desc{font-size:.7rem;color:var(--ink3);margin:.3rem 0 .6rem}
+.gd-set-val{min-height:3.2rem;margin-bottom:1rem;display:flex}
+.gd-set-card{background:#fff;border-radius:.4rem;padding:.9rem .8rem}
+.gd-set-card .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}
+.gd-set-card .key{height:2.6rem;font-size:1rem}
+.gd-set-val .key{width:calc((100% - 1.2rem)/4)}
+#guide .gd.set,#promo .gd.set{background:var(--card)}
+.gd-list{max-height:60vh;overflow:auto;display:flex;flex-direction:column}
+.gd-list button{height:3rem;font-size:1.1rem;border-bottom:1px solid var(--line)}
+.gd-list button.on{color:var(--blue);font-weight:800}
+
+/* ── 설정 ── */
+.tabs{flex:none;display:flex;gap:.4rem;overflow-x:auto;padding:.2rem .9rem .7rem;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;height:2.2rem;padding:0 1rem;border-radius:1.2rem;border:1px solid var(--line);font-size:.85rem;color:var(--ink2);background:#fff}
+.tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.set-body{flex:1;overflow:auto;padding:0 .9rem 2rem;-webkit-overflow-scrolling:touch}
+.card{background:var(--card);border-radius:.4rem;padding:.9rem .8rem;margin-bottom:.7rem}
+.card h3{font-size:.9rem;font-weight:600;margin-bottom:.7rem;display:flex;justify-content:space-between;align-items:center}
+.card h3 .r{font-size:.75rem;font-weight:400;color:var(--ink2)}
+.box{background:#fff;border-radius:.3rem;padding:.7rem .8rem;margin-top:.45rem}
+.box:first-of-type{margin-top:0}
+.chip{display:inline-block;font-size:.65rem;color:var(--blue);background:var(--blue-l);padding:.12rem .4rem;border-radius:.2rem;margin-bottom:.55rem}
+.steps{position:relative;display:flex;justify-content:space-between;padding-top:.15rem}
+.steps:before{content:'';position:absolute;left:.5rem;right:.5rem;top:.62rem;height:1px;background:#e3e6ea}
+.step{position:relative;display:flex;flex-direction:column;align-items:center;gap:.3rem;font-size:.68rem;color:var(--ink2);min-width:1.6rem}
+.step i{width:.95rem;height:.95rem;border-radius:50%;background:#fff;border:1px solid #d6dae0;display:block}
+.step.on i{border:.27rem solid var(--blue)}
+.step.on{color:var(--ink);font-weight:600}
+.radios{display:flex;gap:1.1rem;flex-wrap:wrap}
+.radio{display:flex;align-items:center;gap:.35rem;font-size:.8rem}
+.radio i{width:.95rem;height:.95rem;border-radius:50%;border:1px solid #cfd4da;display:block;background:#fff}
+.radio.on i{border:.27rem solid var(--blue)}
+.row{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:.3rem;padding:.8rem;margin-top:.45rem;font-size:.85rem;width:100%;text-align:left}
+.row:first-of-type{margin-top:0}
+.row .r{display:flex;align-items:center;gap:.4rem;color:var(--ink2);font-size:.75rem}
+.row .r .ico{width:1rem;height:1rem}
+.tag{font-size:.65rem;color:var(--blue);background:var(--blue-l);padding:.1rem .35rem;border-radius:.2rem}
+.plain{background:var(--card);border-radius:.4rem;padding:.9rem .8rem;margin-bottom:.7rem;display:flex;justify-content:space-between;font-size:.85rem;width:100%;text-align:left}
+.plain .r{color:var(--ink2)}
+/* ── 관리자 페이지 (실제: my.brobotics.kr 웹 화면) ── */
+#admin{background:#fff}
+.ad-logo{font-family:'Hanna',sans-serif;font-size:1.25rem;color:#2cc2b5;letter-spacing:-.01em}
+.ad-logo span{color:#2b2f36}
+.ad-login{flex:1;display:flex;flex-direction:column;align-items:center;padding:3.2rem 1.4rem 0}
+.ad-login h2{font-family:'Hanna',sans-serif;font-weight:400;font-size:1.5rem;margin:.9rem 0 2rem}
+.ad-field{position:relative;width:100%;margin-bottom:1rem}
+.ad-field input{width:100%;height:3.1rem;border:1px solid #cfd4da;border-radius:.25rem;padding:0 .9rem;font-size:.95rem;outline:none;background:#fff}
+.ad-field input:focus{border:2px solid var(--blue)}
+.ad-field label{position:absolute;left:.7rem;top:-.5rem;background:#fff;padding:0 .3rem;font-size:.7rem;color:var(--ink2)}
+.ad-row{width:100%;display:flex;justify-content:space-between;align-items:center;font-size:.85rem;margin:.2rem 0 1.4rem}
+.ad-row label{display:flex;align-items:center;gap:.4rem}
+.ad-row input{width:1.05rem;height:1.05rem}
+.ad-btn{width:100%;height:3rem;background:var(--blue);color:#fff;border-radius:.25rem;font-size:.95rem}
+.ad-top{height:3.6rem;flex:none;display:flex;align-items:center;justify-content:center;position:relative;border-bottom:1px solid #eceef1}
+.ad-top .iconbtn{position:absolute;left:.7rem}
+.ad-top .out{position:absolute;right:.9rem;font-size:.72rem;color:var(--ink2)}
+.ad-body{flex:1;overflow:auto;padding:2.2rem 1.4rem 1.4rem}
+.ad-body h3{font-family:'Hanna',sans-serif;font-weight:400;font-size:1.3rem;line-height:1.4;margin-bottom:2rem}
+.ad-modes{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.ad-modes button{height:4.4rem;border:1.5px solid #dfe3e8;border-radius:.6rem;color:var(--blue);font-family:'Hanna',sans-serif;font-size:1.1rem;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.ad-modes button.fill{background:var(--blue);border-color:var(--blue);color:#fff}
+.ad-pick{position:relative;width:min(62%,13rem);margin:1rem auto 0;border-radius:.6rem;overflow:hidden;aspect-ratio:10/16;border:.3rem solid #e9ecef;cursor:pointer}
+.ad-pick .tagb{position:absolute;top:.5rem;left:50%;transform:translateX(-50%);z-index:2;background:#fff;border:1px solid var(--blue);color:var(--blue);font-size:.7rem;padding:.15rem .6rem;border-radius:.25rem}
+.nm-card{background:#fff8e6;border-radius:.8rem;padding:.9rem;margin-bottom:1.4rem;box-shadow:0 0 0 1px #f3dfb0 inset}
+.nm-card > b{font-family:'Hanna',sans-serif;font-weight:400;font-size:1.1rem}
+.nm-pick{display:flex;gap:.5rem;margin:.6rem 0}
+.nm-pick button{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.4rem;border-radius:.6rem;background:#fff;border:2px solid #eee4cf;font-size:.85rem;font-weight:700}
+.nm-pick button .food{width:4rem}
+.nm-pick button.on{border-color:#e9774c;background:#fff1e8}
+.nm-inp{height:2.8rem;font-size:1rem;font-weight:700}
+.nm-ok{font-size:.8rem;color:#178f86;font-weight:700;margin-top:.4rem}
+.qrbox{width:min(70%,14rem);margin:.6rem auto 0;background:#fff}
+.qrbox svg{width:100%;height:auto;display:block}
+.lic{display:flex;flex-direction:column;gap:.6rem;margin-top:.6rem;text-align:left}
+.lic div{display:flex;flex-direction:column;gap:.1rem;font-size:.8rem;border-bottom:1px solid #eceef1;padding-bottom:.5rem}
+.lic span{color:var(--ink2);font-size:.72rem}
+.lic small{color:var(--ink3);font-size:.68rem}
+.grp-head{display:flex;justify-content:flex-end;gap:.35rem;margin-bottom:.6rem}
+.grp-head .btn{height:2.1rem;padding:0 1rem;font-size:.8rem;font-weight:700}
+.grp-tabs{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #e3e6ea;margin-bottom:.8rem}
+.grp-tabs button{height:2.3rem;font-size:.9rem;color:var(--ink2)}
+.grp-tabs button.on{color:var(--ink);font-weight:700;box-shadow:inset 0 -2px 0 var(--ink)}
+.grp-dests{display:grid;grid-template-columns:repeat(5,1fr);gap:.35rem}
+.grp-dests button{height:2.3rem;border-radius:.25rem;background:#fff;border:1px solid #e3e6ea;font-size:.9rem}
+.grp-dests button.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+.sleep{position:fixed;inset:0;z-index:95;background:#000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:.6rem;color:#666;font-size:.85rem}
+.sleep.on{display:flex}
+.sleep b{font-size:1.4rem;color:#888;font-weight:600}
+.names{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem}
+.names label{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--ink2)}
+.names label b{width:1.4rem;text-align:right;color:var(--blue)}
+.inp{width:100%;height:2.3rem;border:1px solid #dfe3e8;border-radius:.3rem;padding:0 .6rem;font-size:.85rem;background:#fff;outline:none}
+.inp:focus{border-color:var(--blue)}
+textarea.inp{height:auto;min-height:4.2rem;padding:.5rem .6rem;line-height:1.45;resize:vertical}
+.ment{margin-top:.6rem}
+.ment:first-of-type{margin-top:0}
+.ment .lb{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--ink2);margin-bottom:.3rem}
+.mini{font-size:.72rem;color:var(--blue);border:1px solid var(--blue);border-radius:.25rem;padding:.2rem .5rem;background:#fff}
+.btnrow{display:flex;gap:.4rem;justify-content:flex-end;margin-top:.6rem}
+.btnrow .btn{height:2.2rem;padding:0 1.1rem;font-size:.8rem}
+.prev{display:flex;gap:.8rem;align-items:center}
+.prev .ph-frame{position:relative;width:5.2rem;aspect-ratio:10/16;border-radius:.4rem;overflow:hidden;border:.25rem solid #16181c;flex:none}
+.prev .txt{flex:1;font-size:.78rem;color:var(--ink2);line-height:1.5}
+.prev .txt .btn{margin-top:.6rem;height:2.3rem;font-size:.82rem;width:100%}
+.place-row{display:flex;gap:.4rem;margin-top:.4rem}
+.place-row .del{flex:none;width:2.3rem;height:2.3rem;border-radius:.3rem;background:#fff;border:1px solid #dfe3e8;display:grid;place-items:center;color:var(--ink2)}
+.place-row .del .ico{width:1rem;height:1rem}
+.sel{width:100%;height:2.3rem;border:1px solid #dfe3e8;border-radius:.3rem;padding:0 .5rem;background:#fff;font-size:.82rem}
+.inmode{display:flex;gap:1.2rem}
+.inmode .radio{flex-direction:column;align-items:flex-start;gap:.5rem}
+.inmode .pic{display:grid;gap:2px;padding:.35rem;background:#f4f5f7;border-radius:.2rem;width:4.4rem}
+.inmode .pic span{height:.5rem;background:#dfe2e6;border-radius:1px}
+
+/* ── 꾸미기 편집기 ── */
+#editor .ed-body{flex:1;overflow:auto;padding:0 .9rem 1rem}
+.ed-head{display:flex;align-items:center;gap:.3rem;height:3.4rem;padding:0 .5rem;flex:none;border-bottom:1px solid #f0f1f3}
+.ed-head h2{font-size:1.15rem;font-weight:800}
+.layouts{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem .4rem;margin:1rem 0}
+.lay{display:flex;flex-direction:column;align-items:center;gap:.45rem}
+.lay .radio{font-size:.8rem}
+.lay .th{width:2.2rem;height:3.2rem;border-radius:.25rem;border:1.5px solid #cfd4da;background:#fff;padding:.18rem;display:flex;flex-direction:column;gap:.12rem;justify-content:center;overflow:hidden}
+.lay.on .th{border-color:var(--blue)}
+.th .b{background:#bcd6fb;border-radius:1px}
+.th .g{height:.22rem;background:#8f969f;border-radius:1px}
+.swatches{display:flex;gap:.45rem;flex-wrap:wrap;margin:.2rem 0 1rem}
+.sw{width:1.8rem;height:1.8rem;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d6dae0}
+.sw.on{box-shadow:0 0 0 2px var(--blue)}
+.ed-label{font-size:.75rem;color:var(--ink2);margin-bottom:.35rem}
+.ed-stage{position:relative;margin:0 auto;width:min(78%, calc((100vh - 24rem) * .625));min-width:10rem;aspect-ratio:10/16;
+  border:.55rem solid #16181c;border-radius:1rem;overflow:hidden;background:#000}
+.ed-tip{text-align:center;font-size:.72rem;color:var(--ink3);margin-top:.5rem}
+.ed-bar{flex:none;display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--line)}
+.ed-bar button{height:3.6rem;font-size:.85rem;font-weight:800;color:var(--blue);line-height:1.25;border-right:1px solid var(--line)}
+.ed-bar button:last-child{background:var(--blue);color:#fff;border:0}
+
+/* ── 모달·시트 ── */
+.modal-wrap{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:1.2rem}
+.modal-wrap.on{display:flex}
+.modal{background:#fff;border-radius:.6rem;width:min(100%, 24rem);max-height:90vh;overflow:auto;padding:1.3rem 1.1rem 1.1rem;position:relative}
+.modal h4{font-size:1rem;font-weight:800;text-align:center;line-height:1.45;margin-bottom:1rem;word-break:keep-all}
+.modal .close{position:absolute;left:.7rem;top:.7rem}
+.modal .stack{display:flex;flex-direction:column;gap:.5rem}
+.modal .stack .btn{height:2.8rem;font-weight:700}
+.modal .two{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.5rem}
+.modal .two .btn{height:2.6rem;font-weight:700}
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}
+.gallery button{display:flex;flex-direction:column;align-items:center;gap:.2rem;font-size:.62rem;color:var(--ink2);padding:.3rem 0;border-radius:.3rem}
+.gallery button:active{background:var(--key)}
+.gallery.posters{grid-template-columns:repeat(3,1fr)}
+.gallery.posters img{width:100%;aspect-ratio:2/3;object-fit:contain;background:var(--key);border-radius:.25rem}
+.gallery .sp{width:100%;aspect-ratio:1;background-image:url('food.png');background-size:500% 400%}
+.tts-top{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;margin-bottom:.4rem}
+.rate{display:flex;align-items:center;gap:.4rem}
+.rate button{width:1.4rem;height:1.4rem;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;display:grid;place-items:center;line-height:1}
+.sync-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-bottom:.8rem}
+.sync-table th,.sync-table td{border:1px solid #cdd3da;padding:.55rem .3rem;text-align:center}
+.sync-table th{background:#eef2f8;font-weight:700;font-size:.7rem}
+.warn{color:var(--red);font-size:.72rem;text-align:center;line-height:1.5;margin-bottom:.8rem}
+.sync-bar{height:.4rem;background:var(--key);border-radius:.2rem;overflow:hidden;margin:.6rem 0}
+.sync-bar i{display:block;height:100%;width:0;background:var(--blue);transition:width 1.6s ease}
+
+.pause{position:fixed;inset:0;z-index:60;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;padding:1.5rem;text-align:center}
+.pause.on{display:flex}
+.pause .pi{width:4.5rem;height:4.5rem;border-radius:50%;background:var(--blue-l);color:var(--blue);display:grid;place-items:center;margin-bottom:.4rem}
+.pause .pi .ico{width:2.3rem;height:2.3rem;stroke-width:2.2}
+.pause h2{font-size:2.2rem;font-weight:800}
+.pause p{font-size:.95rem;color:var(--ink2);min-height:1.4rem}
+.pause .acts{display:flex;flex-direction:column;gap:.5rem;width:min(100%, 18rem);margin-top:1rem}
+.pause .acts .btn{height:3.1rem;font-weight:700}
+
+.pin-dots{display:flex;gap:.8rem;justify-content:center;margin:.3rem 0 1rem}
+.pin-dots i{width:.85rem;height:.85rem;border-radius:50%;border:1.5px solid var(--blue)}
+.pin-dots i.f{background:var(--blue)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem}
+.pin-pad .key{height:2.9rem}
+.pin-err{color:var(--red);font-size:.75rem;text-align:center;min-height:1.1rem;margin-top:.5rem}
+
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 5.2rem);transform:translate(-50%,1rem);background:rgba(25,28,33,.92);color:#fff;
+  font-size:.85rem;padding:.65rem 1.1rem;border-radius:2rem;z-index:90;opacity:0;pointer-events:none;transition:all .25s;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast.mid{bottom:auto;top:50%;transform:translate(-50%,-50%);border-radius:.3rem;padding:.9rem 1.6rem}.toast.mid.on{transform:translate(-50%,-50%)}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+
+/* ═════════ 공용 카드·맵 (영업 미션) ═════════ */
+
+#mission{background:#fffaf0}
+#mission .topbar{background:#fffaf0}
+#mission .topbar .ttl{font-family:'Hanna',sans-serif;font-size:1.15rem}
+.m-bar .btn{flex:1;height:3.2rem;font-size:1.05rem;font-weight:700}
+.m-bar .btn.btn-fill:disabled{background:#c9cfd8}
+.m-sub{font-size:.75rem;color:var(--ink2);line-height:1.5;word-break:keep-all}
+.food{display:inline-block;aspect-ratio:1;background-image:url('food.png');background-size:500% 400%;background-repeat:no-repeat;flex:none}
+.newtag{display:inline-block;font-size:.62rem;font-weight:700;color:#fff;background:#e9774c;border-radius:1rem;padding:.08rem .45rem;vertical-align:middle}
+
+/* 가족 배너 */
+.fam{display:flex;align-items:center;gap:.7rem;padding:.8rem;border-radius:.8rem;color:#fff;margin:.2rem 0 .7rem}
+.fam .n{font-family:'Hanna',sans-serif;font-size:1.9rem;width:3rem;height:3rem;border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center;flex:none}
+.fam .t{font-family:'Hanna',sans-serif;font-size:1.15rem;line-height:1.25}
+.fam .s{font-size:.75rem;opacity:.92;margin-top:.15rem}
+.fam .chg{margin-left:auto;font-size:.72rem;border:1px solid rgba(255,255,255,.7);border-radius:.4rem;padding:.3rem .5rem;color:#fff;flex:none}
+.newmenu .food,.newmenu .m-emo{width:4.4rem}
+.newmenu .nm{font-family:'Hanna',sans-serif;font-size:1.35rem;line-height:1.2;word-break:keep-all}
+.getbtn .t{font-family:'Hanna',sans-serif;font-size:1.15rem}
+.getbtn .s{font-size:.68rem;opacity:.9;word-break:keep-all}
+.getbtn.k{background:linear-gradient(160deg,#2f8cff,#1f6fe0)}
+.stamp .t{font-size:.66rem;font-weight:700;color:#8b7a5a;text-align:center;line-height:1.2;word-break:keep-all}
+.stamp.on{background:#fff;border:1.5px solid #e9774c}
+.stamp.on .e{filter:none;opacity:1}
+.stamp.on .t{color:#c2532a}
+.stamp.on .cnt{display:block}
+.stamp.on::after{content:'참 잘했어요';position:absolute;left:.25rem;bottom:.25rem;font-family:'Hanna',sans-serif;font-size:.55rem;color:#e5484d;border:1.5px solid #e5484d;border-radius:1rem;padding:.12rem .3rem;transform:rotate(-12deg);opacity:.85;line-height:1;white-space:nowrap;background:#fff}
+.stamp.king .t{color:#7a4b00}
+.pk .big{font-family:'Hanna',sans-serif;font-size:1.6rem;line-height:1.1;font-weight:400}
+.pk.on{border-color:var(--c,#1f7cf5);background:color-mix(in srgb, var(--c,#1f7cf5) 10%, #fff)}
+.pk5 .food{width:100%}
+.pk5.on{border-color:#e9774c;background:#fff4ec;font-weight:700}
+.m-inp.big{font-family:'Hanna',sans-serif;font-size:1.2rem}
+.tbl.on{background:#1f7cf5;color:#fff}
+.tbl.on small{color:#e9f2fe}
+.sw2.on{background:#e9774c}.sw2.on::after{left:1.5rem}
+.ok-over.on{display:flex;animation:fadein .25s}
+.ok-over .t{font-family:'Hanna',sans-serif;font-size:2rem}
+.ok-over .n{font-family:'Hanna',sans-serif;font-size:4.5rem;line-height:1}
+.ok-over .s{font-size:.9rem;opacity:.9}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.mcard .back{background:repeating-linear-gradient(45deg,#ef6f45 0 14px,#f58a5c 14px 28px);color:#fff;border:.35rem solid #fff;box-shadow:0 8px 20px rgba(0,0,0,.15)}
+.mcard .back .q{font-family:'Hanna',sans-serif;font-size:4rem}
+.mcard .front .t{font-family:'Hanna',sans-serif;font-size:1.7rem;color:#c2532a}
+.mcard .front .d{font-size:.8rem;color:var(--ink2);line-height:1.5;word-break:keep-all}
+.mcard .front .o .food{width:3rem;vertical-align:middle;margin-right:.3rem}
+.rcpt .top{display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:var(--ink2)}
+.rcpt .no{font-family:'Hanna',sans-serif;font-size:1.25rem;color:var(--ink)}
+.rcpt .main .food,.rcpt .main .m-emo{width:5.2rem}
+.route span.p1{background:#ffe9dc;color:#c2532a;font-weight:700}
+.route span.p2{background:#e3efff;color:#1f6fe0;font-weight:700}
+.mmap{position:relative;width:100%;border-radius:.6rem;overflow:hidden;margin-top:.6rem;box-shadow:0 0 0 1px #eee4cf}
+.mmap img{display:block;width:100%}
+.mk{position:absolute;transform:translate(-50%,-50%);width:1.9rem;height:1.9rem;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:800;color:#fff;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.mk.s{background:#2b2f36}.mk.p1{background:#ef6f45;animation:pop 1.4s infinite}.mk.p2{background:#1f7cf5;animation:pop 1.4s .7s infinite}
+@keyframes pop{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.22)}}
+.chk.on .bx{background:#2cc2b5;border-color:#2cc2b5}
+.chk.on .tx{color:#178f86}
+.m-arr .pic{width:min(46%,12rem);margin:.4rem 0 .6rem}
+.m-arr .pic .food,.m-arr .pic .m-emo{width:100%}
+.m-arr .big{font-family:'Hanna',sans-serif;font-size:1.9rem;color:var(--blue);line-height:1.25;word-break:keep-all}
+.poem .row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.done-st .t{font-family:'Hanna',sans-serif;font-size:1rem;margin-top:.2rem}
+@keyframes stampin{0%{transform:rotate(-12deg) scale(2.4);opacity:0}100%{transform:rotate(-12deg) scale(1);opacity:1}}
+.chip2.on{background:#e9774c;border-color:#e9774c;color:#fff}
+.swap .t{font-family:'Hanna',sans-serif;font-size:1.1rem}
+.swap .s{font-size:.75rem;opacity:.95;margin-top:.1rem;line-height:1.45}
+.king-ban .t{font-family:'Hanna',sans-serif;font-size:1.5rem}
+.lg .food,.lg .m-emo{width:2.6rem}
+.lg .a{flex:1;min-width:0}
+.lg .a b{font-size:.88rem}
+.lg .a div{font-size:.68rem;color:var(--ink2);margin-top:.1rem;line-height:1.4}
+.lg .r{font-size:.8rem;font-weight:800;color:#1f7cf5;flex:none}
+.empty{text-align:center;color:var(--ink3);font-size:.8rem;padding:1.2rem 0}
+
+
+#lab{background:#fffaf0}
+#lab .topbar{background:#fffaf0}
+#lab .topbar .ttl{font-family:'Hanna',sans-serif;font-size:1.15rem}
+.lab-steps span.on{background:#e9774c;color:#fff}
+.lab-steps span.ok{background:#ffe3d4;color:#c2532a}
+.lab-hero .t{font-family:'Hanna',sans-serif;font-size:1.5rem}
+.lab-hero .s{font-size:.8rem;line-height:1.55;margin-top:.3rem;opacity:.95}
+.formula span.f{background:#fff;color:#c2532a}
+.lab-dots button.on{opacity:1;background:var(--c);border-color:var(--c);transform:scale(1.12)}
+.lab-q .row{display:flex;align-items:center;gap:.8rem;margin:.6rem 0;text-align:left}
+.lab-q .row .food{width:5rem}
+.timer .fg{stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.chip2.star.on{background:#e9774c;border-color:#e9774c}
+.lab-in .btn{height:2.7rem;padding:0 1rem;flex:none;font-weight:700}
+.lab-slot .slot .ph{font-size:.85rem;color:var(--ink3)}
+.two2 .btn{height:2.7rem;font-size:.85rem;font-weight:700}
+.two2 .btn:disabled,.m-bar .btn:disabled{background:#c9cfd8;color:#fff;border-color:#c9cfd8}
+.cand-t .top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.3rem}
+.cand-t .nm{font-family:'Hanna',sans-serif;font-size:1.6rem;line-height:1.2;word-break:keep-all}
+.lab-final .nm{font-family:'Hanna',sans-serif;font-size:2rem;color:#c2532a}
+.draft.on{border-color:#e9774c;background:#fff4ec;font-weight:700}
+.lab-cert .s{font-size:.72rem;color:var(--ink2)}
+.lab-cert .food{width:7rem;margin:.5rem 0}
+.lab-cert .nm{font-family:'Hanna',sans-serif;font-size:2.3rem;color:#c2532a;line-height:1.2;word-break:keep-all}
+</style>
+</head>
+<body>
+<div id="frame">
+<div id="bizStrip"><div class="bs-bar" id="bsBar" role="button"></div><div class="bs-dim"></div><div class="bs-panel" id="bizPanel"></div></div>
+<button id="gMenu" data-act="drawer" aria-label="메뉴"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+
+<!-- ═════════ 서빙 홈 ═════════ -->
+<section class="screen on" id="home">
+  <div class="topbar">
+    <button class="iconbtn" data-act="drawer" aria-label="메뉴"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <div class="modeicons">
+      <button class="iconbtn on" data-kind="serve" aria-label="서빙"><svg class="ico" viewBox="0 0 24 24"><path d="M3 18h18M5 18a7 7 0 0 1 14 0M12 9V7.2M10.4 7h3.2"/></svg></button>
+      <button class="iconbtn" data-kind="birthday" aria-label="생일 축하"><svg class="ico" viewBox="0 0 24 24"><path d="M4 20h16M5.5 20v-5.5a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1V20M5.5 16.5c1.6 1.1 3.2 1.1 4.3 0s3.1-1.1 4.4 0 2.8 1.1 4.3 0M8.5 13.5v-3M12 13.5v-3M15.5 13.5v-3M8.5 7.6c-.5-.6 0-1.4 0-1.4s.5.8 0 1.4M12 7.6c-.5-.6 0-1.4 0-1.4s.5.8 0 1.4M15.5 7.6c-.5-.6 0-1.4 0-1.4s.5.8 0 1.4"/></svg></button>
+      <button class="iconbtn" data-kind="collect" aria-label="그릇 회수"><svg class="ico" viewBox="0 0 24 24"><path d="M3.5 12.5h17a8.5 8.5 0 0 1-17 0zM12 3.5v5.5M9.3 6 12 3.3 14.7 6"/></svg></button>
+    </div>
+    <div class="grp">
+      <button class="iconbtn" data-act="toKitchen" aria-label="주방으로 보내기"><svg class="ico" viewBox="0 0 24 24"><path d="M4 10h16v3.5a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6zM2.5 10h19M9 7c-.6-.8 0-1.8 0-1.8s.6 1-.0 1.8M12 7c-.6-.8 0-1.8 0-1.8s.6 1 0 1.8M15 7c-.6-.8 0-1.8 0-1.8s.6 1 0 1.8"/></svg></button>
+      <button class="iconbtn" data-act="toDish" aria-label="퇴식구로 보내기"><svg class="ico" viewBox="0 0 24 24"><path d="M4 9.5h16l-1.6 8.3a2 2 0 0 1-2 1.7H7.6a2 2 0 0 1-2-1.7zM7 6.5h10"/></svg></button>
+      <button class="iconbtn" data-act="toBase" aria-label="대기 장소로 복귀"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M7.8 12h8.4M13 8.6l3.4 3.4-3.4 3.4"/></svg></button>
+    </div>
+  </div>
+  <div class="home-body">
+    <div class="trays" id="trays"></div>
+    <div class="modechip" id="modechip"></div>
+    <div class="badge" id="badge">1</div>
+    <div id="picker" style="width:100%;display:flex;justify-content:center"></div>
+  </div>
+  <div class="bottombar">
+    <button class="btn btn-out soup-btn" id="soupBtn">국물 모드</button>
+    <button class="btn btn-fill send-btn" id="sendBtn">보내기</button>
+  </div>
+</section>
+
+
+<!-- ═════════ 이동중 ═════════ -->
+<section class="screen" id="moving">
+  <div class="mv-top"><div class="mv-hello" id="mvHello"></div><div class="mv-chip" id="mvChip" style="display:none"></div></div>
+  <div class="mv-num" id="mvNum">3</div>
+  <div class="mv-name" id="mvName"></div>
+  <div class="mv-state"><span id="mvState">이동중</span><span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+  <div class="mv-next" id="mvNext"></div>
+  <div class="mv-done"><button class="btn btn-fill" id="mvDone">도착했어요</button><div class="hint2">화면을 터치하면 일시정지해요</div></div>
+  <div class="hint" id="mvHint">화면을 터치하면 일시정지해요</div>
+</section>
+
+<!-- ═════════ 도착 ═════════ -->
+<section class="screen" id="arrive">
+  <div class="topbar">
+    <button class="iconbtn" data-act="drawer" aria-label="메뉴"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <span></span>
+  </div>
+  <div class="arr-body" id="arrBody"></div>
+  <div class="bottombar"><button class="btn btn-fill send-btn" id="goBtn">로봇 보내기</button></div>
+</section>
+
+<!-- ═════════ 돌아다니기 · 홍보 화면 ═════════ -->
+<section class="screen" id="display"></section>
+
+<!-- ═════════ 돌아다니기 ═════════ -->
+<section class="screen" id="roam">
+  <div class="topbar"><button class="iconbtn" data-act="drawer" aria-label="메뉴"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span></span></div>
+  <div class="face-wrap"><svg class="rface" viewBox="0 0 200 170" fill="none" stroke="#111" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"><path d="M20 30l52 30-52 30"/><path d="M180 30l-52 30 52 30"/><path d="M58 112q42 44 84 0"/></svg></div>
+  <div class="bottom2"><button class="btn btn-fill" id="roamGo">로봇 출발</button><button class="btn btn-out" id="roamPath">돌아다니기 경로 확인/수정</button></div>
+</section>
+<section class="screen" id="promo"></section>
+<section class="screen" id="admin"></section>
+<section class="screen" id="rpath"></section>
+<section class="screen" id="redit"></section>
+<div class="sleep" id="sleep"><b>절전모드</b>화면을 터치하면 깨어나요</div>
+<div class="rpause" id="rpause"><div class="mid"><h2>일시정지</h2><div class="sec" id="rpSec">30초</div></div>
+  <div class="hint3">화면을 터치하면 일시정지가 풀려요</div>
+  <div class="acts"><button class="btn btn-fill" data-rp="cancel">이동 취소</button><button class="btn btn-out" data-rp="base">대기 장소로 보내기</button></div></div>
+
+<!-- ═════════ 안내하기 ═════════ -->
+<section class="screen" id="guide"></section>
+
+<!-- ═════════ 설정 ═════════ -->
+<section class="screen" id="settings">
+  <div class="topbar">
+    <button class="iconbtn" data-act="drawer" aria-label="메뉴"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <span style="font-weight:700">설정</span>
+    <button class="iconbtn" data-act="home" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div class="set-body" id="setBody"></div>
+</section>
+
+<!-- ═════════ 화면 꾸미기 ═════════ -->
+<section class="screen" id="editor">
+  <div class="ed-head">
+    <button class="iconbtn" id="edBack" aria-label="뒤로"><svg class="ico" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h2 id="edTitle">홍보모드</h2>
+  </div>
+  <div class="ed-body" id="edBody"></div>
+  <div class="ed-bar">
+    <button id="edImg">이미지/<br>동영상 넣기</button>
+    <button id="edTts">TTS<br>변경하기</button>
+    <button id="edSave">저장하기</button>
+  </div>
+</section>
+
+<!-- 사이드 메뉴 -->
+<div class="dim" id="dim"></div>
+<nav class="drawer" id="drawer">
+  <div class="dr-head">
+    <div class="logo" id="drLogo"></div>
+    <button class="iconbtn" data-act="fullscreen" aria-label="전체 화면"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3.5v8M7.2 6.3a7.5 7.5 0 1 0 9.6 0"/></svg></button>
+  </div>
+  <div class="dr-sec">모드</div>
+  <button class="dr-item" data-go="serve">서빙하기<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  <button class="dr-item" data-go="roam">돌아다니기<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  <button class="dr-item" data-go="guide">안내하기<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  <button class="dr-item" data-go="promo">홍보하기<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  <div class="dr-sec" style="margin-top:1rem">설정</div>
+  <button class="dr-item" data-go="settings">설정<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  <div class="dr-stat" id="drStat"></div>
+  <button class="dr-close" data-act="closeDrawer">닫기</button>
+</nav>
+
+<!-- 일시정지 -->
+<div class="pause" id="pause">
+  <div class="pi"><svg class="ico" viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></svg></div>
+  <h2 id="pzTitle">일시정지</h2>
+  <p id="pzMsg"></p>
+  <div class="acts" id="pzActs"></div>
+</div>
+
+<div class="modal-wrap" id="modalWrap"><div class="modal" id="modal"></div></div>
+<canvas id="confetti"></canvas>
+<div class="toast" id="toast"></div>
+
+</div><!-- #frame -->
+<script src="lib/qrcode.min.js"></script>
+<script>
+'use strict';
+/* ───────── 기본 데이터 ───────── */
+const FOODS = [ // food.png 스프라이트 (행 0~3, 열 0~4)
+  '떡볶이','순대','튀김','라면','김밥','비빔밥','된장찌개','불고기','냉면','제육볶음',
+  '초밥','라멘','짜장면','짬뽕','마라탕','파스타','피자','스테이크','햄버거','리조또'];
+const BGS = [
+  {id:'white', bg:'#ffffff', fg:'#1f2328', sub:'#5b6370'},
+  {id:'blue',  bg:'linear-gradient(160deg,#7b7fe3 0%,#6aa6e8 100%)', fg:'#ffffff', sub:'#eef3ff'},
+  {id:'pink',  bg:'linear-gradient(160deg,#ffb3c6 0%,#ff8fab 100%)', fg:'#ffffff', sub:'#fff2f6'},
+  {id:'cream', bg:'#fff4d6', fg:'#6b3d12', sub:'#8a5a2b'},
+  {id:'mint',  bg:'linear-gradient(160deg,#5fd3c4 0%,#2cb5a8 100%)', fg:'#ffffff', sub:'#effffb'},
+  {id:'navy',  bg:'#1d2b4f', fg:'#ffffff', sub:'#c9d4f2'},
+  {id:'hanji', bg:'#f3ead8', fg:'#2b2118', sub:'#6d5a43'},
+];
+// 꿈트리 갤러리의 예시 포스터 (홍보 화면 포스터 영역 1200×1760 · 세로 2:3)
+const POSTERS = [['img/poster_example.png','한글날 우리말 새 메뉴'], ['img/poster_burger.png','두툼 버거 & 바싹 감튀']];
+const LAYOUTS = [
+  {id:'poster', t:'포스터'}, {id:'m1', t:'모드 1'}, {id:'m2', t:'모드 2'}, {id:'m3', t:'모드 3'},
+  {id:'m4', t:'모드 4'}, {id:'m5', t:'모드 5'}, {id:'basic', t:'기본화면'}];
+
+const DEFAULTS = {
+  storeName:'꿈트리 푸드테크',
+  trays:3, destCount:8, perRow:4, inputMode:'select', showDest:true,
+  names:{}, dishName:'퇴식구', baseName:'대기 장소',
+  speedNormal:0.7, speedSoup:0.5, speedReturn:0.8,
+  stopTime:120, pauseTime:30, arriveMode:'manual',
+  groups:[{name:'1', dests:[]},{name:'2', dests:[]},{name:'3', dests:[]},{name:'4', dests:[]},{name:'5', dests:[]}],
+  sleepUse:true, sleepMin:10, dishDest:8, chargerDest:0, dimScreen:false, accel:1, brake:1,
+  tts:true, volume:1, ttsRate:1, voice:'',
+  ments:{
+    depart:'방문해 주셔서 감사합니다. 맛있게 드세요.',
+    arrive:'고객님, 주문하신 메뉴가 도착했어요. 지정된 트레이의 음식을 내리신 후 로봇 보내기 버튼을 눌러주세요.',
+    birthday:'생일 축하합니다! 오늘 하루 행복하세요.',
+    collect:'다 드신 그릇을 트레이에 올려 주세요.',
+    dish:'그릇을 모두 내려 주세요.',
+    back:'출발지로 이동합니다.',
+    guide:'저를 따라오세요!',
+    guideArrive:'도착했어요. 즐거운 시간 보내세요!',
+  },
+  guidePlaces:['입구','계산대','화장실','퇴식구'],
+  guideStart:null, guideCount:10, guideMent:'어서오세요! 안내를 원하시면 화면을 터치해 주세요.',
+  content:{
+    roam:{layout:'basic', bg:'pink', img:null, t1:'SNS 리뷰\n이벤트', t2:'# 메뉴명으로 n행시 작성 시\n무료 디저트 증정', tts:'리뷰 작성하면 무료 디저트를 제공해요.', ttsRate:1, repeat:20},
+    promo:{layout:'poster', bg:'hanji', img:{src:'img/poster_example.png'}, t1:'한글날 100돌\n우리말 새 메뉴', t2:'', tts:'신메뉴 출시 기념! 할인 이벤트를 진행해요.', ttsRate:1, repeat:30},
+  },
+  routes:[], routeSel:0,
+  pin:'', wakeLock:true,
+  mission:{family:0, store:0, newFood:-1, newName:'', intro:'', set:false},
+};
+const VERSION = '1.1.0 (한글날 에디션 · 운영 미션)';
+
+/* ───────── 저장소 ───────── */
+const LS = {
+  get(k){ try{ return localStorage.getItem(k) }catch(e){ return null } },
+  set(k,v){ try{ localStorage.setItem(k,v); return true }catch(e){ return false } },
+  del(k){ try{ localStorage.removeItem(k) }catch(e){} },
+};
+function deepMerge(base, add){
+  const out = Array.isArray(base) ? base.slice() : {...base};
+  if(!add || typeof add!=='object') return out;
+  for(const k of Object.keys(add)){
+    if(base && base[k] && typeof base[k]==='object' && !Array.isArray(base[k]) && add[k] && typeof add[k]==='object' && !Array.isArray(add[k]))
+      out[k] = deepMerge(base[k], add[k]);
+    else out[k] = add[k];
+  }
+  return out;
+}
+let S;
+try{ S = deepMerge(DEFAULTS, JSON.parse(LS.get('srv_settings')||'{}')); }catch(e){ S = deepMerge(DEFAULTS, {}); }
+// 예전 기본 멘트를 저장해 둔 기기는 실제 로봇 멘트로 바꿔 줌 (직접 고친 멘트는 그대로)
+{ const OLD={depart:'{목적지}로 출발할게요. 길을 비켜 주세요!', arrive:'주문하신 음식이 도착했어요. 트레이에서 음식을 꺼내 주세요.', back:'대기 장소로 돌아갈게요.'};
+  for(const k in OLD) if(S.ments[k]===OLD[k]) S.ments[k]=DEFAULTS.ments[k];
+  if(S.ments.depart==='방문해 주셔서 감사합니다.') S.ments.depart=DEFAULTS.ments.depart; }
+if(S.storeName==='꿈트리 푸드코트') S.storeName=DEFAULTS.storeName;
+if(S.content.promo.tts==='한글날 백 돌을 맞아 메뉴 이름을 우리말로 새로 지었어요. 맛있게 드세요!') S.content.promo.tts=DEFAULTS.content.promo.tts;   // 홍보 기본 멘트 → 실제 로봇 기본 멘트
+if(!S.pauseTime) S.pauseTime=240;   // 실제 로봇엔 무제한이 없어요 (10초~4분)
+applyDim();
+setTimeout(vidLoad, 0);
+{ const pr=S.content.promo;   // 예전 기본 홍보 화면(떡볶이 사진 + 글씨) → 예시 포스터
+  if(pr.layout==='m2' && pr.img && pr.img.food===0 && pr.t1===DEFAULTS.content.promo.t1){ pr.layout='poster'; pr.img={src:'img/poster_example.png'}; pr.t2=''; } }
+{ const pr=S.content.promo; if(pr.t2==='사장님이 새로 지은 메뉴 이름을 찾아보세요!') pr.t2=DEFAULTS.content.promo.t2; }   // 홍보하기 아래 글씨 → 일시정지 안내
+// 돌아다니기 기본 화면: 한글날 n행시 이벤트 → SNS 리뷰 이벤트 (직접 고친 글은 그대로)
+{ const r=S.content.roam, d=DEFAULTS.content.roam;
+  if(r.t1==='한글날 n행시\n이벤트') r.t1=d.t1;
+  if(r.t2==='메뉴 이름으로 n행시를 지으면\n가나다 초콜릿을 드려요!' || r.t2==='#메뉴명으로 n행시 작성 시\n무료 디저트 증정') r.t2=d.t2;
+  if(r.tts==='한글날 엔행시 이벤트! 메뉴 이름으로 엔행시를 지으면 가나다 초콜릿을 드려요.' || r.tts==='SNS 리뷰 이벤트! 메뉴 이름으로 엔행시를 지어 리뷰를 남기시면 무료 디저트를 드려요.' || r.tts==='SNS 리뷰 이벤트! 메뉴명으로 엔행시 작성 시 무료 디저트를 드려요.' || r.tts==='리뷰 작성하면 무료 음료를 제공해요.') r.tts=d.tts; }
+function save(){ LS.set('srv_settings', JSON.stringify(S)); applyDim(); }
+function applyDim(){ document.documentElement.classList.toggle('screen-dim', !!(S && S.dimScreen)); }
+let stats = {date:'', served:0, birthday:0, guided:0};
+try{ stats = Object.assign(stats, JSON.parse(LS.get('srv_stats')||'{}')); }catch(e){}
+const today = new Date().toLocaleDateString('ko-KR');
+if(stats.date!==today) stats = {date:today, served:0, birthday:0, guided:0};
+function saveStats(){ LS.set('srv_stats', JSON.stringify(stats)); }
+/* 동영상은 커서 localStorage(약 5MB)에 못 넣어요 → 브라우저의 큰 파일 저장소(IndexedDB)에 넣고, 화면에선 미리 꺼내 둔 주소를 써요 */
+const vidURL={roam:null, promo:null};
+function idb(){ return new Promise((ok,no)=>{ try{ const r=indexedDB.open('srv_media',1); r.onupgradeneeded=()=>r.result.createObjectStore('v'); r.onsuccess=()=>ok(r.result); r.onerror=()=>no(r.error); }catch(e){ no(e); } }); }
+async function vidPut(mode, blob){ const db=await idb(); return new Promise((ok,no)=>{ const t=db.transaction('v','readwrite'); t.objectStore('v').put(blob, mode); t.oncomplete=ok; t.onerror=()=>no(t.error); }); }
+async function vidDel(mode){ try{ const db=await idb(); db.transaction('v','readwrite').objectStore('v').delete(mode); }catch(e){} }
+async function vidLoad(){
+  for(const m of ['roam','promo']){
+    if(S.content[m].img!=='video') continue;
+    try{ const db=await idb(); const blob=await new Promise(ok=>{ const q=db.transaction('v').objectStore('v').get(m); q.onsuccess=()=>ok(q.result); q.onerror=()=>ok(null); });
+      if(blob){ vidURL[m]=URL.createObjectURL(blob); if(current==='display' && displayMode===m) $('#display').innerHTML=contentHTML(S.content[m], imgOf(m), false); if(current==='promo') renderPromo(); } }catch(e){}
+  }
+}
+function imgOf(mode){ const c=S.content[mode]; if(c.img==='video') return vidURL[mode]?{video:vidURL[mode]}:null; if(c.img && c.img.food!=null) return c.img; if(c.img && c.img.src) return c.img; if(c.img==='data'){ const d=LS.get('srv_img_'+mode); return d?{src:d}:null; } return null; }
+
+/* ───────── 유틸 ───────── */
+const $ = s => document.querySelector(s);
+const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let toastT;
+function toast(msg, mid){ const t=$('#toast'); t.textContent=msg; t.classList.toggle('mid', !!mid); t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2200); }
+function updateMenuBtn(){
+  const sc=document.getElementById(current); if(!sc) return;
+  const own=[...sc.querySelectorAll('[data-act="drawer"]')].some(b=>b.offsetParent!==null);
+  const ownTop = current==='editor' || (current==='admin' && adView!=='login');   // 화면 꾸미기(뒤로가기)·관리자 페이지(자체 ≡)는 왼쪽 위 버튼이 이미 있어요
+  $('#gMenu').classList.toggle('on', !own && !ownTop);   // 화면 꾸미기는 왼쪽 위가 뒤로가기라 제외
+}
+setInterval(()=>{ try{ updateMenuBtn(); }catch(e){} }, 400);   // 화면 안 내용이 바뀌어도 ≡ 버튼 표시를 맞춰요
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id));
+  current = id; lastShow = Date.now(); updateConfetti(); fitFrames();
+  requestAnimationFrame(updateMenuBtn);
+  if(typeof renderStrip==='function') renderStrip();
+}
+let current = 'home';
+function waitPlace(){ const n = (typeof BZ!=='undefined' && BZ.fam!=null) ? BZ.fam+1 : S.guideStart; return n ? `가족 ${n} 대기 장소` : '대기 장소'; }   // 「출발지」 대신 쓰는 이름
+function tableLabel(n){ const nm=(S.names[n]||'').trim(); return nm ? nm : n+'번 테이블'; }
+function fmtSec(s){ if(!s) return '무제한'; return s<60? s+'초' : (s%60? Math.floor(s/60)+'분 '+(s%60)+'초' : (s/60)+'분'); }
+function spritePos(i){ const r=Math.floor(i/5), c=i%5; return `${c*25}% ${r*100/3}%`; }
+
+/* ───────── 음성(TTS) ───────── */
+let voices=[];
+function loadVoices(){ try{ voices = speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang)); }catch(e){ voices=[]; } }
+if('speechSynthesis' in window){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+// "3번" → "삼번" (TTS가 "세 번"으로 읽지 않도록 한자어 수로 바꿔 읽기)
+const SINO=['','일','이','삼','사','오','육','칠','팔','구'];
+function sino(n){ n=+n; if(!n) return '영'; if(n>=10000) return String(n);
+  const d=[Math.floor(n/1000)%10, Math.floor(n/100)%10, Math.floor(n/10)%10], u=['천','백','십'];
+  return d.map((x,i)=> x ? (x>1?SINO[x]:'')+u[i] : '').join('') + SINO[n%10]; }
+function sayNum(t){ return String(t).replace(/(\d+)(\s*)번/g, (_,d,sp)=>sino(d)+sp+'번'); }
+function speak(text, rate, force){
+  if(!text || !('speechSynthesis' in window)) return;
+  if(!S.tts && !force) return;
+  if(paused && !force) return;   // 일시정지 중엔 말하지 않음
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(sayNum(text));
+    u.lang='ko-KR'; u.rate = (rate||1)*S.ttsRate; u.volume = S.volume;
+    const v = voices.find(v=>v.name===S.voice) || voices[0]; if(v) u.voice=v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function hush(){ try{ speechSynthesis.cancel(); }catch(e){} }
+function fill(m, vars){ return String(m||'').replace(/\{목적지\}(으로|로)/g, (_,j)=> vars['목적지']!=null ? josaRo(vars['목적지']) : '').replace(/\{(\w+|목적지)\}/g, (_,k)=>vars[k]??''); }
+
+/* ───────── 생일 축하 노래 ───────── */
+let actx, songStop=null;
+function playSong(){
+  stopSong();
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended') actx.resume();
+    const N={G4:392,A4:440,B4:493.9,C5:523.3,D5:587.3,E5:659.3,F5:698.5,G5:784};
+    const seq=[['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
+      ['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],
+      ['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',2],
+      ['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',2.5]];
+    const beat=.42; let t=actx.currentTime+.05; const g=actx.createGain(); g.gain.value=.18*S.volume; g.connect(actx.destination);
+    const oscs=[];
+    for(const [n,d] of seq){
+      const o=actx.createOscillator(), e=actx.createGain(); o.type='triangle'; o.frequency.value=N[n];
+      e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(1,t+.02); e.gain.exponentialRampToValueAtTime(.01,t+d*beat*.95);
+      o.connect(e); e.connect(g); o.start(t); o.stop(t+d*beat); oscs.push(o); t+=d*beat;
+    }
+    songStop=()=>{ oscs.forEach(o=>{try{o.stop()}catch(e){}}); g.disconnect(); };
+  }catch(e){}
+}
+// 출발 알림음: 파#↗라↗레 ↘솔# (실제 서빙로봇 출발음)
+function chime(){
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended') actx.resume();
+    const g=actx.createGain(); g.gain.value=.22*S.volume; g.connect(actx.destination);
+    let t=actx.currentTime+.03;
+    for(const f of [369.99, 440, 587.33, 415.30]){
+      const o=actx.createOscillator(), e=actx.createGain(); o.type='sine'; o.frequency.value=f;
+      e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(1,t+.015); e.gain.exponentialRampToValueAtTime(.001,t+.55);
+      o.connect(e); e.connect(g); o.start(t); o.stop(t+.6); t+=.17;
+    }
+  }catch(e){}
+}
+function stopSong(){ if(songStop){ songStop(); songStop=null; } }
+
+/* ───────── 색종이 ───────── */
+const cvs=$('#confetti'), cctx=cvs.getContext('2d'); let parts=[], confOn=false, raf=0;
+function sizeCanvas(){ const f=$('#frame'); cvs.width=(f?f.clientWidth:innerWidth)*devicePixelRatio; cvs.height=(f?f.clientHeight:innerHeight)*devicePixelRatio; }
+addEventListener('resize', sizeCanvas); sizeCanvas();
+function updateConfetti(){
+  const want = (current==='home' && kind==='birthday') || (trip && trip.kind==='birthday' && !trip.returning && (current==='moving'||current==='arrive'));
+  if(want===confOn) return; confOn=want;
+  if(confOn){ parts=Array.from({length:70},()=>newPart(true)); loop(); } else { cancelAnimationFrame(raf); cctx.clearRect(0,0,cvs.width,cvs.height); }
+}
+function newPart(any){ const cols=['#f48fb1','#90caf9','#64b5f6','#f8bbd0','#ef9a9a','#b39ddb'];
+  return {x:Math.random()*cvs.width, y:any?Math.random()*cvs.height:-20, vy:(.4+Math.random()*.9)*devicePixelRatio, vx:(Math.random()-.5)*.6,
+    r:Math.random()*6.28, vr:(Math.random()-.5)*.08, w:(4+Math.random()*6)*devicePixelRatio, h:(2+Math.random()*4)*devicePixelRatio, c:cols[Math.random()*cols.length|0]}; }
+function loop(){
+  cctx.clearRect(0,0,cvs.width,cvs.height);
+  for(const p of parts){ p.y+=p.vy; p.x+=p.vx; p.r+=p.vr; if(p.y>cvs.height+20) Object.assign(p,newPart(false));
+    cctx.save(); cctx.translate(p.x,p.y); cctx.rotate(p.r); cctx.fillStyle=p.c; cctx.globalAlpha=.85; cctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); cctx.restore(); }
+  raf=requestAnimationFrame(loop);
+}
+
+/* ───────── 화면 켜짐 유지 ───────── */
+let wl=null;
+async function keepAwake(){ if(!S.wakeLock || !('wakeLock' in navigator) || wl) return; try{ wl=await navigator.wakeLock.request('screen'); wl.addEventListener('release',()=>wl=null); }catch(e){} }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') keepAwake(); });
+document.addEventListener('pointerdown', keepAwake, {once:false, passive:true});
+
+/* ═════════ 서빙 홈 ═════════ */
+let kind='serve';            // serve | birthday | collect
+let slots=[], active=0, soup=false, typed='';
+function resetSlots(){ slots=Array.from({length:S.trays},()=>null); active=0; typed=''; }
+resetSlots();
+
+function renderHome(){
+  if(slots.length!==S.trays){ slots=Array.from({length:S.trays},(_,i)=>slots[i]??null); active=Math.min(active,S.trays-1); }
+  document.querySelectorAll('.modeicons .iconbtn').forEach(b=>b.classList.toggle('on', b.dataset.kind===kind));
+  $('#trays').innerHTML = slots.map((t,i)=>{
+    const cls = ['tray', t!=null?'filled':'', i===active?'active':''].join(' ');
+    const nm = t!=null && S.showDest && S.names[t] ? `<span class="nm">${esc(S.names[t])}</span>` : '';
+    return `<div class="${cls}" data-slot="${i}"><span class="no">${i+1}</span>${t!=null? t+nm : '목적지 선택'}${t!=null?`<button class="x" data-clear="${i}" aria-label="지우기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`:''}</div>`;
+  }).join('');
+  $('#badge').textContent = active+1;
+  const chip = $('#modechip');
+  chip.classList.toggle('show', kind!=='serve');
+  chip.textContent = kind==='birthday' ? '🎂 생일 축하 모드 · 도착하면 축하 노래가 나와요' : kind==='collect' ? '🥣 그릇 회수 모드 · 마지막에 '+S.dishName+'로 가요' : '';
+  const used = new Set(slots.filter(x=>x!=null));
+  if(S.inputMode==='keypad'){
+    $('#picker').innerHTML = `<div class="numpad-wrap"><div class="numpad-input ${typed?'':'empty'}">${typed||'목적지 번호를 입력하세요'}</div>
+      <div class="numpad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="key" data-np="${n}">${n}</button>`).join('')}
+      <button class="key" data-np="del">⌫</button><button class="key" data-np="0">0</button><button class="key" data-np="ok" style="background:var(--blue);color:#fff">확인</button></div></div>`;
+  }else{
+    $('#picker').innerHTML = `<div class="keypad" style="grid-template-columns:repeat(${S.perRow},1fr)">${
+      Array.from({length:S.destCount},(_,i)=>i+1).map(n=>`<button class="key ${used.has(n)?'used':''}" data-dest="${n}">${n}${S.showDest&&S.names[n]?`<small>${esc(S.names[n])}</small>`:''}</button>`).join('')}</div>`;
+  }
+  const sb=$('#soupBtn'); sb.classList.toggle('on',soup); sb.innerHTML = soup ? '🍲 국물 모드 켬' : '국물 모드';
+  updateConfetti();
+}
+function assign(n){
+  if(n<1 || n>S.destCount){ toast(`목적지는 1~${S.destCount}번까지 있어요`); return; }
+  slots[active]=n;
+  const nextEmpty = slots.findIndex((t,i)=>t==null && i>active);
+  const anyEmpty = slots.findIndex(t=>t==null);
+  active = nextEmpty>=0 ? nextEmpty : anyEmpty>=0 ? anyEmpty : active;
+  renderHome();
+}
+$('#home').addEventListener('click', e=>{
+  const k=e.target.closest('[data-kind]'); if(k){ kind=k.dataset.kind; if(kind==='birthday') speak('생일 축하 모드예요'); renderHome(); return; }
+  const c=e.target.closest('[data-clear]'); if(c){ const i=+c.dataset.clear; slots[i]=null; active=i; renderHome(); e.stopPropagation(); return; }
+  const s=e.target.closest('[data-slot]'); if(s){ active=+s.dataset.slot; renderHome(); return; }
+  const d=e.target.closest('[data-dest]'); if(d){ assign(+d.dataset.dest); return; }
+  const np=e.target.closest('[data-np]'); if(np){ const v=np.dataset.np;
+    if(v==='del') typed=typed.slice(0,-1); else if(v==='ok'){ if(typed){ assign(+typed); typed=''; } } else if(typed.length<2) typed+=v;
+    renderHome(); return; }
+});
+$('#soupBtn').onclick=()=>{ soup=!soup; toast(soup?'국물 모드: 천천히 조심해서 갈게요':'국물 모드를 껐어요'); renderHome(); };
+$('#sendBtn').onclick=()=>{
+  const filled = slots.map((t,i)=>({t,i})).filter(x=>x.t!=null);
+  if(!filled.length){ toast('목적지를 먼저 선택해 주세요'); return; }
+  const order=[]; filled.forEach(x=>{ if(!order.includes(x.t)) order.push(x.t); });
+  const stops = order.map(n=>({type:'table', num:n, label:tableLabel(n), trays:filled.filter(x=>x.t===n).map(x=>x.i)}));
+  if(kind==='collect') stops.push({type:'dish', label:S.dishName, trays:filled.map(x=>x.i)});
+  startTrip(kind, stops);
+};
+
+/* ═════════ 운행(이동 → 도착 → 다음 → 복귀) ═════════ */
+let trip=null, autoT=null, autoLeft=0, autoStart=0, pauseT=null, arrT=null, repT=null;
+let departT=null;
+function clearTimers(){ clearTimeout(autoT); clearInterval(pauseT); clearInterval(arrT); clearTimeout(departT); autoT=pauseT=arrT=departT=null; }
+function speedNow(){ if(!trip) return S.speedNormal; if(trip.returning) return S.speedReturn; return trip.soup ? S.speedSoup : S.speedNormal; }
+
+function startTrip(k, stops){
+  trip = {kind:k, stops, i:0, soup, slots:slots.slice(), returning:false};
+  goMove();
+}
+function stopNow(){ if(trip.returning){ if((trip.kind==='guide'||trip.kind==='guideStart') && S.guideStart) return {type:'base', label:'가족 '+S.guideStart+' 대기'}; return {type:'base', label:S.baseName}; } return trip.stops[trip.i]; }
+function goMove(){
+  clearTimers(); stopSong();
+  const st = stopNow();
+  const num=$('#mvNum'), nm=$('#mvName');
+  num.className='mv-num';
+  if(st.type==='table'){ num.textContent=st.num; nm.textContent = S.showDest && S.names[st.num] ? S.names[st.num] : ''; }
+  else if(st.type==='base'){ num.classList.add('ret','wp'); num.innerHTML=esc(waitPlace().replace(/ 장소$/,''))+'<small>장소로</small>'; nm.textContent=''; }
+  else { num.classList.add('text'); num.textContent=st.label; nm.textContent = st.type==='kitchen' ? '주방' : ''; }
+  $('#mvState').textContent = trip.returning ? '이동중' : trip.kind==='guide' ? '안내중' : '이동중';
+  if(trip.kind==='guideStart'){ nm.textContent='안내 출발지'; }
+  if(trip.kind==='guide' && !trip.returning && trip.party){ const c=$('#mvChip'); c.style.display=''; c.textContent=`${trip.party.reserved?'예약':'방문'} · ${trip.party.count}명`; }
+  if(trip.returning && trip.kind==='guide' && S.guideStart){ nm.textContent='안내 출발지'; }
+  $('#mvHello').textContent = trip.kind==='birthday' && !trip.returning ? '생일 축하합니다!' : trip.kind==='guide' && !trip.returning ? '저를 따라오세요' : '';
+  const chip=$('#mvChip');
+  if(trip.soup && !trip.returning){ chip.style.display=''; chip.textContent='🍲 국물 모드 · 천천히 이동해요'; } else chip.style.display='none';
+  const rest = trip.returning ? [] : trip.stops.slice(trip.i+1).map(s=>s.type==='table'?s.num:s.label);
+  $('#mvNext').innerHTML = rest.length ? '다음 ' + rest.map(r=>`<b>${esc(r)}</b>`).join('<span>›</span>') : '';
+  if(trip.kind==='promoGo'){ num.className='mv-num ret sm'; num.textContent='홍보 장소로'; nm.textContent=''; }
+  // 수동 도착일 때: 이동 중·출발지로 갈 때 모두 「도착했어요」 버튼
+  // 서빙(안내 제외)은 일시정지 없음 → 도착 버튼은 항상 보여 줌
+  const noPause = trip.kind!=='guide' && trip.kind!=='guideStart' && trip.kind!=='promoGo';   // 홍보 장소로 갈 땐 터치하면 일시정지
+  $('#moving').classList.toggle('nopause', noPause);
+  $('#moving').classList.toggle('manual', noPause || trip.kind==='promoGo' || S.arriveMode==='manual');
+  $('#mvDone').textContent = '도착했어요';
+  show('moving');
+  // 출발 안내
+  if(trip.returning) hush();   // 출발지로 이동할 때는 말하지 않음
+  else if(trip.kind==='promoGo' || trip.kind==='kitchen'){ hush(); chime(); }   // 홍보 시작·주방 가기: 출발 알림음만
+  else if(trip.kind==='guide') speak(S.ments.guide);
+  else if(trip.kind==='guideStart') speak('안내 출발지로 이동합니다.');
+  else { // 실제 서빙로봇처럼: 출발 알림음(파#·라·레·솔#) 뒤에 출발 멘트
+    chime();
+    const say = fill(S.ments.depart, {'목적지': st.type==='table' ? tableLabel(st.num) : st.label});
+    departT = setTimeout(()=>{ if(current==='moving') speak(say); }, 1000);
+  }
+  // 자동 도착
+  if(S.arriveMode!=='manual'){ autoLeft = (+S.arriveMode) * 1000 * (0.7/speedNow()); armAuto(); }
+}
+function armAuto(){ if(S.arriveMode==='manual') return; autoStart=Date.now(); autoT=setTimeout(arrived, autoLeft); }
+
+/* 일시정지 */
+var paused=false;   // var: speak()가 먼저 불려도 안전하게
+$('#moving').addEventListener('click', ()=>{ if(!paused && !$('#moving').classList.contains('nopause')) pause(); });
+$('#mvDone').addEventListener('click', e=>{ e.stopPropagation(); if(!paused && trip) arrived(); });
+function pause(){
+  paused=true; hush(); clearTimeout(departT); departT=null;
+  if(autoT){ clearTimeout(autoT); autoT=null; autoLeft=Math.max(0, autoLeft-(Date.now()-autoStart)); }
+  const ret = trip.returning;
+  $('#pzTitle').textContent='일시정지';
+  $('#pzActs').innerHTML = `<button class="btn btn-fill" data-pz="arrive">도착했어요</button>
+    <button class="btn btn-out" data-pz="resume">다시 출발</button>
+    ${ret?'':`<button class="btn btn-gray" data-pz="cancel">${trip.kind==='guide'?'안내':'서빙'} 취소하고 복귀</button>`}`;
+  $('#pause').classList.add('on');
+  let left=S.pauseTime; const msg=$('#pzMsg');
+  const draw=()=> msg.textContent = S.pauseTime ? `${left}초 후 다시 출발해요` : '버튼을 눌러 주세요';
+  draw(); clearInterval(pauseT);
+  if(S.pauseTime) pauseT=setInterval(()=>{ left--; draw(); if(left<=0) resume(); },1000);
+}
+function closePause(){ paused=false; clearInterval(pauseT); pauseT=null; $('#pause').classList.remove('on'); }
+function resume(){ closePause(); speak('다시 출발할게요.'); armAuto(); }
+$('#pzActs').addEventListener('click', e=>{
+  const b=e.target.closest('[data-pz]'); if(!b) return;
+  const a=b.dataset.pz;
+  if(a==='resume') resume();
+  else if(a==='arrive'){ closePause(); arrived(); }
+  else if(a==='cancel'){ closePause(); toast('취소하고 대기 장소로 돌아가요'); trip.canceled=true; trip.returning=true; goMove(); }
+  else if(a==='displayBack'){ closePause(); stopDisplay(); goServe(); }
+  else if(a==='displayResume'){ closePause(); startRepeat(); }
+});
+
+function arrived(){
+  clearTimers();
+  if(trip.kind==='guideStart'){ trip=null; gstep='welcome'; renderGuide(); show('guide'); return; }
+  if(trip.kind==='promoGo' && !trip.returning){ trip=null; promoRun=true; goDisplay('promo'); bizEvent({kind:'promoArrive', table:S.promoPlace}); return; }
+  if(trip.returning){ finishTrip(); return; }
+  const st = stopNow(), k=trip.kind;
+  let html='';
+  const trayList = (hits, txt)=> `<div class="arr-trays">${trip.slots.map((t,i)=>{
+      const hit = hits.includes(i);
+      return `<div class="arr-tray ${hit?'hit':''}"><span class="no">${i+1}</span>${hit? txt(t) : ''}</div>`; }).join('')}</div>`;
+  if(k==='kitchen'){   // 주방(가게)에 도착: 실을 메뉴를 보여 줘요
+    const P=bizMine(), its = P ? P.items.filter(i=>Math.floor(i/5)===st.store) : [];
+    html = `<div class="arr-big">${esc(st.label)}</div><div class="arr-msg">주방에 도착했어요.<br>음식을 실은 후 로봇 보내기 버튼을 눌러주세요</div>`
+      + (its.length ? `<div class="kit-items">${its.map(i=>`<div>${foodPic(i)}<b>${esc(menuName(i))}</b></div>`).join('')}</div>` : '');
+    speak('주방에 도착했어요. 음식을 실어 주세요.');
+  }else if(k==='guide'){
+    html = `<div class="arr-big">${esc(st.label)}</div><div class="arr-msg">${esc(S.ments.guideArrive)}</div>`;
+    speak(S.ments.guideArrive);
+  }else if(st.type==='dish'){
+    html = `<div class="arr-msg">${esc(S.dishName)}에 도착했어요.<br>그릇을 모두 내리신 후<br>로봇 보내기 버튼을 눌러주세요</div>` +
+      (st.trays.length ? trayList(st.trays, ()=> '🥣 <span class="sub">그릇</span>') : `<div class="arr-big">🥣</div>`);
+    speak(S.ments.dish);
+  }else if(k==='collect'){
+    html = `<div class="arr-msg">다 드신 그릇을 지정된 트레이에 올려 주신 후<br>로봇 보내기 버튼을 눌러주세요</div>` + trayList(st.trays, t=>`${t}`);
+    speak(S.ments.collect);
+  }else{
+    html = (k==='birthday'?`<div class="mv-hello" style="margin:.2rem 0 .4rem">🎂 생일 축하합니다!</div>`:'') +
+      `<div class="arr-msg">지정된 트레이의 음식을 내리신 후<br>로봇 보내기 버튼을 눌러주세요</div>` + trayList(st.trays, t=>`${t}`) +
+      (k==='birthday'?`<button class="btn btn-out arr-song" id="songBtn" style="padding:0 1.2rem">🎵 축하 노래 다시 듣기</button>`:'');
+    if(k==='birthday'){ speak(S.ments.birthday); setTimeout(()=>{ if(current==='arrive') playSong(); }, 2600); }
+    else { const P=bizMine(), nf=P && st.num===P.table && P.items.find(i=>isNew(i));
+      speak(nf!=null && nf!==undefined && nf!==false ? `한글날 신메뉴, ${menuName(nf)} 나왔습니다! ${S.ments.arrive}` : S.ments.arrive); }
+  }
+  $('#arrBody').innerHTML = html;
+  const pa=$('#promoAgain'); if(pa) pa.onclick=()=>speak(S.content.promo.tts, S.content.promo.ttsRate);
+  const sb=$('#songBtn'); if(sb) sb.onclick=()=>{ hush(); playSong(); };
+  const isLast = trip.i>=trip.stops.length-1;
+  const label = k==='guide' ? '복귀하기' : '로봇 보내기';
+  let left=S.stopTime; const btn=$('#goBtn');
+  const draw=()=> btn.textContent = S.stopTime ? `${label} ${left}` : label;
+  draw();
+  if(S.stopTime) arrT=setInterval(()=>{ left--; draw(); if(left<=0) next(); },1000);
+  btn.dataset.last = isLast?'1':'';
+  show('arrive');
+}
+function next(){
+  clearTimers(); stopSong();
+  if(trip.kind==='kitchen'){ const st=trip.stops[trip.i]; bizKitchen(st.store);
+    if(trip.i < trip.stops.length-1){ trip.i++; goMove(); }
+    else { trip=null; resetSlots(); kind='serve'; goServe(); toast('주방에서 기다려요 · 목적지를 골라 보내 주세요', true); }   // 실제 로봇처럼 음식을 실은 곳에서 바로 테이블로
+    return; }
+  if(trip.i < trip.stops.length-1){ trip.i++; goMove(); }
+  else { trip.returning=true; goMove(); }
+}
+$('#goBtn').onclick=next;
+function finishTrip(){
+  { const t=trip; setTimeout(()=>{ try{ bizTrip(t); }catch(e){} }, 60); }   // 기존 완료 알림 뒤에 미션 결과를 보여 줘요
+  const k=trip.kind, done=trip.stops.length;
+  if(k==='guide') stats.guided++; else if(k==='birthday'){ stats.birthday++; stats.served++; } else if(k==='serve' || k==='collect') stats.served++;
+  saveStats();
+  const hadStops = done>0;
+  trip=null; resetSlots(); soup=false;
+  if(k==='guide'){ gstep = S.guideStart ? 'welcome' : 'nostart'; renderGuide(); show('guide'); }
+  else if(k==='roam'){ openRoam(); return; }
+  else if(k==='promo'){ openPromo(); return; }
+  else { if(kind==='birthday' && hadStops) kind='serve'; renderHome(); show('home'); }
+  if(hadStops) toast(k==='guide' ? `안내 완료! ${waitPlace()}로 돌아왔어요` : `서빙 완료! ${waitPlace()}로 돌아왔어요 🎉`);
+}
+// 상단 오른쪽: 퇴식구 바로 보내기 / 복귀
+/* 주방으로 보내기: 들를 가게를 순서대로 골라요 */
+document.querySelector('[data-act="toKitchen"]').onclick=()=>{
+  let pick=[];
+  const draw=()=>{ $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <h4>어느 주방으로 갈까요?</h4><div class="m-sub" style="text-align:center;margin:-.3rem 0 .7rem">들를 순서대로 눌러 주세요</div>
+    <div class="kit-grid">${STORES.map((x,i)=>{ const o=pick.indexOf(i); return `<button class="${o>=0?'on':''}" data-kit="${i}"><img src="${x.img}" alt="">${o>=0?`<span class="ord">${o+1}</span>`:''}<b>${x.name}</b><small>${x.kind}</small></button>`; }).join('')}</div>
+    <div class="two" style="margin-top:.8rem"><button class="btn btn-gray" data-m="x">취소</button><button class="btn btn-fill" data-m="go" ${pick.length?'':'disabled'}>보내기</button></div>`; };
+  draw(); openModal();
+  $('#modal').onclick=e=>{ const k=e.target.closest('[data-kit]'), m=e.target.closest('[data-m]');
+    if(k){ const i=+k.dataset.kit, o=pick.indexOf(i); if(o>=0) pick.splice(o,1); else pick.push(i); draw(); return; }
+    if(!m) return; if(m.dataset.m==='x'){ closeModal(); return; }
+    if(m.dataset.m==='go' && pick.length){ closeModal(); trip={kind:'kitchen', stops:pick.map(i=>({type:'kitchen', store:i, label:STORES[i].name, trays:[]})), i:0, soup:false, slots:[], returning:false}; goMove(); } };
+};
+document.querySelector('[data-act="toDish"]').onclick=()=>{ startTrip('collect', [{type:'dish', label:S.dishName, trays:[]}]); };
+document.querySelector('[data-act="toBase"]').onclick=()=>{ trip={kind:'serve', stops:[], i:0, soup:false, slots:[], returning:true}; goMove(); };
+
+/* ═════════ 안내하기 (실물 흐름) ═════════
+   출발지 설정 → 출발지로 이동 → 어서오세요(터치) → 예약하셨나요? → 몇 분이신가요? → 확인 완료 → (직원) 테이블로 안내 → 출발지 복귀 */
+let gstep='nostart', gDraft=null, gParty={reserved:null, count:2}, gT=null, gLeft=0;
+const MENU_ICO = `<button class="iconbtn" data-act="drawer" aria-label="메뉴"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>`;
+const GEAR_ICO = `<button class="iconbtn" data-g="setstart" aria-label="출발지 설정" style="color:var(--ink3)"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.8 12h2.4M18.8 12h2.4M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/></svg></button>`;
+function openGuide(){ OPENED.guide=Date.now(); gstep = S.guideStart ? 'ready' : 'nostart'; renderGuide(); show('guide'); }   // 처음엔 「출발지가 설정되어있지 않습니다」, 강사가 고른 뒤엔 그대로
+function gClear(){ clearInterval(gT); gT=null; }
+function renderGuide(){
+  gClear();
+  const top = `<div class="topbar">${MENU_ICO}<span></span>${GEAR_ICO}</div>`;
+  let h='';
+  if(gstep==='nostart'){
+    h = top + `<div class="gd"><div class="gd-center"><div class="gd-q">출발지가<br>설정되어있지<br>않습니다</div></div>
+      <div class="gd-btns"><button class="btn btn-fill" data-g="gostart">출발지로 이동</button><button class="btn btn-out" data-g="setstart">출발지 설정</button></div></div>`;
+  }
+  else if(gstep==='setstart'){
+    const v=gDraft;
+    // 실제 앱: 목록에서 고른 번호는 위(안내 출발지)로 올라가고 목록에서 빠짐 · 위 번호를 누르면 다시 목록으로
+    const gwKey = (n, attr)=> `<button class="key" ${attr}="${n}">가족 ${n}<small>대기</small></button>`;   // 맵 아래 「가족 ○ 대기」 자리
+    h = `<div class="gd set"><div class="gd-set-head"><h2>안내 출발지 설정</h2></div>
+      <div class="gd-set-head" style="height:auto;justify-content:flex-end;margin:-.4rem 0 .8rem"><div class="two"><button class="btn btn-gray" data-g="setcancel" style="background:#fff">취소</button><button class="btn btn-fill" data-g="setapply">적용</button></div></div>
+      <div class="gd-set-card">
+        <div class="gd-set-sec">안내 출발지 설정</div><div class="gd-set-desc">목적지를 선택하면 안내 출발지에서 제외됩니다.</div>
+        <div class="gd-set-val">${v?gwKey(v,'data-gsx'):''}</div>
+        <div class="gd-set-sec">목적지 목록</div><div class="gd-set-desc">목적지를 선택하면 안내 출발지로 설정됩니다.</div>
+        <div class="grid4 gw-grid">${[1,2,3,4].filter(n=>n!==v).map(n=>gwKey(n,'data-gs')).join('')}</div></div></div>`;
+  }
+  else if(gstep==='ready'){
+    h = top + `<div class="gd"><div class="gd-center gd-start"><div class="n">가족 ${S.guideStart} 대기<small class="wp">장소로</small></div><div class="lb">이동합니다</div></div>
+      <div class="gd-cnt mv-state" style="font-size:inherit;font-weight:inherit;margin-top:0">이동중<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+      <div class="gd-btns"><button class="btn btn-fill" data-g="gostart">도착했어요</button><button class="btn btn-out" data-g="setstart">출발지 설정</button></div></div>`;
+  }
+  else if(gstep==='welcome'){
+    h = `<div class="topbar">${MENU_ICO}<span></span>${GEAR_ICO}</div><div class="gd" data-g="touch"><div class="gd-center"><div class="gd-wel">어서오세요</div><div class="gd-sub">방문을 환영합니다!</div></div>
+      <div class="gd-hint">안내를 원하시면<br>화면을 터치해주세요!</div></div>`;
+  }
+  else if(gstep==='reserve'){
+    h = top + `<div class="gd"><div class="gd-center"><div class="gd-q">예약하셨나요?</div></div>
+      <div class="gd-btns"><button class="btn btn-fill" data-g="yes">네</button><button class="btn btn-out" data-g="no">아니오</button></div></div>`;
+  }
+  else if(gstep==='people'){
+    h = top + `<div class="gd"><div class="gd-center"><div class="gd-q">몇 분이신가요?</div>
+      <div class="gd-sel">총 <button data-g="count">${gParty.count}<svg class="ico" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button> 명</div></div>
+      <div class="gd-btns"><button class="btn btn-fill" data-g="countok">확인</button></div></div>`;
+  }
+  else if(gstep==='confirm'){
+    h = top + `<div class="gd"><div class="gd-center"><div class="gd-ok"><svg class="ico" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>확인 완료</div>
+      <div class="gd-box"><div><span>예약여부</span><b>${gParty.reserved?'예약':'방문'}</b></div><div><span>인원</span><b>${gParty.count}명</b></div></div></div>
+      <div class="gd-hint" style="margin-bottom:.4rem">잠시 기다리시면<br>직원이 도와드리겠습니다</div>
+      <button class="gd-staff" data-g="staff">직원: 안내할 테이블 선택</button></div>`;
+  }
+  $('#guide').innerHTML = h;
+  if(gstep==='welcome') speak(S.guideMent);
+  // 출발지로 가는 동안은 「이동중...」 · 「도착했어요」를 눌러야 다음으로 넘어가요
+}
+function goStart(){
+  if(!S.guideStart){ toast('출발지를 먼저 설정해 주세요'); return; }
+  gClear(); gstep='welcome'; renderGuide(); show('guide');   // 「안내 출발지 이동중」 화면 없이 바로 어서오세요
+}
+function pickList(title, items, cur, onPick){
+  $('#modal').innerHTML = `<h4>${title}</h4><div class="gd-list">${items.map(([v,t])=>`<button class="${v===cur?'on':''}" data-pick="${v}">${t}</button>`).join('')}</div>`;
+  openModal();
+  $('#modal').onclick=e=>{ const b=e.target.closest('[data-pick]'); if(!b) return; closeModal(); onPick(+b.dataset.pick); };
+}
+$('#guide').addEventListener('click', e=>{
+  const ks=e.target.closest('[data-gs]'); if(ks){ gDraft=+ks.dataset.gs; renderGuide(); return; }
+  if(e.target.closest('[data-gsx]')){ gDraft=null; renderGuide(); return; }
+  const b=e.target.closest('[data-g]'); if(!b) return;
+  const a=b.dataset.g;
+  if(a==='setstart'){ askPin(()=>{ gDraft=S.guideStart; gstep='setstart'; renderGuide(); }); }
+  else if(a==='setcancel'){ gstep = S.guideStart ? 'ready' : 'nostart'; renderGuide(); }
+  else if(a==='setapply'){ if(!gDraft){ toast('출발지를 선택해 주세요'); return; } const changed=S.guideStart!==gDraft || BZ.fam!==gDraft-1; S.guideStart=gDraft; save(); if(changed) bizStart(gDraft-1); gstep='ready'; renderGuide(); }
+  else if(a==='gostart') goStart();
+  else if(a==='touch'){ hush(); gParty={reserved:null, count:2}; gstep='reserve'; renderGuide(); speak('예약하셨나요?'); }
+  else if(a==='yes' || a==='no'){ gParty.reserved = a==='yes'; gstep='people'; renderGuide(); speak('몇 분이신가요?'); }
+  else if(a==='count'){ pickList('인원을 선택해 주세요', Array.from({length:10},(_,i)=>[i+1, (i+1)+'명']), gParty.count, v=>{ gParty.count=v; renderGuide(); }); }
+  else if(a==='countok'){ gstep='confirm'; renderGuide(); speak('잠시 기다리시면 직원이 도와드리겠습니다.'); }
+  else if(a==='staff'){ pickList('안내할 테이블을 선택하세요', Array.from({length:S.destCount},(_,i)=>[i+1, tableLabel(i+1)]), null, n=>{ startGuide({type:'table', num:n, label:tableLabel(n), trays:[]}); }); }
+});
+function startGuide(st){ trip={kind:'guide', stops:[st], i:0, soup:false, slots:[], returning:false, party:{...gParty}}; goMove(); }
+
+/* ═════════ 돌아다니기 · 홍보하기 화면 ═════════ */
+function contentHTML(c, img, editable){
+  const B = BGS.find(b=>b.id===c.bg) || BGS[0];
+  const ph = (cls, key, txt, phTxt)=> editable
+    ? `<div class="${cls} ph" contenteditable="true" data-field="${key}" data-ph="${phTxt}">${esc(txt)}</div>`
+    : (txt ? `<div class="${cls}">${esc(txt)}</div>` : '');
+  const photoBg = c.layout==='m1' && img && img.src; const fg = photoBg ? '#fff' : B.fg, sub = photoBg ? '#fff' : B.sub;
+  const t1 = ph('t1','t1',c.t1,'텍스트 입력'), t2 = ph('t2','t2',c.t2,'텍스트 입력');
+  const pic = (cover)=> !img ? (editable?`<div class="imgbox" style="width:70%;aspect-ratio:1;border:2px dashed rgba(127,127,127,.5);border-radius:.8em;color:inherit;opacity:.6;font-size:1em">이미지 없음</div>`:'')
+    : img.food!=null ? `<div class="sprite" style="background-position:${spritePos(img.food)}"></div>`
+    : img.video ? `<video src="${img.video}" autoplay muted loop playsinline></video>`
+    : `<img src="${img.src}" alt="">`;
+  let inner='';
+  const hint = `<div class="hint2" style="color:${sub}">화면을 터치하면 일시정지해요</div>`;
+  switch(c.layout){
+    case 'm1':
+      inner = img ? `<div class="imgbox" style="position:absolute;inset:0;${img.food!=null?'padding:30% 18% 22%':''}">${pic()}</div>${img.food==null?'<div class="shade"></div>':''}
+        <div class="layer" style="position:absolute;top:9%;color:${fg}">${t1}${t2}</div>`
+        : `<div class="layer" style="color:${fg}">${t1}${t2}</div>`;
+      break;
+    case 'm2':
+      inner = `<div class="layer" style="color:${fg};height:100%;justify-content:center;gap:1.2em;padding:8% 0 12%">${t1}
+        <div class="imgbox ${img&&img.src?'':'contain'}" style="width:76%;flex:0 1 auto;aspect-ratio:1;max-height:44%;border-radius:1em">${pic()}</div>
+        <div style="color:${sub}">${t2}</div></div>`;
+      break;
+    case 'm3':
+      inner = `<div class="imgbox" style="position:absolute;top:0;left:0;right:0;height:52%">${pic()}</div>
+        <div class="layer" style="position:absolute;top:56%;color:${fg}">${t1}<div style="color:${sub}">${t2}</div></div>`;
+      break;
+    case 'm4':
+      inner = `<div class="layer" style="position:absolute;top:8%;color:${fg}">${t1}<div style="color:${sub}">${t2}</div></div>
+        <div class="imgbox" style="position:absolute;bottom:0;left:0;right:0;height:50%">${pic()}</div>`;
+      break;
+    case 'm5':
+      inner = `<div class="layer" style="color:${fg};gap:1.4em"><div class="imgbox contain" style="width:42%;aspect-ratio:1;border-radius:.8em">${pic()}</div>${t1}<div style="color:${sub}">${t2}</div></div>`;
+      break;
+    case 'poster':   // 포스터 한 장을 잘리지 않게 꽉 채움 (남는 곳은 포스터를 흐리게 깔아 채움) · 글자 없음
+      inner = img && img.video ? `<video class="pimg" src="${img.video}" autoplay muted loop playsinline style="background:#000"></video>`
+        : img && img.src ? `<div class="pbg" style="background-image:url('${img.src}')"></div><img class="pimg" src="${img.src}" alt="">`
+        : img ? `<div class="imgbox contain" style="width:80%;aspect-ratio:1">${pic()}</div>`
+        : `<div class="layer" style="color:${sub};opacity:.7">포스터 이미지를 넣어 주세요<br><small>(1200×1760 · 세로 2:3)</small></div>`;
+      break;
+    default:
+      inner = `<div class="layer" style="color:${fg};gap:1.2em">${t1}<div style="color:${sub}">${t2}</div></div>`;
+  }
+  const hideHint = c.layout==='m4' || String(c.t2||'').includes('화면을 터치하면 일시정지');
+  return `<div class="cv ${c.layout==='poster'?'poster':''}" style="background:${B.bg}">${inner}${hideHint?'':hint}</div>`;
+}
+let displayMode=null;
+function goDisplay(mode){
+  displayMode=mode;
+  const c=S.content[mode];
+  $('#display').innerHTML = contentHTML(c, imgOf(mode), false);
+  show('display');
+  const nf=MS().newFood; speak(mode==='promo' && c.tts===DEFAULTS.content.promo.tts && isNew(nf) ? `한글날 100주년 신메뉴, ${menuName(nf)} 출시 기념! 할인 이벤트를 진행해요.` : c.tts, c.ttsRate);
+  startRepeat();
+}
+function startRepeat(){ clearInterval(repT); if(displayMode==='roam' || displayMode==='promo') return;   // 돌아다니기·홍보하기 멘트는 한 번만
+  const c=S.content[displayMode]; if(c && c.repeat) repT=setInterval(()=>{ if(current==='display') speak(c.tts, c.ttsRate); }, c.repeat*1000); }
+function stopDisplay(){ clearInterval(repT); hush(); displayMode=null; }
+$('#display').addEventListener('click', ()=>{
+  clearInterval(repT); hush();
+  if((displayMode==='roam' && roamRun) || (displayMode==='promo' && promoRun)){ roamPause(); return; }
+  const roam = displayMode==='roam';
+  $('#pzTitle').textContent = roam ? '잠시 멈췄어요' : '홍보 중이에요';
+  $('#pzMsg').textContent = roam ? '돌아다니기를 계속할까요?' : '홍보 화면을 계속 보여줄까요?';
+  $('#pzActs').innerHTML = `<button class="btn btn-fill" data-pz="displayResume">${roam?'계속 돌아다니기':'계속 홍보하기'}</button>
+    <button class="btn btn-out" data-pz="displayBack">서빙 화면으로</button>`;
+  paused=true; $('#pause').classList.add('on');
+});
+
+/* 로봇 탭 QR (실제 로봇처럼 QR을 띄워 휴대폰으로 열기)
+   관리자 페이지 = 이 앱의 설정 화면(웹 주소로 올려 둔 경우에만 휴대폰에서 열려요) · 홈페이지·설명서 = 배민로봇 공식 안내 */
+const QR_LINKS = [['admin','서빙로봇 관리자 페이지 가기'], ['home','서빙로봇 홈페이지 가기'], ['manual','서빙로봇 설명서 보기']];
+function qrURL(k){
+  if(k==='admin') return location.href.split('#')[0] + '#admin';
+  if(k==='home') return 'https://bit.ly/416lzlK';
+  return 'https://www.youtube.com/playlist?list=PLeTNQmAbjq-OYI9kSHwV1fINnyBEmseS7';
+}
+function showQR(k){
+  const url=qrURL(k), t=QR_LINKS.find(x=>x[0]===k)[1].replace(/ (가기|보기)$/,'');
+  let img='';
+  try{ const q=qrcode(0,'M'); q.addData(url); q.make(); img=q.createSvgTag({cellSize:5, margin:2, scalable:true}); }catch(e){ img='<div style="padding:2rem 0;color:var(--ink3)">QR을 만들지 못했어요</div>'; }
+  const local = k==='admin' && !/^https?:/.test(location.href);
+  $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <h4>${t}</h4><div class="qrbox">${img}</div>
+    <div style="font-size:.68rem;color:var(--ink3);word-break:break-all;text-align:center;margin-top:.4rem">${esc(url)}</div>
+    ${local?'<div style="font-size:.72rem;color:var(--red);text-align:center;margin-top:.4rem">지금은 이 기기 안의 파일로 열려 있어서 다른 휴대폰에서는 열리지 않아요.<br>앱을 웹 주소로 올리면 QR로 바로 관리자 페이지가 열려요.</div>':''}
+    ${k==='admin'?'<button class="btn btn-fill" data-m="here" style="width:100%;margin-top:.8rem">이 기기에서 관리자 페이지 열기</button>':''}`;
+  openModal();
+  $('#modal').onclick=e=>{ if(e.target.closest('[data-m="x"]')) closeModal(); if(e.target.closest('[data-m="here"]')){ closeModal(); openAdmin(); } };
+}
+function showLicense(){
+  const L=[['qrcode-generator 1.4.4','Kazuhiko Arase','MIT License'], ['배민 한나체 Pro (BMHANNAPro)','(주)우아한형제들','배민글꼴 사용 허가 (무료 · 상업적 사용 가능)']];
+  $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <h4>오픈소스 라이선스</h4><div class="lic">${L.map(([a,b,c])=>`<div><b>${a}</b><span>${b}</span><small>${c}</small></div>`).join('')}</div>`;
+  openModal();
+  $('#modal').onclick=e=>{ if(e.target.closest('[data-m="x"]')) closeModal(); };
+}
+// 관리자 페이지 QR로 들어오면 설정 화면부터
+if(location.hash==='#admin' || location.hash==='#settings') setTimeout(openAdmin, 0);
+
+/* 관리자 페이지: 로그인 → 꾸미고 싶은 모드 → (돌아다니기·홍보) 꾸밀 화면 → 화면 꾸미기
+   수업용이라 아이디·비밀번호는 아무거나 넣어도 들어가요 */
+let adView='login';
+function bizMark(k){ BZ.mk=BZ.mk||{}; BZ.mk[k]=Date.now(); saveBZ(); }   // 영업 미션 줄 체크용 (관리자 로그인·포스터 업로드·동기화)
+/* 🌟 한글날 100주년 신메뉴: 이번 영업 우리 주문 메뉴 중에서만 고를 수 있어요 (그래서 네 태블릿이 겹치지 않아요) */
+function newMenuCard(){
+  const P=bizMine(), cand = P ? P.keep : [];
+  if(!cand.length) return `<div class="nm-card"><b>🌟 한글날 100주년 신메뉴</b><div class="m-sub">강사님이 가족 번호를 정하면 이번 손님 메뉴가 나와요</div></div>`;
+  const m=MS();
+  return `<div class="nm-card"><b>🌟 한글날 100주년 신메뉴</b><div class="m-sub">이번 손님 메뉴 중 하나를 골라 새 이름을 붙여요 · 앱 전체에 바로 적용돼요</div>
+    <div class="nm-pick">${cand.map(i=>`<button class="${m.newFood===i?'on':''}" data-nmf="${i}">${foodPic(i)}${FOODS[i]}</button>`).join('')}</div>
+    <input class="inp nm-inp" id="nmName" maxlength="12" placeholder="새 이름 (12글자까지) 예: 바삭바삭 황금 튀김" value="${esc(cand.includes(m.newFood)?m.newName:'')}">
+    ${cand.includes(m.newFood)&&m.newName?`<div class="nm-ok">✓ 「${esc(FOODS[m.newFood])}」 → 「${esc(m.newName)}」로 바뀌었어요</div>`:''}</div>`;
+}
+function openAdmin(){ adView = sessionStorage.getItem('srv_admin_in') ? 'modes' : 'login'; if(adView==='modes') bizMark('admin'); renderAdmin(); show('admin'); }
+const AD_LOGO = `<div class="ad-logo">꿈트리 푸드테크 <span>서빙로봇</span></div>`;
+document.addEventListener('input', e=>{ if(e.target.id!=='nmName') return; const m=MS(); m.newName=e.target.value.trim(); save(); if(m.newName && m.newFood>=0) bizMark('name');
+  const card=e.target.parentNode; let ok=card.querySelector('.nm-ok'); if(!ok){ ok=document.createElement('div'); ok.className='nm-ok'; card.appendChild(ok); }   // 다시 그리지 않고 글자만 바꿔요 (다음 버튼이 바로 눌리게)
+  ok.textContent = m.newFood>=0 && m.newName ? `✓ 「${FOODS[m.newFood]}」 → 「${m.newName}」로 바뀌었어요` : (m.newFood<0 ? '위에서 음식을 먼저 골라요' : ''); });
+function renderAdmin(){
+  let h='';
+  if(adView==='login'){
+    const saved=LS.get('srv_admin_id')||'';   // 수업용 기본 계정이 미리 들어가 있어서 로그인만 누르면 돼요
+    h = `<div class="ad-login">${AD_LOGO}<h2>관리자 페이지</h2>
+      <div class="ad-field"><label>아이디 *</label><input id="adId" autocomplete="username" value="${esc(saved||'kumtreerobot')}" placeholder="아이디 *"></div>
+      <div class="ad-field"><label>비밀번호 *</label><input id="adPw" type="password" autocomplete="current-password" value="1234" placeholder="비밀번호 *"></div>
+      <div class="ad-row"><label><input type="checkbox" id="adSave" ${saved?'checked':''}>아이디 저장</label><button data-ad="reset">비밀번호 초기화</button></div>
+      <button class="ad-btn" data-ad="login">로그인</button>
+      <button data-ad="back" style="margin-top:1.4rem;font-size:.8rem;color:var(--ink3)">← 로봇 화면으로 돌아가기</button></div>`;
+  }else{
+    const top = `<div class="ad-top"><button class="iconbtn" data-ad="${adView==='modes'?'back':'modes'}" aria-label="메뉴"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>${AD_LOGO}<button class="out" data-ad="logout">로그아웃</button></div>`;
+    if(adView==='modes') h = top + `<div class="ad-body"><h3>꾸미고 싶은 모드를 눌러주세요.</h3>
+      <div class="ad-modes"><button data-adm="serve">서빙모드</button><button data-adm="roam">돌아다니기 모드</button><button data-adm="guide">안내모드</button><button data-adm="promo">홍보모드</button><button data-adm="bgm">배경음</button><button class="fill" data-adm="sync">로봇 동기화</button></div></div>`;
+    else { const m=adView, nm=m==='roam'?'돌아다니기모드':'홍보모드';
+      h = top + `<div class="ad-body">${m==='promo'?newMenuCard():''}<h3>${nm}에서 꾸미고 싶은<br>화면을 클릭해주세요.</h3>
+      <div class="ad-pick" data-adedit="${m}"><span class="tagb">${m==='roam'?'돌아다니기':'홍보'}</span><div class="ph-frame" style="position:absolute;inset:0;border:0;border-radius:0;width:auto">${contentHTML(S.content[m], imgOf(m), false)}</div></div></div>`; }
+  }
+  $('#admin').innerHTML = h; fitFrames();
+}
+$('#admin').addEventListener('click', e=>{
+  const T=q=>e.target.closest(q); let b;
+  if((b=T('[data-nmf]'))){ MS().newFood=+b.dataset.nmf; const v=($('#nmName')||{}).value||''; MS().newName=v.trim(); save(); if(MS().newName) bizMark('name'); renderAdmin(); return; }
+  if((b=T('[data-ad]'))){ const a=b.dataset.ad;
+    if(a==='login'){ const id=$('#adId').value.trim(), pw=$('#adPw').value;
+      if(!id){ toast('아이디를 입력해 주세요'); $('#adId').focus(); return; }
+      if(!pw){ toast('비밀번호를 입력해 주세요'); $('#adPw').focus(); return; }
+      if($('#adSave').checked) LS.set('srv_admin_id', id); else LS.del('srv_admin_id');
+      try{ sessionStorage.setItem('srv_admin_in','1'); }catch(_){}
+      adView='modes'; bizMark('admin'); renderAdmin(); }
+    else if(a==='reset') toast('비밀번호는 로봇 전문가(선생님)에게 물어보세요');
+    else if(a==='logout'){ try{ sessionStorage.removeItem('srv_admin_in'); }catch(_){} adView='login'; renderAdmin(); }
+    else if(a==='modes'){ adView='modes'; renderAdmin(); }
+    else if(a==='back'){ history.replaceState(null,'',location.pathname+location.search); goServe(); }
+    return; }
+  if((b=T('[data-adm]'))){ const m=b.dataset.adm;
+    if(m==='roam'||m==='promo'){ adView=m; renderAdmin(); }
+    else if(m==='serve'||m==='guide'){ tab=m; renderSettings(); show('settings'); }
+    else if(m==='bgm') toast('배경음은 준비 중이에요');
+    else if(m==='sync') toast('로봇 동기화 완료! 화면이 바뀌었어요', true);
+    return; }
+  if((b=T('[data-adedit]'))){ const m=b.dataset.adedit; edReturn=()=>{ adView=m; renderAdmin(); show('admin'); }; openEditor(m); }
+});
+
+/* 절전모드: 정해 둔 시간 동안 아무도 화면을 만지지 않으면 화면을 꺼요 (이동·홍보·돌아다니기 중엔 안 꺼짐) */
+let lastTouch=Date.now();
+addEventListener('pointerdown', ()=>{ lastTouch=Date.now(); }, {capture:true, passive:true});
+$('#sleep').addEventListener('click', ()=>{ $('#sleep').classList.remove('on'); lastTouch=Date.now(); });
+setInterval(()=>{
+  if(!S.sleepUse || $('#sleep').classList.contains('on')) return;
+  const idle = ['home','roam','promo','guide','settings','mission','lab','rpath','redit'].includes(current) && !trip && !paused;
+  if(idle && Date.now()-lastTouch >= S.sleepMin*60000){ hush(); $('#sleep').classList.add('on'); }
+}, 15000);
+
+/* ═════════ 홍보하기 (실제 앱 흐름)
+   미리보기 + 홍보 장소 미설정 → [홍보 장소 바꾸기] 홍보장소 설정 → [홍보 시작] 홍보 장소로 이동중 → (도착했어요) 홍보 화면(멘트 한 번) */
+var promoRun=false, pmDraft=null, pmSet=false;
+function openPromo(){ OPENED.promo=Date.now(); promoRun=false; S.promoPlace=null; save(); pmSet=false; renderPromo(); show('promo'); }   // 홍보하기를 열 때마다 장소 설정부터
+function renderPromo(){
+  if(pmSet){
+    const v=pmDraft, keyHTML=(n,attr)=>`<button class="key" ${attr}="${n}">${n}${S.showDest&&S.names[n]?`<small>${esc(S.names[n])}</small>`:''}</button>`;
+    $('#promo').innerHTML = `<div class="gd set"><div class="gd-set-head"><h2>홍보장소 설정</h2></div>
+      <div class="gd-set-head" style="height:auto;justify-content:flex-end;margin:-.4rem 0 .8rem"><div class="two"><button class="btn btn-gray" data-pm="cancel" style="background:#fff">취소</button><button class="btn btn-fill" data-pm="apply">적용</button></div></div>
+      <div class="gd-set-card">
+        <div class="gd-set-sec">설정된 홍보장소</div><div class="gd-set-desc">목적지를 선택하면 홍보장소에서 제외됩니다.</div>
+        <div class="gd-set-val">${v?keyHTML(v,'data-pmx'):''}</div>
+        <div class="gd-set-sec">목적지 목록</div><div class="gd-set-desc">목적지를 선택하면 홍보장소로 설정됩니다.</div>
+        <div class="grid4">${Array.from({length:S.destCount},(_,i)=>i+1).filter(n=>n!==v).map(n=>keyHTML(n,'data-pms')).join('')}</div></div></div>`;
+    return;
+  }
+  $('#promo').innerHTML = `<div class="topbar">${MENU_ICO}<span></span></div>
+    <div class="pm-mid"><span class="pm-tag">미리보기</span><div class="ph-frame">${contentHTML(S.content.promo, imgOf('promo'), false)}</div>
+      <div class="pm-place">${S.promoPlace ? '홍보 장소 '+S.promoPlace : '홍보 장소 미설정'}</div></div>
+    <div class="bottom2"><button class="btn btn-fill" data-pm="start">홍보 시작</button><button class="btn btn-out" data-pm="set">홍보 장소 바꾸기</button></div>`;
+  fitFrames();
+}
+$('#promo').addEventListener('click', e=>{
+  const T=q=>e.target.closest(q); let b;
+  if((b=T('[data-pms]'))){ pmDraft=+b.dataset.pms; renderPromo(); return; }
+  if(T('[data-pmx]')){ pmDraft=null; renderPromo(); return; }
+  if(!(b=T('[data-pm]'))) return;
+  const a=b.dataset.pm;
+  if(a==='set'){ pmDraft=S.promoPlace; pmSet=true; renderPromo(); }
+  else if(a==='cancel'){ pmSet=false; renderPromo(); }
+  else if(a==='apply'){ if(!pmDraft){ toast('홍보장소를 선택해 주세요'); return; } S.promoPlace=pmDraft; save(); pmSet=false; renderPromo(); }
+  else if(a==='start'){
+    if(!S.promoPlace){ toast('홍보 장소를 먼저 설정하세요'); return; }
+    trip={kind:'promoGo', stops:[{type:'table', num:S.promoPlace, label:'홍보 장소', trays:[]}], i:0, soup:false, slots:[], returning:false}; goMove();
+  }
+});
+
+/* ═════════ 영업 미션 (한 가족 = 로봇 1대 = 테이블 1개)
+   강사가 태블릿마다 안내 출발지(가족 1~4 대기)를 겹치지 않게 고르면 그게 가족 번호가 돼요.
+   네 태블릿은 연결되어 있지 않지만, 「영업 번호 + 가족 번호」로 똑같은 규칙을 계산해서 테이블·메뉴가 서로 겹치지 않아요.
+   ①자리 안내 → ②홍보 → ③서빙(여러 가게에서 싣기) → ④퇴식 → ⑤이벤트(시간 남는 가족) */
+const PARTY=[0,2,2,3,3,3,2,4,3];      // 맵 테이블별 손님 수 (1~8번)
+const SOUP=[3,6,8,11,13,14];          // 국물 메뉴: 라면·된장찌개·냉면·라멘·짬뽕·마라탕
+const BIZ_MAX=4;
+const BSTEPS=[{id:'guide',e:'🙋',t:'자리 안내'},{id:'promo',e:'📣',t:'홍보'},{id:'serve',e:'🍽️',t:'서빙'},{id:'event',e:'🎉',t:'이벤트'},{id:'collect',e:'🥣',t:'퇴식'}];   // 손님이 먹는 동안 리뷰 이벤트 → 다 먹으면 퇴식
+var BZ={round:1, fam:null, done:{}, note:{}, loaded:{}, t0:0, rating:[]};
+try{ Object.assign(BZ, JSON.parse(LS.get('srv_biz')||'{}')); }catch(e){}
+function saveBZ(){ LS.set('srv_biz', JSON.stringify(BZ)); }
+function prng(seed){ return ()=>{ seed=seed+0x6D2B79F5|0; let t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function bizPlan(round){
+  // 영업 1·2, 영업 3·4는 「신메뉴 후보」 2개를 같이 써요 → 한 번 지은 신메뉴 이름이 두 영업 동안 유지돼요
+  const pair=Math.ceil(round/2), rk=prng(20261009 + pair*7919);
+  const mixK=a=>{ for(let i=a.length-1;i>0;i--){ const j=rk()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; };
+  const all=mixK([...Array(20).keys()]), keeps=[0,1,2,3].map(()=>all.splice(0,2));
+  const r=prng(20261009 + round*977);
+  const fams=[0,1,2,3].map(f=>{
+    const table = round===1 ? f+5 : (r()<.5 ? f+5 : f+1);          // 가족 n → (n+4)번 또는 n번 · 영업 1은 가까운 아래 줄
+    const party = PARTY[table];
+    const extra = round>=2 && party<4 && r()<1/3 ? 1 : 0;           // 영업 2부터 가끔 「하나 더!」 (최대 4개)
+    return {table, party, extra, count:Math.min(4, party+extra), wantSoup:r()<.6, bday:(r(), false), keep:keeps[f]};   // 생일은 미션 아님 · 선택
+  });
+  const mix=a=>{ for(let i=a.length-1;i>0;i--){ const j=r()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; };
+  const used=new Set(keeps.flat());
+  const soups=mix(SOUP.filter(i=>!used.has(i))), rest=mix([...Array(20).keys()].filter(i=>!SOUP.includes(i) && !used.has(i)));
+  fams.forEach(F=>{ F.items=F.keep.slice();
+    if(F.wantSoup && !F.items.some(i=>SOUP.includes(i)) && F.items.length<F.count && soups.length) F.items.push(soups.pop());
+    while(F.items.length<F.count) F.items.push(rest.length?rest.pop():soups.pop());
+    F.items.sort((a,b)=>a-b); F.soup=F.items.some(i=>SOUP.includes(i)); });
+  return fams;
+}
+function bizMine(){ return BZ.fam==null ? null : bizPlan(BZ.round)[BZ.fam]; }
+function bizCur(){ return BSTEPS.find(x=>!BZ.done[x.id]); }
+function bizStart(fam){ const pair=Math.ceil(BZ.round/2); if(BZ.namePair!==pair){ MS().newFood=-1; MS().newName=''; BZ.namePair=pair; }   // 영업 1·2 / 3·4 사이에만 신메뉴 유지
+  BZ.fam=fam; BZ.done={}; BZ.note={}; BZ.loaded={}; BZ.kit={}; BZ.li={}; BZ.rs={}; BZ.need=null; BZ.rating=[]; BZ.t0=Date.now(); saveBZ();
+  MS().family=fam; S.baseName='가족 '+(fam+1)+' 대기'; save(); renderStrip(); }
+function bizStores(P){ return [...new Set(P.items.map(i=>Math.floor(i/5)))].sort((a,b)=>a-b); }
+/* 할 일을 한 줄씩: 줄마다 앱 상태를 보고 자동으로 ✓ (손으로 하는 일만 버튼) · 마지막 줄은 단계 성공으로 끝나요 */
+var OPENED={}, lastShow=0;
+function stageStart(id){ const base={guide:BZ.t0, promo:BZ.done.guide, serve:BZ.done.promo, event:BZ.done.serve, collect:BZ.done.event}[id]||0; return Math.max(base, (BZ.rs||{})[id]||0); }   // 메뉴에서 그 화면을 실제로 연 시각 (영업·단계가 시작된 뒤에 열어야 첫 줄 ✓)
+function bizLines(id, P){
+  const T=P.table, tk=()=>trip&&trip.kind, ret=()=>trip&&trip.returning;
+  const G=['welcome','reserve','people','confirm'], gAt=n=>current==='guide' && G.indexOf(gstep)>=n;
+  if(id==='guide'){ const gt=()=>tk()==='guide'; return [
+    {t:'☰ 메뉴 → <b>안내하기</b>를 눌러요', ok:()=>(OPENED.guide||0)>stageStart('guide')||gt()},
+    {t:`로봇이 ${waitPlace()}에 섰으면 「<b>도착했어요</b>」를 눌러요`, ok:()=>gAt(0)||gt()},
+    {t:'<b>손님 역할</b>이 「어서오세요」 화면을 터치해요', ok:()=>gAt(1)||gt()},
+    {t:'예약했는지 「네 / 아니오」를 골라요', ok:()=>gAt(2)||gt()},
+    {t:`손님 수에 맞게 인원을 골라 「확인」 (${T}번 테이블 손님 ${P.party}명)`, ok:()=>gAt(3)||gt()},
+    {t:`직원: 아래 「안내할 테이블 선택」에서 <b>${T}번</b>`, ok:()=>gt()},
+    {t:`${T}번 테이블에 닿으면 「<b>도착했어요</b>」`, ok:()=>gt() && (current==='arrive'||ret())},
+    {t:`「복귀하기」 → ${waitPlace()}에 오면 「<b>도착했어요</b>」`} ]; }
+  if(id==='promo'){ const pt=()=>tk()==='promoGo', st0=stageStart('promo'), mk=k=>((BZ.mk||{})[k]||0)>st0, up=()=>mk('up_promo')||mk('sync_promo'), sy=()=>mk('sync_promo');
+    const kn=P.keep.map(i=>'「<b>'+FOODS[i]+'</b>」').join('·'), named=()=>P.keep.includes(MS().newFood) && !!(MS().newName||'').trim();
+    return [
+    {t:`🌟 오늘 손님 메뉴 ${kn} 중 하나를 골라 <b>한글날 100주년 기념 새 이름</b>을 지어요`, man:'이름 지었어요', act:()=>bizMark('named'), ok:()=>mk('named')||named()},
+    {t:'포스터 만드는 앱에서 새 이름으로 <b>포스터</b>를 만들어 와요', man:'만들어 왔어요', act:()=>bizMark('poster'), ok:()=>mk('poster')||up()},
+    {t:'☰ 메뉴 → <b>설정</b> → 관리자 페이지 「<b>로그인</b>」', ok:()=>mk('admin')||up()},
+    {t:'「<b>홍보모드</b>」 → 🌟 <b>신메뉴</b> 칸에서 음식을 고르고 새 이름을 써요', ok:()=>named() && (mk('name')||up())},
+    {t:'포스터 미리보기를 눌러 화면 꾸미기로 들어가요', ok:()=>(current==='editor'&&edMode==='promo')||up()},
+    {t:'「<b>이미지/동영상 넣기</b>」 → 「내 파일 업로드」로 우리가 만든 포스터를 골라요', ok:()=>mk('up_promo')},
+    {t:'「<b>저장하기</b>」 → 「<b>동기화 적용</b>」', ok:()=>sy()},
+    {t:'☰ 메뉴 → <b>홍보하기</b>를 눌러요', ok:()=>(OPENED.promo||0)>((BZ.mk||{}).sync_promo||0) && sy()||pt()},
+    {t:'「<b>홍보 장소 바꾸기</b>」를 눌러요', ok:()=>(current==='promo'&&pmSet)||S.promoPlace===T||pt()},
+    {t:`목록에서 <b>${T}번</b>을 고르고 「적용」`, ok:()=>(S.promoPlace===T&&!pmSet)||pt()},
+    {t:'「<b>홍보 시작</b>」을 눌러요', ok:()=>pt()},
+    {t:`${T}번 테이블에 닿으면 「<b>도착했어요</b>」 → 손님에게 포스터를 보여 줘요`} ]; }
+  if(id==='serve'){ const st=()=>tk()==='serve'||tk()==='birthday';
+    const ss=bizStores(P), kt=()=>tk()==='kitchen', kd=sx=>((BZ.kit||{})[sx]||0)>stageStart('serve');
+    const a=[{t:'☰ 메뉴 → <b>서빙하기</b>를 눌러요', ok:()=>current==='home'||kt()||ss.some(kd)},
+      {t:`위쪽 <b>냄비 모양 주방 아이콘</b> → ${ss.map(sx=>'<b>'+STORES[sx].name+'</b>').join(' → ')} 순서로 고르고 「보내기」`, ok:()=>kt()||ss.some(kd)}];
+    ss.forEach(sx=>{ const its=P.items.filter(i=>Math.floor(i/5)===sx);
+      a.push({t:`<b>${STORES[sx].name}</b> 주방에 닿으면 「도착했어요」 → ${its.map(i=>esc(menuName(i))).join('·')} 싣고 「<b>로봇 보내기</b>」`, ok:()=>kd(sx)}); });
+    a.push({t:'주방에서 기다려요. 서빙 화면에서 목적지를 골라요', ok:()=>current==='home'||st()});
+    if(P.bday) a.push({t:'🎂 오늘 생일 손님! 위쪽 <b>케이크 아이콘</b>을 눌러요', ok:()=>kind==='birthday'||tk()==='birthday'});
+    a.push({t:`목적지 <b>${T}번</b>을 눌러요`, ok:()=>slots.includes(T)||st()});
+    if(P.soup) a.push({t:'🍲 국물 메뉴가 있어요! 「<b>국물 모드</b>」를 켜요', ok:()=>soup||(st()&&trip.soup)});
+    a.push({t:'「<b>보내기</b>」를 눌러요', ok:()=>st()},
+      {t:`${T}번 테이블에 닿으면 「<b>도착했어요</b>」`, ok:()=>st() && (current==='arrive'||ret())},
+      {t:`음식을 내리고 「로봇 보내기」 → ${waitPlace()}에 오면 「<b>도착했어요</b>」`});
+    return a; }
+  if(id==='collect'){ const ct=()=>tk()==='collect'; return [
+    {t:'☰ 메뉴 → <b>서빙하기</b>를 눌러요', ok:()=>current==='home'||ct()},
+    {t:'위쪽 <b>🥣 그릇 회수</b> 아이콘을 눌러요', ok:()=>kind==='collect'||ct()},
+    {t:`<b>${T}번</b>을 누르고 「보내기」`, ok:()=>ct()},
+    {t:'테이블에서 그릇을 싣고 「<b>로봇 보내기</b>」', ok:()=>ct() && (trip.i>=1||ret())},
+    {t:'식기 반납대에서 그릇을 내리고 「<b>로봇 보내기</b>」', ok:()=>ct() && ret()},
+    {t:`${waitPlace()}에 오면 「<b>도착했어요</b>」`} ]; }
+  return [
+    {t:'☰ 메뉴 → <b>돌아다니기</b>를 눌러요', ok:()=>(OPENED.roam||0)>stageStart('event')},
+    {t:'「돌아다니기 경로 확인/수정」 → 「<b>+ 경로추가</b>」', ok:()=>current==='redit'||S.routes.some(r=>r.stops.length)},
+    {t:'경로명을 쓰고 테이블 번호를 눌러 경로를 만든 뒤 「확인」', ok:()=>S.routes.some(r=>r.stops.length)},
+    {t:'「<b>로봇 출발</b>」 → 리뷰 이벤트를 보여 주며 돌아다녀요', ok:()=>((BZ.mk||{}).roamGo||0)>stageStart('event')},
+    {t:'리뷰를 쓴 손님에게 <b>간식 매대</b>의 간식을 드려요', man:'간식 드렸어요', act:()=>bizMark('snack'), ok:()=>((BZ.mk||{}).snack||0)>stageStart('event')},
+    {t:`화면을 터치 → 「<b>대기 장소로 보내기</b>」 → ${waitPlace()}에 오면 「도착했어요」`} ];
+}
+function bizLineIdx(id){ return (BZ.li||{})[id]||0; }
+function tick(){ try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume();
+  const o=actx.createOscillator(), g=actx.createGain(), t=actx.currentTime; o.type='sine'; o.frequency.value=1318.5;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.15*S.volume,t+.01); g.gain.exponentialRampToValueAtTime(.001,t+.25);
+  o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+.3); }catch(e){} }
+// 0.3초마다 지금 줄이 끝났는지 보고, 끝났으면 다음 줄로 (빨리 진행해도 여러 줄을 한꺼번에 넘겨요)
+setInterval(()=>{
+  const P=bizMine(), cur=bizCur(); if(!P||!cur) return;
+  const L=bizLines(cur.id,P); let i=Math.min(bizLineIdx(cur.id), L.length-1); const i0=i;
+  const nd=BZ.need && BZ.need.id===cur.id ? BZ.need : null;
+  if(nd && !nd.f && lastShow>(nd.t||0)) nd.f=1;   // 되돌린 뒤 메뉴를 다시 누르면(화면을 다시 열면) 바로 넘어갈 수 있어요
+  try{ while(i<L.length-1 && L[i].ok && L[i].ok()){ if(nd && nd.k===i && !nd.f) break; i++; }
+    if(nd && nd.k===i && !nd.f && !(L[i].ok && L[i].ok())){ nd.f=1; saveBZ(); } }catch(e){}
+  if(nd && i>nd.k) BZ.need=null;
+  if(i!==i0){ BZ.li=BZ.li||{}; BZ.li[cur.id]=i; saveBZ(); tick(); renderStrip(); const b=$('#bsBar'); b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash'); }
+}, 300);
+function bizKitchen(sx){ BZ.kit=BZ.kit||{}; BZ.kit[sx]=Date.now(); const P=bizMine(); if(P) P.items.filter(i=>Math.floor(i/5)===sx).forEach(i=>BZ.loaded[i]=true); saveBZ(); }
+function bizManual(){ const P=bizMine(), cur=bizCur(); if(!P||!cur) return; const L=bizLines(cur.id,P), ln=L[bizLineIdx(cur.id)]; if(ln&&ln.act){ ln.act(); saveBZ(); renderStrip(); } }
+function bizBackTo(id, k){ BZ.li=BZ.li||{}; BZ.rs=BZ.rs||{}; BZ.li[id]=k; BZ.rs[id]=Date.now(); BZ.need={id, k, f:0, t:Date.now()}; saveBZ(); renderStrip(); }
+function bizBack(){ const cur=bizCur(); if(!cur) return; bizBackTo(cur.id, Math.max(0, bizLineIdx(cur.id)-1)); toast('한 줄 앞으로 돌아갔어요', true); }
+function bizRestart(){ const cur=bizCur(); if(!cur) return; if(cur.id==='serve'){ BZ.loaded={}; BZ.kit={}; } bizBackTo(cur.id, 0); toast(`${cur.e} ${cur.t} 단계를 처음부터 다시 해요`, true); }
+function bizPrevStage(){ const cur=bizCur(), k=cur?BSTEPS.indexOf(cur):BSTEPS.length; const prev=BSTEPS[k-1]; if(!prev) return;
+  delete BZ.done[prev.id]; if(BZ.note) delete BZ.note[prev.id]; if(prev.id==='serve'){ BZ.loaded={}; BZ.kit={}; } bizBackTo(prev.id, 0); toast(`${prev.e} ${prev.t} 단계로 돌아갔어요`, true); }
+function bizSkip(){ const P=bizMine(), cur=bizCur(); if(!P||!cur) return; const L=bizLines(cur.id,P); BZ.li=BZ.li||{}; BZ.li[cur.id]=Math.min(bizLineIdx(cur.id)+1, L.length-1); saveBZ(); renderStrip(); }
+function bizMap(P){
+  const M=([x,y],cls,txt)=>`<span class="mk ${cls}" style="left:${x/20}%;top:${y/13.08}%">${txt}</span>`;
+  return `<div class="mmap"><img src="img/map.jpg" alt="푸드코트 맵">${M(PT.wait[BZ.fam],'s','출발')}${bizStores(P).map((st,k)=>M(PT.store[st],'p1',k+1)).join('')}${M(PT.table[P.table],'p2',P.table)}</div>`;
+}
+var bzOpen=false;
+function renderStrip(){
+  const on = true;   // 모든 화면에서 할 일을 보여 줘요 (관리자 페이지·화면 꾸미기 포함)
+  document.documentElement.classList.toggle('bz-on', on);
+  const el=$('#bizStrip'); if(!el) return;
+  el.classList.toggle('open', bzOpen && on);
+  const P=bizMine(), cur=bizCur();
+  const dots = BSTEPS.map(x=>`<i class="${BZ.done[x.id]?'on':cur&&cur.id===x.id?'cur':''}"></i>`).join('');
+  let now, man='';
+  if(!P) now='강사님: 안내 출발지(가족 번호)를 정해 주세요';
+  else if(!cur) now='🎉 오늘 영업 끝! 수고했어요';
+  else { const L=bizLines(cur.id,P), i=Math.min(bizLineIdx(cur.id),L.length-1), ln=L[i];
+    now = ln.man ? `<em>${cur.e} ${i+1}/${L.length}</em>${ln.t}` : `<em>${cur.e} ${BSTEPS.indexOf(cur)+1}. ${cur.t} ${i+1}/${L.length}</em>${ln.t}`;   // 버튼이 있으면 글자 자리를 넓게
+    if(ln.man) man=`<span class="bs-man" data-bzman role="button">${ln.man} ✓</span>`; }
+  now = now.replace(/<em>.*?<\/em>/,'');
+  if(P && cur) now = `<i class="mtag">미션</i>${now}`;   // 영업 번호·단계 이름은 빼고 할 일만 (판을 펼치면 다 보여요)
+  $('#bsBar').innerHTML = `<span class="now">${now}</span>${man}<svg class="ico arw" viewBox="0 0 24 24" style="width:1.2rem;height:1.2rem"><path d="M6 9l6 6 6-6"/></svg>`;
+  if(bzOpen) renderBizPanel();
+}
+function renderBizPanel(){
+  const P=bizMine(), cur=bizCur(); let h='';
+  if(!P){
+    h = `<div class="bs-card"><h4>👩‍🏫 강사님, 먼저 가족 번호를 정해 주세요</h4><ol class="bs-how">
+      <li>☰ 메뉴 → <b>안내하기</b> → 「출발지 설정」</li><li>이 태블릿의 <b>가족 1~4 대기</b>를 골라 「적용」 (태블릿끼리 겹치지 않게!)</li>
+      <li>네 태블릿이 같은 <b>영업 번호</b>인지 확인해요 (지금 영업 ${BZ.round})</li></ol>
+      <button class="btn btn-fill bs-go" data-bz="go-guide">안내하기 열기</button></div>`;
+  }else{
+    const k=cur?BSTEPS.indexOf(cur):4, r=roleOf(k);
+    h = `<div class="bs-head"><div class="fn" style="background:${FAM_COL[BZ.fam]}">${BZ.fam+1}</div><div><div class="t">가족 ${BZ.fam+1} · ${P.table}번 테이블 손님 ${P.party}명</div><div class="s">영업 ${BZ.round} / ${BIZ_MAX} · 출발: 가족 ${BZ.fam+1} 대기</div></div></div>
+      <div class="bs-steps">${BSTEPS.map((x,i)=>`<div class="${BZ.done[x.id]?'on':cur&&cur.id===x.id?'cur':''}"><b>${BZ.done[x.id]?'✓':x.e}</b>${i+1}. ${x.t}</div>`).join('')}</div>
+      ${cur?`<div class="bs-role"><span>🎮 조종 <b>${r.drive}</b></span><span>🧾 확인·싣기 <b>${r.crew}</b></span></div>`:''}`;
+    const orderCard = ()=>`<div class="bs-card"><h4>🧾 ${P.table}번 테이블오더 <small>${P.count}개 · 손님 ${P.party}명</small></h4>
+      <div class="m-sub" style="margin:-.2rem 0 .5rem">🎂 오늘 생일인 친구가 있으면 서빙할 때 <b>케이크 아이콘</b>으로 축하해 줄 수 있어요 (선택)</div>
+      ${(P.soup||P.bday||P.extra)?`<div class="bs-req">${P.soup?'<span>🍲 국물 메뉴 있어요 → 국물 모드</span>':''}${P.bday?'<span>🎂 오늘 생일이에요!</span>':''}${P.extra?'<span>🍽️ 나눠 먹을 메뉴 하나 더!</span>':''}</div>`:''}
+      <div class="bs-items">${P.items.map(i=>`<button class="bs-item ${BZ.loaded[i]?'on':''}" data-bzload="${i}">${foodPic(i)}<span class="nm">${esc(menuName(i))}${isNew(i)?' <span class="newtag">신메뉴</span>':''}<small>${STORES[Math.floor(i/5)].name}${SOUP.includes(i)?' · 🍲 국물':''}</small></span><span class="ck">${BZ.loaded[i]?'실었어요 ✓':'싣기'}</span></button>`).join('')}</div>
+      ${bizMap(P)}<div class="m-sub" style="margin-top:.4rem">출발 → ① ② … 가게에서 싣고 → <b style="color:#1f7cf5">${P.table}번</b> 테이블</div></div>`;
+    if(cur){
+      h += `<div class="bs-card"><h4>${cur.e} ${BSTEPS.indexOf(cur)+1}. ${cur.t} </h4><ol class="bs-lines">${(()=>{ const L=bizLines(cur.id,P), i=Math.min(bizLineIdx(cur.id),L.length-1); return L.map((x,k)=>`<li class="${k<i?'ok':k===i?'now':''}"><b>${k<i?'✓':k+1}</b><span>${x.t}${k===i&&x.man?` <button class="bs-man2" data-bzman>${x.man} ✓</button>`:''}</span></li>`).join(''); })()}</ol>
+        <div class="bs-ctl"><button data-bzback>◀ 이전 줄</button><button data-bzrestart>↺ 이 단계 처음부터</button><button data-bzskip>다음 줄 ▶</button></div>
+        ${BSTEPS.indexOf(cur)>0?`<button class="bs-skip" data-bzprev>⏮ 이전 단계(${BSTEPS[BSTEPS.indexOf(cur)-1].t})로 돌아가기</button>`:''}
+        <button class="btn btn-fill bs-go" data-bz="go-${cur.id}">${cur.id==='guide'?'안내하기':cur.id==='promo'?(bizLineIdx('promo')<7?'관리자 페이지':'홍보하기'):cur.id==='event'?'돌아다니기':'서빙하기'} 열기</button></div>`;
+      if(cur.id==='serve' || cur.id==='collect') h += orderCard();
+    }else{
+      h += `<div class="bs-card bs-done"><div class="big">오늘 영업 끝! 🏆</div><div class="m-sub">${fmtMS((BZ.done.collect||Date.now())-BZ.t0)} 만에 손님 한 팀을 모셨어요</div>${noteHTML()}</div>`;
+    }
+  }
+  h += `<button class="bs-teacher" data-bz="teacher">👩‍🏫 강사님 메뉴 (영업 번호 · 가족 번호)</button>`;
+  $('#bizPanel').innerHTML = h;
+}
+function noteHTML(){ const n=Object.values(BZ.note||{}).flat(); return n.length?`<div class="bs-note">${n.map(esc).join('<br>')}</div>`:''; }
+function bizToggle(v){ bzOpen = v==null ? !bzOpen : v; renderStrip(); }
+function bizOk(id, notes){
+  BZ.li=BZ.li||{}; BZ.done[id]=Date.now(); if(notes && notes.length) BZ.note[id]=notes; saveBZ();
+  const nx=bizCur();
+  if(id==='collect'){ speak('영업 완료! 손님 한 팀을 멋지게 모셨어요. 수고했어요!'); }
+  else if(id==='promo'){ setTimeout(()=>{ const P=bizMine(); ding(); speak(`띵동! ${P.table}번 테이블에서 주문이 들어왔어요. ${P.items.map(menuName).join(', ')}.`); bizToggle(true); }, 6000); }
+  toast(`${BSTEPS.find(x=>x.id===id).e} ${BSTEPS.find(x=>x.id===id).t} 성공!` + (nx && id!=='collect' && id!=='promo' ? ` 다음은 ${nx.e} ${nx.t}` : ''), true);
+  renderStrip();
+  if(id==='collect') setTimeout(()=>bizToggle(true), 1600);   // 한 줄씩 보여 주니까, 판은 영업 완료 때만 펼쳐요
+}
+// 실제 앱에서 한 일을 보고 미션을 체크해요
+function bizEvent(ev){
+  const P=bizMine(); if(!P) return; const cur=bizCur(); if(!cur) return;
+  const T=P.table, turn=()=>toast(`지금은 ${cur.e} ${cur.t} 차례예요`, true);
+  if(ev.kind==='guide'){ if(cur.id!=='guide') return turn(); if(ev.table!==T) return toast(`안내할 테이블은 ${T}번이에요!`, true); bizOk('guide', ev.count!=null && ev.count!==P.party ? [`👥 ${T}번 테이블 손님은 ${P.party}명이었어요 (${ev.count}명으로 골랐어요)`] : []); }
+  else if(ev.kind==='promoArrive'){ if(cur.id!=='promo') return turn(); if(ev.table!==T) return toast(`홍보 장소는 ${T}번 테이블이에요!`, true); bizOk('promo'); }
+  else if(ev.kind==='serve' || ev.kind==='birthday'){
+    if(cur.id!=='serve') return turn(); if(!ev.tables.includes(T)) return toast(`주문한 테이블은 ${T}번이에요!`, true);
+    const n=[]; if(P.soup && !ev.soup) n.push('🍲 국물 메뉴였는데 국물 모드를 안 켰어요'); if(P.bday && ev.kind!=='birthday') n.push('🎂 생일 손님인데 케이크 아이콘을 안 눌렀어요');
+    if(P.items.some(i=>!BZ.loaded[i])) n.push('🧾 주문서에서 싣기 체크를 다 안 했어요');
+    bizOk('serve', n); }
+  else if(ev.kind==='collect'){ if(cur.id!=='collect') return turn(); if(!ev.tables.includes(T) || !ev.dish) return toast(`${T}번 테이블 그릇을 식기 반납대까지 가져가요!`, true); bizOk('collect'); }
+  else if(ev.kind==='roamStart'){ if(cur.id==='event') bizMark('roamGo'); else turn(); }
+  else if(ev.kind==='roamEnd'){ if(cur.id==='event' && ((BZ.mk||{}).roamGo||0)>stageStart('event')) bizOk('event', ((BZ.mk||{}).snack||0)>stageStart('event') ? [] : ['🍪 리뷰 쓴 손님에게 간식을 드렸는지 확인해요']); }
+}
+function bizTrip(t){
+  if(!t || t.mission || t.canceled) return;
+  const tables=(t.stops||[]).filter(x=>x.type==='table').map(x=>x.num);
+  if(t.kind==='guide') bizEvent({kind:'guide', table:tables[0], count:t.party&&t.party.count});
+  else if(t.kind==='serve' || t.kind==='birthday') bizEvent({kind:t.kind, tables, soup:!!t.soup});
+  else if(t.kind==='collect') bizEvent({kind:'collect', tables, dish:(t.stops||[]).some(x=>x.type==='dish')});
+  else if(t.kind==='roam') bizEvent({kind:'roamEnd'});   // 돌아다니기 → 출발지로 보내기 → 도착
+}
+function bizTeacher(){
+  $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <h4>👩‍🏫 강사님 메뉴</h4>
+    <div class="m-sub" style="text-align:center;margin-bottom:.5rem">네 태블릿 모두 <b>같은 영업 번호</b>로 맞춰 주세요</div>
+    <div class="gw-grid" style="margin-bottom:.8rem">${[1,2,3,4].map(n=>`<button class="key ${BZ.round===n?'used':''}" data-bzr="${n}" style="${BZ.round===n?'background:var(--blue);color:#fff':''}">영업 ${n}</button>`).join('')}</div>
+    <div class="stack"><button class="btn btn-out" data-bzr="fam">가족 번호(안내 출발지) 다시 정하기</button></div>`;
+  openModal();
+  $('#modal').onclick=e=>{ const b=e.target.closest('[data-bzr],[data-m]'); if(!b) return;
+    if(b.dataset.m==='x'){ closeModal(); return; }
+    const v=b.dataset.bzr;
+    if(v==='fam'){ closeModal(); BZ.fam=null; BZ.done={}; saveBZ(); S.guideStart=null; save(); bzOpen=false; openGuide(); renderStrip(); toast('안내 출발지를 다시 골라 주세요', true); return; }
+    const n=+v;   // 같은 번호를 다시 눌러도 그 영업을 처음부터 다시 시작해요
+    BZ.round=n; if(BZ.fam!=null) bizStart(BZ.fam); else saveBZ(); closeModal(); renderStrip(); toast(`영업 ${n} 시작! 새 손님이 와요`, true); };
+}
+$('#bizStrip').addEventListener('click', e=>{
+  const T=q=>e.target.closest(q); let b;
+  if(T('[data-bzman]')){ bizManual(); return; }
+  if(T('[data-bzskip]')){ bizSkip(); return; }
+  if(T('[data-bzback]')){ bizBack(); return; }
+  if(T('[data-bzrestart]')){ bizRestart(); return; }
+  if(T('[data-bzprev]')){ bizPrevStage(); return; }
+  if(T('#bsBar')){ bizToggle(); return; }
+  if(T('.bs-dim')){ bizToggle(false); return; }
+  if((b=T('[data-bzload]'))){ const i=+b.dataset.bzload; BZ.loaded[i]=!BZ.loaded[i]; saveBZ(); renderBizPanel(); return; }
+  if((b=T('[data-bz]'))){ const a=b.dataset.bz;
+    if(a==='teacher'){ bizTeacher(); return; }
+    bizToggle(false);
+    if(a==='go-guide') openGuide();
+    else if(a==='go-promo'){ const P=bizMine(); if(P && bizLineIdx('promo')<7) openAdmin(); else openPromo(); }
+    else if(a==='go-serve'){ kind='serve'; soup=false; goServe(); }
+    else if(a==='go-collect'){ kind='collect'; soup=false; goServe(); }
+    else if(a==='go-event') openRoam();
+  }
+});
+
+/* ═════════ 돌아다니기 (실제 앱 흐름)
+   얼굴 화면 → [돌아다니기 경로 확인/수정] 경로 설정(선택 · +경로추가) → 경로 추가(경로명 · 기본 정차시간 · 테이블 번호)
+   → [로봇 출발] 돌아다니기 화면(이벤트) → 터치하면 일시정지(이동 취소 / 출발지로 보내기) */
+let roamRun=false, rpT=null, rDraft=null, rIdx=-1;
+const WAITS=[[10,'10초'],[20,'20초'],[30,'30초'],[60,'1분']];
+function openRoam(){ OPENED.roam=Date.now(); roamRun=false; show('roam'); }
+$('#roamGo').onclick=()=>{
+  const r=S.routes[S.routeSel];
+  if(!r || !r.stops.length){ toast('돌아다니기 경로를 먼저 설정하세요'); return; }
+  roamRun=true; goDisplay('roam'); bizEvent({kind:'roamStart'});
+};
+$('#roamPath').onclick=()=>renderRPath();
+function renderRPath(){
+  $('#rpath').innerHTML = `<div class="head"><button class="iconbtn" data-rp2="close" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="box"><h4>돌아다니기 경로 설정</h4>
+      ${S.routes.map((r,i)=>`<div class="rp-row ${i===S.routeSel?'on':''}" data-rsel="${i}" role="button"><span class="rd"></span><span class="nm">${esc(r.name)}</span><button class="go" data-redit="${i}" aria-label="수정"><svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div>`).join('')}
+      <button class="rp-add" data-redit="-1">+ 경로추가</button></div>`;
+  show('rpath');
+}
+$('#rpath').addEventListener('click', e=>{
+  const T=q=>e.target.closest(q); let b;
+  if(T('[data-rp2="close"]')){ openRoam(); return; }
+  if((b=T('[data-redit]'))){ openREdit(+b.dataset.redit); return; }
+  if((b=T('[data-rsel]'))){ S.routeSel=+b.dataset.rsel; save(); renderRPath(); toast('적용 완료 되었습니다', true); return; }
+});
+function openREdit(i){
+  rIdx=i;
+  rDraft = i>=0 ? JSON.parse(JSON.stringify(S.routes[i])) : {name:'', wait:30, stops:[]};
+  renderREdit(); show('redit');
+}
+function renderREdit(){
+  const d=rDraft;
+  $('#redit').innerHTML = `<div class="body"><h3>돌아다니기 경로 ${rIdx>=0?'수정':'추가'}</h3>
+      <div class="lb">경로명</div><input class="inp" id="reName" maxlength="12" placeholder="경로 이름을 입력하세요 (예: 경로${S.routes.length+1})" value="${esc(d.name)}">
+      <div class="rowx"><span>기본 정차시간</span><select id="reWait">${WAITS.map(([v,t])=>`<option value="${v}" ${d.wait===v?'selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="re-path"><span class="tg">경로</span>
+        ${d.stops.length ? `<div class="re-stops" style="margin-top:.9rem">${d.stops.map((st,k)=>`<div class="re-stop"><span class="ord">${k+1}번</span>${st.t}<small data-rwait="${k}" role="button">${fmtSec(st.w)}</small><button class="del" data-rdel="${k}" aria-label="빼기">×</button></div>`).join('')}</div>`
+          : `<div class="re-empty">아래 테이블 번호를 눌러 경로를 만들어요</div>`}</div>
+      ${rIdx>=0?`<button class="btn btn-gray" data-rremove style="width:100%;margin:1rem 0 .4rem;height:2.6rem">이 경로 삭제</button>`:''}
+    </div>
+    <div class="tblpad"><div class="lb">테이블 번호</div><div class="grid">${Array.from({length:S.destCount},(_,k)=>k+1).map(n=>`<button class="key" data-radd="${n}">${n}</button>`).join('')}</div></div>
+    <div class="foot"><button data-rcancel>취소</button><button class="ok" data-rok>확인</button></div>`;
+}
+$('#redit').addEventListener('input', e=>{ if(e.target.id==='reName') rDraft.name=e.target.value; });
+$('#redit').addEventListener('change', e=>{ if(e.target.id==='reWait') rDraft.wait=+e.target.value; });
+$('#redit').addEventListener('click', e=>{
+  const T=q=>e.target.closest(q); let b;
+  if((b=T('[data-radd]'))){ if(rDraft.stops.length>=12){ toast('경로는 12곳까지 만들 수 있어요'); return; } rDraft.stops.push({t:+b.dataset.radd, w:rDraft.wait}); renderREdit(); return; }
+  if((b=T('[data-rdel]'))){ rDraft.stops.splice(+b.dataset.rdel,1); renderREdit(); return; }
+  if((b=T('[data-rwait]'))){ const st=rDraft.stops[+b.dataset.rwait], v=WAITS.map(x=>x[0]); st.w=v[(v.indexOf(st.w)+1)%v.length]; renderREdit(); return; }
+  if(T('[data-rcancel]')){ renderRPath(); return; }
+  if(T('[data-rremove]')){ S.routes.splice(rIdx,1); S.routeSel=Math.min(S.routeSel, Math.max(0,S.routes.length-1)); save(); renderRPath(); toast('경로를 삭제했어요'); return; }
+  if(T('[data-rok]')){
+    const nm=rDraft.name.trim();
+    if(!nm){ toast('경로명을 입력하세요'); $('#reName').focus(); return; }
+    if(!rDraft.stops.length){ toast('테이블 번호를 눌러 경로를 만들어요'); return; }
+    rDraft.name=nm;
+    if(rIdx>=0) S.routes[rIdx]=rDraft; else { S.routes.push(rDraft); S.routeSel=S.routes.length-1; }
+    save(); renderRPath(); toast('적용 완료 되었습니다', true); return; }
+});
+// 돌아다니기 일시정지: 시간이 지나거나 화면을 터치하면 다시 돌아다니기 · 일시정지 중엔 말하지 않음
+function roamPause(){
+  paused=true; clearInterval(rpT);
+  let left=S.pauseTime||30; const draw=()=>$('#rpSec').textContent=left+'초'; draw();
+  $('#rpause').classList.add('on');
+  rpT=setInterval(()=>{ left--; draw(); if(left<=0) roamResume(); },1000);
+}
+function roamClose(){ clearInterval(rpT); rpT=null; paused=false; $('#rpause').classList.remove('on'); }
+function roamResume(){ roamClose(); startRepeat(); }
+$('#rpause').addEventListener('click', e=>{
+  const b=e.target.closest('[data-rp]');
+  if(!b){ roamResume(); return; }
+  const was = promoRun ? 'promo' : 'roam';
+  roamClose(); stopDisplay(); roamRun=false; promoRun=false;
+  if(b.dataset.rp==='cancel'){ if(was==='roam') bizEvent({kind:'roamEnd'}); was==='promo' ? openPromo() : openRoam(); return; }
+  trip={kind:was, stops:[], i:0, soup:false, slots:[], returning:true}; goMove();
+});
+
+// 작은 액자 안의 콘텐츠를 실제 화면 비율로 줄여 보여 주기
+function fitFrames(){ document.querySelectorAll('.ph-frame, .ed-stage').forEach(f=>{ const cv=f.querySelector('.cv'); if(cv) cv.style.fontSize=(f.clientWidth/($('#frame').clientWidth||innerWidth))+'rem'; }); }
+addEventListener('resize', fitFrames);
+
+/* ═════════ 사이드 메뉴 ═════════ */
+function openDrawer(){
+  $('#drLogo').innerHTML = `<svg class="face" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="3" fill="#e6f8f6"/><circle cx="9.3" cy="13" r="1.6"/><circle cx="14.7" cy="13" r="1.6"/><path d="M12 7V4.5M10.5 4.5h3"/></svg><span class="a">${esc(S.storeName)}</span><span class="b">서빙로봇</span>`;
+  $('#drStat').innerHTML = `서빙 <b>${stats.served}</b>번 · 생일 축하 <b>${stats.birthday}</b>번 · 안내 <b>${stats.guided}</b>번`;
+  const cur = current==='display' ? displayMode : (current==='roam'||current==='rpath'||current==='redit') ? 'roam' : current==='promo' ? 'promo' : current==='guide' ? 'guide' : current==='settings'||current==='editor'||current==='admin' ? 'settings' : 'serve';
+  document.querySelectorAll('.dr-item').forEach(b=>b.classList.toggle('cur', b.dataset.go===cur));
+  $('#dim').classList.add('on'); $('#drawer').classList.add('on');
+}
+function closeDrawer(){ $('#dim').classList.remove('on'); $('#drawer').classList.remove('on'); }
+function goServe(){ renderHome(); show('home'); }
+document.addEventListener('click', e=>{
+  const a=e.target.closest('[data-act]'); if(!a) return;
+  const act=a.dataset.act;
+  if(act==='drawer') openDrawer();
+  else if(act==='closeDrawer') closeDrawer();
+  else if(act==='home'){ goServe(); }
+  else if(act==='fullscreen'){ try{ if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen(); }catch(err){} closeDrawer(); }
+});
+$('#dim').onclick=closeDrawer;
+document.querySelectorAll('.dr-item').forEach(b=>b.onclick=()=>{
+  closeDrawer(); stopDisplay();
+  const g=b.dataset.go;
+  if(g==='serve') goServe();
+  else if(g==='roam') openRoam();
+  else if(g==='promo') openPromo();
+  else if(g==='guide'){ openGuide(); }
+  else if(g==='settings') openAdmin();   // 설정 = 관리자 페이지 (로그인 → 꾸미고 싶은 모드)
+});
+
+/* ═════════ 비밀번호 ═════════ */
+function pinPad(title, onDone){
+  let v='';
+  const draw=(err)=>{
+    $('#modal').innerHTML = `<h4>${title}</h4><div class="pin-dots">${[0,1,2,3].map(i=>`<i class="${i<v.length?'f':''}"></i>`).join('')}</div>
+      <div class="pin-pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="key" data-pin="${n}">${n}</button>`).join('')}
+      <button class="key" data-pin="x">취소</button><button class="key" data-pin="0">0</button><button class="key" data-pin="d">⌫</button></div>
+      <div class="pin-err">${err||''}</div>`;
+  };
+  draw(); openModal();
+  $('#modal').onclick=e=>{
+    const b=e.target.closest('[data-pin]'); if(!b) return; const k=b.dataset.pin;
+    if(k==='x'){ closeModal(); return; }
+    if(k==='d') v=v.slice(0,-1); else if(v.length<4) v+=k;
+    draw();
+    if(v.length===4){ const r=onDone(v); if(r===false){ v=''; draw('비밀번호가 맞지 않아요'); } }
+  };
+}
+function askPin(ok){
+  if(!S.pin){ ok(); return; }
+  pinPad('설정 비밀번호를 입력하세요', v=>{ if(v===S.pin){ closeModal(); ok(); return true; } return false; });
+}
+function openModal(){ $('#modalWrap').classList.add('on'); }
+function closeModal(){ $('#modalWrap').classList.remove('on'); $('#modal').onclick=null; }
+$('#modalWrap').addEventListener('click', e=>{ if(e.target.id==='modalWrap') closeModal(); });
+
+/* ═════════ 설정 ═════════ */
+const TABS=[['serve','서빙하기'],['roam','돌아다니기'],['guide','안내하기'],['promo','홍보하기'],['sound','소리'],['robot','로봇']];
+let tab='serve', groupsDraft=null, groupTab=0;
+function getPath(p){ return p.split('.').reduce((o,k)=>o?.[k], S); }
+function setPath(p,v){ const ks=p.split('.'); let o=S; ks.slice(0,-1).forEach(k=>o=o[k]); o[ks.at(-1)]=v; save(); }
+const steps=(path, opts)=> `<div class="steps">${opts.map(([v,t])=>`<button class="step ${JSON.stringify(getPath(path))===JSON.stringify(v)?'on':''}" data-set="${path}" data-val='${JSON.stringify(v)}'><i></i>${t}</button>`).join('')}</div>`;
+const radios=(path, opts)=> `<div class="radios">${opts.map(([v,t])=>`<button class="radio ${JSON.stringify(getPath(path))===JSON.stringify(v)?'on':''}" data-set="${path}" data-val='${JSON.stringify(v)}'><i></i>${t}</button>`).join('')}</div>`;
+const chev = `<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>`;
+
+function renderSettings(){
+  $('#tabs').innerHTML = TABS.map(([k,t])=>`<button class="tab ${k===tab?'on':''}" data-tab="${k}">${t}</button>`).join('');
+  let h='';
+  if(tab==='serve'){
+    const gd = groupsDraft || JSON.parse(JSON.stringify(S.groups)), g = gd[groupTab];
+    h += `<div class="card"><h3>서빙 속도</h3>
+      <div class="box"><span class="chip">일반</span>${steps('speedNormal',[[.5,'0.5'],[.6,'0.6'],[.7,'0.7'],[.8,'0.8'],[.9,'0.9'],[1,'1.0']])}</div>
+      <div class="box"><span class="chip">국물 모드</span>${steps('speedSoup',[[.1,'0.1'],[.2,'0.2'],[.3,'0.3'],[.4,'0.4'],[.5,'0.5'],[.6,'0.6']])}</div></div>
+    <div class="card"><h3>돌아오는 속도</h3><div class="box"><span class="chip">서빙 후 돌아오는 속도</span>${steps('speedReturn',[[.5,'0.5'],[.6,'0.6'],[.7,'0.7'],[.8,'0.8'],[.9,'0.9'],[1,'1.0']])}</div></div>
+    <div class="card"><h3>정차 시간</h3><div class="box"><span class="chip">목적지 도착 후 대기하는 시간</span>${steps('stopTime',[[30,'30초'],[60,'1분'],[120,'2분'],[180,'3분'],[0,'무제한']])}</div></div>
+    <div class="card"><h3>도착 처리 <span class="r">실제 로봇은 따로 움직여요</span></h3><div class="box"><span class="chip">이동 화면이 도착으로 바뀌는 방법</span>
+      ${radios('arriveMode',[['manual','화면 터치 → 도착'],['5','자동 5초'],['10','자동 10초'],['20','자동 20초']])}
+      <div style="font-size:.7rem;color:var(--ink3);margin-top:.6rem;line-height:1.5">자동 시간은 서빙 속도에 맞춰 늘어나거나 줄어요. (속도 0.7 기준)</div></div></div>
+    <div class="card"><h3>목적지 설정</h3><div class="box">
+      <div class="grp-head"><button class="btn btn-gray" data-grp="cancel">취소</button><button class="btn btn-fill" data-grp="apply">적용</button></div>
+      <div class="grp-tabs">${gd.map((x,k)=>`<button class="${k===groupTab?'on':''}" data-gtab="${k}">${k+1}</button>`).join('')}</div>
+      <span class="chip">그룹명 (6글자 이하)</span><input class="inp" maxlength="6" data-gname value="${esc(g.name)}">
+      <span class="chip" style="margin-top:.8rem">그룹에 속한 목적지</span>
+      <div class="grp-dests">${Array.from({length:S.destCount},(_,i)=>i+1).map(n=>`<button class="${g.dests.includes(n)?'on':''}" data-gdest="${n}">${n}</button>`).join('')}</div></div></div>
+    <div class="card"><h3>장소 이름</h3>
+      <div class="box"><span class="chip">그릇 내리는 곳</span><input class="inp" maxlength="8" data-input="dishName" value="${esc(S.dishName)}"></div>
+      <div class="box"><span class="chip">로봇이 기다리는 곳</span><input class="inp" maxlength="8" data-input="baseName" value="${esc(S.baseName)}"></div></div>`;
+  }
+  if(tab==='roam' || tab==='promo'){
+    const c=S.content[tab], nm = tab==='roam'?'돌아다니기':'홍보하기';
+    h += `<div class="card"><h3>화면 꾸미기</h3><div class="box prev"><div class="ph-frame">${contentHTML(c, imgOf(tab), false)}</div>
+      <div class="txt">${tab==='roam'?'가게 안을 천천히 돌아다니며 보여 주는 화면이에요.':'한자리에 서서 손님에게 보여 주는 홍보 화면이에요.'}<br>사진, 글자, 로봇 멘트를 바꿀 수 있어요.
+      <button class="btn btn-fill" data-edit="${tab}">${nm} 화면 꾸미기</button><button class="btn btn-out" data-play="${tab}" style="margin-top:.4rem">지금 화면 띄우기</button></div></div></div>
+    ${tab==='roam'||tab==='promo'?'':`<div class="card"><h3>로봇 멘트 반복</h3><div class="box"><span class="chip">멘트를 다시 말하는 간격</span>${steps('content.'+tab+'.repeat',[[0,'끄기'],[10,'10초'],[20,'20초'],[30,'30초'],[60,'1분']])}</div></div>`}`;
+  }
+  if(tab==='guide'){
+    h += `<div class="card"><h3>안내 출발지 <span class="r">${S.guideStart?'가족 '+S.guideStart+' 대기':'설정 안 됨'}</span></h3><div class="box"><span class="chip">안내를 시작할 때 손님을 기다리는 곳</span>
+      <div class="btnrow"><button class="btn btn-out" data-guideset>안내 출발지 설정하러 가기</button></div></div></div>
+    <div class="card"><h3>손님 맞이 멘트</h3><div class="box ment"><div class="lb">어서오세요 화면 <button class="mini" data-hearg>미리듣기</button></div><input class="inp" data-input="guideMent" value="${esc(S.guideMent)}"></div></div>
+    <div class="card"><h3>안내 멘트</h3>
+      <div class="box ment"><div class="lb">출발할 때 <button class="mini" data-hear="guide">미리듣기</button></div><input class="inp" data-input="ments.guide" value="${esc(S.ments.guide)}"></div>
+      <div class="box ment"><div class="lb">도착했을 때 <button class="mini" data-hear="guideArrive">미리듣기</button></div><input class="inp" data-input="ments.guideArrive" value="${esc(S.ments.guideArrive)}"></div></div>`;
+  }
+  if(tab==='sound'){
+    const M=[['depart','출발할 때 · {목적지} 자리에 테이블 이름이 들어가요'],['arrive','음식이 도착했을 때'],['birthday','생일 축하 도착'],['collect','그릇 회수하러 왔을 때'],['dish','퇴식구에 도착했을 때'],['back','대기 장소로 돌아갈 때']];
+    h += `<div class="card"><h3>음성 안내</h3><div class="box">${radios('tts',[[true,'켜기'],[false,'끄기']])}</div>
+      <div class="box"><span class="chip">음량</span>${steps('volume',[[.2,'20%'],[.4,'40%'],[.6,'60%'],[.8,'80%'],[1,'100%']])}</div>
+      <div class="box"><span class="chip">말하기 속도</span>${steps('ttsRate',[[.8,'0.8'],[.9,'0.9'],[1,'1.0'],[1.1,'1.1'],[1.2,'1.2'],[1.4,'1.4']])}</div>
+      <div class="box"><span class="chip">목소리</span>${voices.length?`<select class="sel" data-input="voice"><option value="">기본 목소리</option>${voices.map(v=>`<option ${v.name===S.voice?'selected':''} value="${esc(v.name)}">${esc(v.name)}</option>`).join('')}</select>`:`<div style="font-size:.75rem;color:var(--ink3)">이 기기에서 한국어 목소리를 찾지 못했어요. 기기 설정에서 한국어 음성을 설치하면 더 잘 들려요.</div>`}</div></div>
+    <div class="card"><h3>서빙 멘트</h3>${M.map(([k,t])=>`<div class="box ment"><div class="lb">${t} <button class="mini" data-hear="${k}">미리듣기</button></div><textarea class="inp" rows="2" data-input="ments.${k}">${esc(S.ments[k])}</textarea></div>`).join('')}</div>`;
+  }
+  if(tab==='robot'){
+    h += `<div class="card"><h3>가게 이름</h3><div class="box"><input class="inp" maxlength="10" data-input="storeName" value="${esc(S.storeName)}"></div></div>
+    <div class="card"><h3>트레이 설정</h3><div class="box"><span class="chip">트레이 개수</span>${radios('trays',[[1,'1단'],[2,'2단'],[3,'3단'],[4,'4단']])}</div></div>
+    <div class="card"><h3>비밀번호 설정</h3>
+      <button class="row" data-pinset>비밀번호 설정/해제<span class="r"><span class="tag">${S.pin?'설정됨':'해제됨'}</span>${chev}</span></button>
+      ${S.pin?`<button class="row" data-pinchange>비밀번호 변경<span class="r">${chev}</span></button>`:''}</div>
+    <div class="card"><h3>절전모드 타이머</h3><div class="box"><span class="chip">절전모드 진입 시간 설정</span>${radios('sleepUse',[[true,'사용'],[false,'사용안함']])}
+      <div style="margin-top:.7rem;${S.sleepUse?'':'opacity:.4;pointer-events:none'}">${steps('sleepMin',[[10,'10분'],[20,'20분'],[30,'30분'],[40,'40분'],[50,'50분'],[60,'1시간']])}</div></div></div>
+    <div class="card"><h3>일시정지 타이머</h3><div class="box"><span class="chip">일시정지 시간 설정</span>${steps('pauseTime',[[10,'10초'],[30,'30초'],[60,'1분'],[120,'2분'],[180,'3분'],[240,'4분']])}</div></div>
+    <div class="card"><h3>목적지 입력 방법</h3><div class="box"><span class="chip">입력 방법 선택</span><div class="inmode">
+      <button class="radio ${S.inputMode==='select'?'on':''}" data-set="inputMode" data-val='"select"'><span style="display:flex;gap:.35rem;align-items:center"><i></i>목적지 선택</span><span class="pic" style="grid-template-columns:repeat(4,1fr)">${'<span></span>'.repeat(8)}</span></button>
+      <button class="radio ${S.inputMode==='keypad'?'on':''}" data-set="inputMode" data-val='"keypad"'><span style="display:flex;gap:.35rem;align-items:center"><i></i>키패드 입력</span><span class="pic" style="grid-template-columns:repeat(3,1fr)"><span style="grid-column:1/4;background:#bcd6fb"></span>${'<span></span>'.repeat(9)}</span></button></div></div></div>
+    <div class="card"><h3>목적지 보기</h3>
+      <div class="box"><span class="chip">한 줄에 보이는 목적지 수</span>${steps('perRow',[[2,'2개'],[3,'3개'],[4,'4개'],[5,'5개'],[6,'6개']])}</div></div>
+    <div class="card"><h3>목적지 지정</h3>
+      <button class="row" data-pickdest="dishDest">퇴식구<span class="r"><span class="tag">${S.dishDest||'미설정'}</span>${chev}</span></button>
+      <button class="row" data-pickdest="chargerDest">충전기<span class="r"><span class="tag">${S.chargerDest||'미설정'}</span>${chev}</span></button></div>
+    <div class="card"><h3>화면 설정</h3>
+      <div class="box" style="display:flex;justify-content:space-between;align-items:center"><span class="chip" style="margin:0">화면 흐리게</span>${radios('dimScreen',[[true,'켜기'],[false,'끄기']])}</div>
+      <div class="box" style="display:flex;justify-content:space-between;align-items:center"><span class="chip" style="margin:0">목적지 표시</span>${radios('showDest',[[true,'켜기'],[false,'끄기']])}</div></div>
+    <div class="card"><h3>가속 모드</h3><div class="box"><span class="chip">로봇 출발 시 가속 강도 설정</span>${steps('accel',[[1,'레벨 1'],[2,'레벨 2'],[3,'레벨 3'],[4,'레벨 4'],[5,'레벨 5']])}</div></div>
+    <div class="card"><h3>브레이크 설정</h3><div class="box"><span class="chip">로봇 감속 시 브레이크 강도 설정</span>${steps('brake',[[1,'레벨 1'],[2,'레벨 2'],[3,'레벨 3'],[4,'레벨 4'],[5,'레벨 5']])}</div></div>
+    <div class="plain">와이파이 설정<span class="r">${navigator.onLine?'연결됨':'연결 안 됨'}</span></div>
+    <div class="plain">로봇 앱 버전<span class="r">${VERSION}</span></div>
+    ${QR_LINKS.map(([k,t])=>`<button class="plain" data-qr="${k}">${t}<span class="r"><svg class="ico" viewBox="0 0 24 24" style="width:1.2rem;height:1.2rem"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2zM6.5 6.5h1v1h-1zM16.5 6.5h1v1h-1zM6.5 16.5h1v1h-1z"/></svg></span></button>`).join('')}
+    <button class="plain" data-license>오픈소스 라이선스<span class="r">${chev}</span></button>
+`;
+  }
+  $('#setBody').innerHTML = h;
+  fitFrames();
+}
+$('#tabs').addEventListener('click', e=>{ const t=e.target.closest('[data-tab]'); if(!t) return; tab=t.dataset.tab; groupsDraft=null; renderSettings(); $('#setBody').scrollTop=0; t.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'}); });
+$('#setBody').addEventListener('click', e=>{
+  const s=e.target.closest('[data-set]');
+  if(s){ const p=s.dataset.set, v=JSON.parse(s.dataset.val); setPath(p,v);
+    if(p==='trays'){ resetSlots(); }
+    if(p==='wakeLock' && !v && wl){ try{wl.release()}catch(err){} }
+    if(p==='volume' || p==='ttsRate') speak('이 정도 크기와 빠르기로 말할게요.', 1, true);
+    const y=$('#setBody').scrollTop; renderSettings(); $('#setBody').scrollTop=y; return; }
+  const keepY=()=>{ const y=$('#setBody').scrollTop; renderSettings(); $('#setBody').scrollTop=y; };
+  const qb=e.target.closest('[data-qr]'); if(qb){ showQR(qb.dataset.qr); return; }
+  if(e.target.closest('[data-license]')){ showLicense(); return; }
+  const pd=e.target.closest('[data-pickdest]'); if(pd){ const k=pd.dataset.pickdest;
+    pickList((k==='dishDest'?'퇴식구':'충전기')+' 목적지를 선택하세요', [[0,'미설정'], ...Array.from({length:S.destCount},(_,i)=>[i+1, (i+1)+''])], S[k]||0, v=>{ S[k]=v; save(); keepY(); }); return; }
+  const gt=e.target.closest('[data-gtab]'); if(gt){ groupsDraft = groupsDraft || JSON.parse(JSON.stringify(S.groups)); groupTab=+gt.dataset.gtab; keepY(); return; }
+  const gdst=e.target.closest('[data-gdest]'); if(gdst){ groupsDraft = groupsDraft || JSON.parse(JSON.stringify(S.groups)); const d=groupsDraft[groupTab].dests, n=+gdst.dataset.gdest; const k=d.indexOf(n); if(k>=0) d.splice(k,1); else { d.push(n); d.sort((a,b)=>a-b); } keepY(); return; }
+  const gb=e.target.closest('[data-grp]');
+  if(gb){ if(gb.dataset.grp==='apply'){ if(groupsDraft){ groupsDraft.forEach((x,k)=>{ x.name=(x.name||'').trim()||String(k+1); }); S.groups=groupsDraft; save(); } toast('적용 완료 되었습니다', true); }
+    else toast('바꾼 내용을 취소했어요');
+    groupsDraft=null; keepY(); return; }
+  const hear=e.target.closest('[data-hear]'); if(hear){ speak(fill(S.ments[hear.dataset.hear], {'목적지':tableLabel(3)}), 1, true); return; }
+  const ed=e.target.closest('[data-edit]'); if(ed){ openEditor(ed.dataset.edit); return; }
+  const pl=e.target.closest('[data-play]'); if(pl){ goDisplay(pl.dataset.play); return; }
+  if(e.target.closest('[data-guideset]')){ gDraft=S.guideStart; gstep='setstart'; renderGuide(); show('guide'); return; }
+  if(e.target.closest('[data-hearg]')){ speak(S.guideMent, 1, true); return; }
+  if(e.target.closest('[data-addplace]')){ S.guidePlaces.push(''); save(); renderSettings(); return; }
+  const dp=e.target.closest('[data-delplace]'); if(dp){ S.guidePlaces.splice(+dp.dataset.delplace,1); save(); renderSettings(); return; }
+  if(e.target.closest('[data-pinset]')){
+    if(S.pin){ S.pin=''; save(); toast('비밀번호를 해제했어요'); renderSettings(); }
+    else newPin(); return; }
+  if(e.target.closest('[data-pinchange]')){ newPin(); return; }
+  if(e.target.closest('[data-resetstats]')){ stats={date:today,served:0,birthday:0,guided:0}; saveStats(); toast('오늘 기록을 지웠어요'); renderSettings(); return; }
+  if(e.target.closest('[data-resetall]')){
+    $('#modal').innerHTML = `<h4>모든 설정을 처음으로 되돌릴까요?<br><span style="font-weight:400;font-size:.8rem;color:var(--ink2)">목적지 이름, 멘트, 꾸민 화면이 모두 지워져요.</span></h4>
+      <div class="two"><button class="btn btn-gray" data-m="no">취소</button><button class="btn btn-fill" data-m="yes" style="background:var(--red)">되돌리기</button></div>`;
+    openModal();
+    $('#modal').onclick=ev=>{ const b=ev.target.closest('[data-m]'); if(!b) return; closeModal();
+      if(b.dataset.m==='yes'){ LS.del('srv_settings'); LS.del('srv_img_roam'); LS.del('srv_img_promo'); S=deepMerge(DEFAULTS,{}); resetSlots(); renderSettings(); toast('처음 설정으로 돌아갔어요'); } };
+  }
+});
+$('#setBody').addEventListener('input', e=>{
+  const i=e.target;
+  if(i.dataset.gname!=null){ groupsDraft = groupsDraft || JSON.parse(JSON.stringify(S.groups)); groupsDraft[groupTab].name=i.value; return; }
+  if(i.dataset.place!=null){ S.guidePlaces[+i.dataset.place]=i.value; save(); return; }
+});
+$('#setBody').addEventListener('change', e=>{
+  const i=e.target; if(!i.dataset.input) return;
+  let v=i.value; if(i.dataset.input==='storeName'||i.dataset.input==='dishName'||i.dataset.input==='baseName'){ v=v.trim()||getPath(i.dataset.input); }
+  setPath(i.dataset.input, v); toast('저장했어요');
+});
+function newPin(){
+  pinPad('새 비밀번호 4자리를 입력하세요', v=>{
+    const first=v;
+    setTimeout(()=> pinPad('한 번 더 입력하세요', v2=>{
+      if(v2===first){ S.pin=v2; save(); closeModal(); toast('비밀번호를 설정했어요'); renderSettings(); return true; }
+      return false; }), 120);
+    return true;
+  });
+}
+
+/* ═════════ 화면 꾸미기 편집기 ═════════ */
+let edMode=null, draft=null, draftImg=null, draftDirty=false;
+function openEditor(mode){
+  edMode=mode; draft=JSON.parse(JSON.stringify(S.content[mode]));
+  const im=imgOf(mode); draftImg = im ? (im.food!=null?{food:im.food}: im.video?{video:im.video}:{src:im.src}) : null; draftDirty=false;
+  $('#edTitle').textContent = mode==='roam'?'돌아다니기모드 (이벤트)':'홍보모드';
+  renderEditor(); show('editor');
+}
+function readFields(){ document.querySelectorAll('#edBody [data-field]').forEach(el=>{ draft[el.dataset.field]=el.innerText.replace(/\n$/,''); }); }
+function renderEditor(){
+  $('#edBody').innerHTML = `
+    <div class="layouts">${LAYOUTS.map(l=>`<button class="lay ${draft.layout===l.id?'on':''}" data-lay="${l.id}"><span class="radio ${draft.layout===l.id?'on':''}"><i></i>${l.t}</span>${thumb(l.id)}</button>`).join('')}</div>
+    <div class="ed-label">배경색</div>
+    <div class="swatches">${BGS.map(b=>`<button class="sw ${draft.bg===b.id?'on':''}" data-bg="${b.id}" style="background:${b.bg}" aria-label="${b.id}"></button>`).join('')}</div>
+    <div class="ed-stage" id="edStage">${contentHTML(draft, draftImg, true)}</div>
+    <div class="ed-tip">초록 점선 글자를 눌러 바로 고칠 수 있어요 · 줄을 바꾸려면 엔터</div>`;
+  fitFrames();
+}
+function thumb(id){
+  const B='<div class="b" style="flex:1"></div>', G='<div class="g"></div>';
+  const m={ m1:`<div class="b" style="flex:1;display:flex;flex-direction:column;gap:.1rem;padding:.12rem"><div class="g" style="background:#fff"></div><div class="g" style="background:#fff;width:70%;margin:0 auto"></div></div>`,
+    m2:`${G}<div class="b" style="height:40%;margin:0 .15rem"></div>${G}`, m3:`${B}${G}${G}`, m4:`${G}${G}${B}`,
+    m5:`<div class="b" style="height:30%;width:45%;margin:0 auto"></div>${G}${G}`, basic:`${G}${G}`, poster:B };
+  return `<span class="th">${m[id]}</span>`;
+}
+$('#edBody').addEventListener('click', e=>{
+  const l=e.target.closest('[data-lay]'); if(l){ readFields(); draft.layout=l.dataset.lay; draftDirty=true; renderEditor(); return; }
+  const b=e.target.closest('[data-bg]'); if(b){ readFields(); draft.bg=b.dataset.bg; draftDirty=true; renderEditor(); return; }
+});
+$('#edBody').addEventListener('input', ()=>{ draftDirty=true; });
+$('#edBack').onclick=()=>{
+  readFields();
+  if(!draftDirty){ leaveEditor(); return; }
+  $('#modal').innerHTML = `<h4>저장하지 않고 나갈까요?</h4><div class="two"><button class="btn btn-gray" data-m="stay">계속 꾸미기</button><button class="btn btn-fill" data-m="leave">나가기</button></div>`;
+  openModal(); $('#modal').onclick=ev=>{ const x=ev.target.closest('[data-m]'); if(!x) return; closeModal(); if(x.dataset.m==='leave'){ leaveEditor(); } };
+};
+// 이미지 넣기
+$('#edImg').onclick=()=>{
+  readFields();
+  $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <h4>이미지/영상 업로드 방법을<br>선택해주세요</h4>
+    <div class="stack"><button class="btn btn-out" data-m="gal">꿈트리 갤러리에서 넣기</button>
+    <button class="btn btn-fill" data-m="file">내 파일 업로드</button>
+    ${draftImg?`<button class="btn btn-gray" data-m="none">이미지 빼기</button>`:''}</div>
+    <input type="file" accept="image/*,video/*" id="fileIn" hidden>`;
+  openModal();
+  $('#modal').onclick=ev=>{
+    const x=ev.target.closest('[data-m]'); if(!x) return; const m=x.dataset.m;
+    if(m==='x') closeModal();
+    else if(m==='none'){ draftImg=null; draftDirty=true; closeModal(); renderEditor(); }
+    else if(m==='file') $('#fileIn').click();
+    else if(m==='gal'){
+      $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><h4>꿈트리 갤러리</h4>
+        <div class="ed-label" style="margin:.2rem 0 .4rem">예시 포스터 <small style="color:var(--ink3)">(화면 모양 「포스터」로 바뀌어요)</small></div>
+        <div class="gallery posters">${POSTERS.map(([src,t])=>`<button data-poster="${src}"><img src="${src}" alt="">${t}</button>`).join('')}</div>
+        <div class="ed-label" style="margin:.8rem 0 .4rem">음식 사진</div>
+        <div class="gallery">${FOODS.map((f,i)=>`<button data-food="${i}"><span class="sp" style="background-position:${spritePos(i)}"></span>${f}</button>`).join('')}</div>`;
+      $('#modal').onclick=e2=>{ if(e2.target.closest('[data-m="x"]')){ closeModal(); return; }
+        const ps=e2.target.closest('[data-poster]'); if(ps){ readFields(); draftImg={src:ps.dataset.poster}; draft.layout='poster'; draftDirty=true; closeModal(); renderEditor(); return; }
+        const f=e2.target.closest('[data-food]'); if(!f) return; draftImg={food:+f.dataset.food}; draftDirty=true; closeModal(); renderEditor(); };
+    }
+  };
+  $('#fileIn').onchange=ev=>{
+    const file=ev.target.files[0]; if(!file) return;
+    if(/^video\//.test(file.type)){   // 동영상: 소리 없이 반복 재생 · 200MB까지
+      if(file.size > 200*1024*1024){ toast('동영상이 너무 커요 (200MB까지)'); return; }
+      draftImg={video:URL.createObjectURL(file), file}; draftDirty=true; bizMark('up_'+edMode); closeModal(); renderEditor(); toast('동영상을 넣었어요'); return;
+    }
+    const rd=new FileReader();
+    rd.onload=()=>{ const im=new Image(); im.onload=()=>{
+        const max=1760, sc=Math.min(1, max/Math.max(im.width,im.height));   // 포스터(1200×1760)가 그대로 들어가게
+        const c=document.createElement('canvas'); c.width=Math.round(im.width*sc); c.height=Math.round(im.height*sc);
+        const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(im,0,0,c.width,c.height);
+        draftImg={src:c.toDataURL('image/jpeg',.9)}; draftDirty=true; bizMark('up_'+edMode); closeModal(); renderEditor(); toast('사진을 넣었어요');
+      }; im.onerror=()=>toast('이 사진은 열 수 없어요'); im.src=rd.result; };
+    rd.readAsDataURL(file);
+  };
+};
+// TTS 변경하기
+$('#edTts').onclick=()=>{
+  readFields();
+  let rate=draft.ttsRate||1;
+  const nm = edMode==='roam'?'돌아다니기모드':'홍보모드';
+  $('#modal').innerHTML = `<h4 style="display:flex;align-items:center;justify-content:center;gap:.3rem">로봇 멘트 변경 : ${nm}</h4>
+    <div class="tts-top"><span id="ttsCnt">(0/200)</span><span class="rate"><button data-r="-">−</button><span id="ttsRate">속도 1.0</span><button data-r="+">+</button></span></div>
+    <textarea class="inp" id="ttsText" maxlength="200" rows="3" placeholder="로봇이 말할 문구를 입력하세요">${esc(draft.tts)}</textarea>
+    <div class="two"><button class="btn btn-out" data-m="hear">미리듣기</button><button class="btn btn-out" data-m="cancel">취소하기</button></div>
+    <button class="btn btn-fill" data-m="ok" style="width:100%;margin-top:.4rem;height:2.8rem;font-weight:700">변경사항 저장</button>`;
+  openModal();
+  const ta=$('#ttsText'), cnt=()=>$('#ttsCnt').textContent=`(${ta.value.length}/200)`, rd=()=>$('#ttsRate').textContent='속도 '+rate.toFixed(1);
+  cnt(); rd(); ta.oninput=cnt;
+  $('#modal').onclick=ev=>{
+    const r=ev.target.closest('[data-r]'); if(r){ rate=Math.round(Math.min(2,Math.max(.5, rate+(r.dataset.r==='+'?.1:-.1)))*10)/10; rd(); return; }
+    const x=ev.target.closest('[data-m]'); if(!x) return;
+    if(x.dataset.m==='hear') speak(ta.value, rate, true);
+    else if(x.dataset.m==='cancel'){ hush(); closeModal(); }
+    else { draft.tts=ta.value.trim(); draft.ttsRate=rate; draftDirty=true; hush(); closeModal(); toast('로봇 멘트를 바꿨어요'); }
+  };
+};
+// 저장하기 → 로봇 동기화
+$('#edSave').onclick=()=>{
+  readFields();
+  $('#modal').innerHTML = `<h4 style="font-size:.85rem">저장한 내용을 로봇에 전송하시겠습니까?<br>동기화 적용을 누르면, 로봇이 재부팅됩니다.</h4>
+    <table class="sync-table"><tr><th>비고</th><th>로봇 상태</th><th>동기화 가능 여부</th></tr><tr><td>1</td><td>대기중</td><td>동기화 가능</td></tr></table>
+    <div class="warn">동기화 적용시 동기화가 불가한 상태의 로봇을 제외하고 동기화가 적용됩니다.</div>
+    <div class="sync-bar" id="syncBar" style="display:none"><i></i></div>
+    <div class="two" id="syncBtns"><button class="btn btn-gray" data-m="no">취소</button><button class="btn btn-fill" data-m="yes">동기화 적용</button></div>`;
+  openModal();
+  $('#modal').onclick=ev=>{
+    const x=ev.target.closest('[data-m]'); if(!x) return;
+    if(x.dataset.m==='no'){ closeModal(); return; }
+    // 저장
+    const c={...draft};
+    const vMode=edMode;
+    if(draftImg && draftImg.video){ LS.del('srv_img_'+vMode); c.img='video';
+      if(draftImg.file){ const f=draftImg.file, u=draftImg.video; vidPut(vMode, f).then(()=>{ vidURL[vMode]=u; }).catch(()=>toast('동영상을 저장하지 못했어요. 더 작은 파일을 써 주세요')); vidURL[vMode]=u; } }
+    else if(draftImg && draftImg.src && !draftImg.src.startsWith('data:')){ LS.del('srv_img_'+edMode); c.img={src:draftImg.src}; vidDel(vMode); }
+    else if(draftImg && draftImg.src){
+      if(!LS.set('srv_img_'+edMode, draftImg.src)){ closeModal(); toast('사진이 너무 커서 저장하지 못했어요. 더 작은 사진을 써 주세요'); return; }
+      c.img='data'; vidDel(vMode);
+    }else { LS.del('srv_img_'+edMode); c.img = draftImg ? {food:draftImg.food} : null; vidDel(vMode); }
+    S.content[edMode]=c; save(); bizMark('sync_'+edMode);
+    $('#syncBtns').style.display='none'; $('#syncBar').style.display='block';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>$('#syncBar i').style.width='100%'));
+    setTimeout(()=>{ closeModal(); draftDirty=false; toast('로봇 동기화 완료! 화면이 바뀌었어요'); leaveEditor(true); }, 1800);
+  };
+};
+
+let edReturn=null;
+function leaveEditor(saved){ if(edReturn){ const f=edReturn; edReturn=null; f(!!saved); } else { renderSettings(); show('settings'); } }
+
+/* ═════════ 가게·맵 정보 (영업 미션·이름 연구소에서 써요) ═════════ */
+const STORES = [
+  {name:'봄날떡집', kind:'분식당', color:'#e9774c', img:'img/store1.jpg'},
+  {name:'훈훈비빔', kind:'한식당', color:'#3fa58b', img:'img/store2.jpg'},
+  {name:'분노라멘', kind:'일식당', color:'#5583c2', img:'img/store3.jpg'},
+  {name:'콤비키친', kind:'양식당', color:'#c8963a', img:'img/store4.jpg'}];
+const FAM_COL = ['#e9774c','#3fa58b','#5583c2','#c8963a'];
+const PT = { wait:[[169,1238],[584,1238],[1415,1238],[1830,1238]], store:[[446,222],[861,222],[1277,222],[1692,222]],
+  table:[null,[447,535],[723,535],[1277,535],[1553,535],[447,950],[723,950],[1277,950],[1553,950]],
+  water:[1918,520], snack:[169,180], dishL:[78,960], dishR:[1918,960] };
+const MS = () => S.mission;
+function menuName(i){ return isNew(i) ? MS().newName.trim() : FOODS[i]; }
+function isNew(i){ return i!=null && MS().newFood===i && !!(MS().newName||'').trim(); }
+function foodPic(i){ return `<span class="food" style="background-position:${spritePos(i)}"></span>`; }
+function roleOf(n){ return n%2===0 ? {drive:'아이', crew:'보호자'} : {drive:'보호자', crew:'아이'}; }
+function fmtMS(ms){ const s=Math.max(0,Math.round(ms/1000)); return Math.floor(s/60)+'분 '+String(s%60).padStart(2,'0')+'초'; }
+function josaEul(w){ w=String(w); const c=w.charCodeAt(w.length-1); if(c<0xAC00||c>0xD7A3) return w+'을(를)'; return w+((c-0xAC00)%28?'을':'를'); }
+function josaRo(w){ w=String(w); const c=w.charCodeAt(w.length-1); if(isNaN(c)) return w; if(c<0xAC00||c>0xD7A3) return w+'(으)로'; const j=(c-0xAC00)%28; return w+(j===0||j===8?'로':'으로'); }
+function ding(){
+  try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume();
+    [[880,0],[1318.5,.16]].forEach(([f,d])=>{ const o=actx.createOscillator(), g=actx.createGain(); const t=actx.currentTime+d;
+      o.type='sine'; o.frequency.value=f; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.25*S.volume,t+.01); g.gain.exponentialRampToValueAtTime(.001,t+.5);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+.55); });
+  }catch(e){}
+}
+
+/* ───────── 시작 ───────── */
+if(S.guideStart>4) S.guideStart=null;   // 예전(테이블 번호) 출발지는 지워요
+if(S.guideStart && BZ.fam!==S.guideStart-1) bizStart(S.guideStart-1);
+goServe(); renderStrip();
+</script>
+</body>
+</html>
