@@ -425,6 +425,9 @@ html.bz-on #bizStrip{display:block}
 .roam-links{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;z-index:5}
 .roam-links a{display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.9rem .6rem;border-radius:.9rem;background:rgba(255,255,255,.95);color:#2b2f36;text-decoration:none;font-weight:800;font-size:1.05rem;box-shadow:0 .3rem 1rem rgba(0,0,0,.15)}
 .roam-links a small{font-weight:400;font-size:.7rem;color:#8a8f98}
+.snd-test{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+.snd-test .btn{height:2.6rem;font-size:.85rem}
+.snd-info{font-size:.72rem;color:var(--ink2);margin-top:.6rem;line-height:1.6}
 .nm-links{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.7rem 0 .2rem}
 .nm-links a{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.1rem;padding:.7rem .6rem;border-radius:.6rem;background:#fff;box-shadow:0 0 0 1.5px #f3dfb0 inset;color:var(--ink);text-decoration:none;font-weight:800;font-size:.82rem}
 .nm-links a small{font-weight:400;font-size:.66rem;color:var(--ink3);margin:0}
@@ -841,7 +844,7 @@ const DEFAULTS = {
   pin:'', wakeLock:true,
   mission:{family:0, store:0, newFood:-1, newName:'', intro:'', set:false},
 };
-const VERSION = '1.1.0 (한글날 에디션 · 운영 미션)';
+const VERSION = '1.3.0 · 10/17 소리 수정';
 
 /* ───────── 저장소 ───────── */
 const LS = {
@@ -941,7 +944,9 @@ function speak(text, rate, force){
     const u = new SpeechSynthesisUtterance(sayNum(text));
     u.lang='ko-KR'; u.rate = (rate||1)*S.ttsRate; u.volume = S.volume;
     if(!voices.length) loadVoices();
-    const v = voices.find(v=>v.name===S.voice) || voices[0]; if(v) u.voice=v;
+    const v = S.voice ? voices.find(v=>v.name===S.voice) : null; if(v) u.voice=v;   // 목소리를 고른 경우만 지정 (안드로이드에서 지정하면 조용히 실패하는 경우가 있어요)
+    u.onerror = ev=>{ ttsLog='오류: '+(ev.error||'알 수 없음'); if(!u.__retry && ev.error!=='interrupted' && ev.error!=='canceled'){ const u2=new SpeechSynthesisUtterance(u.text); u2.lang='ko-KR'; u2.rate=u.rate; u2.volume=u.volume; u2.__retry=1; window.__utt2=u2; try{ speechSynthesis.speak(u2); }catch(e){} } };
+    u.onstart = ()=>{ ttsLog='말하는 중 ✓'; };
     window.__utt = u;   // 안드로이드 크롬: 참조가 없으면 말하는 도중에 사라지는 문제 방지
     // 안드로이드 크롬: 끊자마자 새로 말하면 조용히 사라져서, 말하는 중일 때만 끊고 잠깐 뒤에 말해요
     if(speechSynthesis.speaking || speechSynthesis.pending){ speechSynthesis.cancel(); setTimeout(()=>{ try{ speechSynthesis.speak(u); }catch(e){} }, 80); }
@@ -949,6 +954,7 @@ function speak(text, rate, force){
     if(speechSynthesis.paused) speechSynthesis.resume();
   }catch(e){}
 }
+var ttsLog='아직 안 말함';
 function hush(){ try{ speechSynthesis.cancel(); }catch(e){} }
 function fill(m, vars){ return String(m||'').replace(/\{목적지\}(으로|로)/g, (_,j)=> vars['목적지']!=null ? josaRo(vars['목적지']) : '').replace(/\{(\w+|목적지)\}/g, (_,k)=>vars[k]??''); }
 
@@ -1093,7 +1099,8 @@ $('#sendBtn').onclick=()=>{
 /* ═════════ 운행(이동 → 도착 → 다음 → 복귀) ═════════ */
 let trip=null, autoT=null, autoLeft=0, autoStart=0, pauseT=null, arrT=null, repT=null;
 let departT=null;
-function clearTimers(){ clearTimeout(autoT); clearInterval(pauseT); clearInterval(arrT); clearTimeout(departT); autoT=pauseT=arrT=departT=null; }
+let moveT=null;
+function clearTimers(){ clearTimeout(autoT); clearInterval(pauseT); clearInterval(arrT); clearTimeout(departT); clearInterval(moveT); autoT=pauseT=arrT=departT=moveT=null; }
 function speedNow(){ if(!trip) return S.speedNormal; if(trip.returning) return S.speedReturn; return trip.soup ? S.speedSoup : S.speedNormal; }
 
 function startTrip(k, stops){
@@ -1125,9 +1132,9 @@ function goMove(){
   $('#mvDone').textContent = '도착했어요';
   show('moving');
   // 출발 안내
-  if(trip.returning) hush();   // 출발지로 이동할 때는 말하지 않음
+  if(trip.returning){ hush(); chime(); }   // 대기 장소로 돌아갈 때: 말은 안 하고 출발 알림음만
   else if(trip.kind==='promoGo' || trip.kind==='kitchen'){ hush(); chime(); }   // 홍보 시작·주방 가기: 출발 알림음만
-  else if(trip.kind==='guide') speak(S.ments.guide);
+  else if(trip.kind==='guide'){ chime(); departT=setTimeout(()=>{ if(current==='moving') speak(S.ments.guide); }, 1000); }   // 안내 출발: 알림음 뒤에 「저를 따라오세요」
   else if(trip.kind==='guideStart') speak('안내 출발지로 이동합니다.');
   else { // 실제 서빙로봇처럼: 출발 알림음(파#·라·레·솔#) 뒤에 출발 멘트
     chime();
@@ -1435,6 +1442,8 @@ function showQR(k){
   openModal();
   $('#modal').onclick=e=>{ if(e.target.closest('[data-m="x"]')) closeModal(); if(e.target.closest('[data-m="here"]')){ closeModal(); openAdmin(); } };
 }
+function sndInfo(){ const el=$('#sndInfo'); if(!el) return; let vs=[]; try{ vs=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang)); }catch(e){}
+  el.innerHTML = `소리 장치: <b>${actx?actx.state:'아직 없음'}</b> · 한국어 목소리 <b>${vs.length}</b>개${vs.length?' ('+vs.slice(0,3).map(v=>esc(v.name)+(v.localService?'':'·인터넷')).join(', ')+')':''}<br>음성 상태: <b>${esc(ttsLog)}</b> · 앱 버전 ${VERSION}<br>소리가 하나도 안 나면 기기 음량·무음 모드를 확인하고, 화면을 한 번 누른 뒤 다시 눌러 봐요.`; }
 function showLicense(){
   const L=[['qrcode-generator 1.4.4','Kazuhiko Arase','MIT License'], ['배민 한나체 Pro (BMHANNAPro)','(주)우아한형제들','배민글꼴 사용 허가 (무료 · 상업적 사용 가능)']];
   $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
@@ -2019,7 +2028,10 @@ function renderSettings(){
   }
   if(tab==='sound'){
     const M=[['depart','출발할 때 · {목적지} 자리에 테이블 이름이 들어가요'],['arrive','음식이 도착했을 때'],['birthday','생일 축하 도착'],['collect','그릇 회수하러 왔을 때'],['dish','퇴식구에 도착했을 때'],['back','대기 장소로 돌아갈 때']];
-    h += `<div class="card"><h3>음성 안내</h3><div class="box">${radios('tts',[[true,'켜기'],[false,'끄기']])}</div>
+    h += `<div class="card"><h3>🔈 소리 확인 <span class="r">폰·태블릿에서 소리가 안 날 때</span></h3><div class="box">
+      <div class="snd-test"><button class="btn btn-out" data-snd="tick">짧은 소리</button><button class="btn btn-out" data-snd="chime">출발 알림음</button><button class="btn btn-out" data-snd="tts">음성</button></div>
+      <div class="snd-info" id="sndInfo"></div></div></div>
+    <div class="card"><h3>음성 안내</h3><div class="box">${radios('tts',[[true,'켜기'],[false,'끄기']])}</div>
       <div class="box"><span class="chip">음량</span>${steps('volume',[[.2,'20%'],[.4,'40%'],[.6,'60%'],[.8,'80%'],[1,'100%']])}</div>
       <div class="box"><span class="chip">말하기 속도</span>${steps('ttsRate',[[.8,'0.8'],[.9,'0.9'],[1,'1.0'],[1.1,'1.1'],[1.2,'1.2'],[1.4,'1.4']])}</div>
       <div class="box"><span class="chip">목소리</span>${voices.length?`<select class="sel" data-input="voice"><option value="">기본 목소리</option>${voices.map(v=>`<option ${v.name===S.voice?'selected':''} value="${esc(v.name)}">${esc(v.name)}</option>`).join('')}</select>`:`<div style="font-size:.75rem;color:var(--ink3)">이 기기에서 한국어 목소리를 찾지 못했어요. 기기 설정에서 한국어 음성을 설치하면 더 잘 들려요.</div>`}</div></div>
@@ -2054,6 +2066,7 @@ function renderSettings(){
 `;
   }
   $('#setBody').innerHTML = h;
+  if(tab==='sound') setTimeout(sndInfo, 0);
   fitFrames();
 }
 $('#tabs').addEventListener('click', e=>{ const t=e.target.closest('[data-tab]'); if(!t) return; tab=t.dataset.tab; groupsDraft=null; renderSettings(); $('#setBody').scrollTop=0; t.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'}); });
@@ -2065,6 +2078,9 @@ $('#setBody').addEventListener('click', e=>{
     if(p==='volume' || p==='ttsRate') speak('이 정도 크기와 빠르기로 말할게요.', 1, true);
     const y=$('#setBody').scrollTop; renderSettings(); $('#setBody').scrollTop=y; return; }
   const keepY=()=>{ const y=$('#setBody').scrollTop; renderSettings(); $('#setBody').scrollTop=y; };
+  const sb=e.target.closest('[data-snd]'); if(sb){ const k=sb.dataset.snd; unlockAudio();
+    if(k==='tick') tick(); else if(k==='chime') chime(); else speak('안녕하세요. 꿈트리 푸드테크 서빙로봇이에요. 삼번 테이블로 갈게요.', 1, true);
+    setTimeout(sndInfo, 300); setTimeout(sndInfo, 2500); return; }
   const qb=e.target.closest('[data-qr]'); if(qb){ showQR(qb.dataset.qr); return; }
   if(e.target.closest('[data-license]')){ showLicense(); return; }
   const pd=e.target.closest('[data-pickdest]'); if(pd){ const k=pd.dataset.pickdest;
