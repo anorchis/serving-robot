@@ -1447,7 +1447,7 @@ function showQR(k){
   $('#modal').onclick=e=>{ if(e.target.closest('[data-m="x"]')) closeModal(); if(e.target.closest('[data-m="here"]')){ closeModal(); openAdmin(); } };
 }
 function sndInfo(){ const el=$('#sndInfo'); if(!el) return; let vs=[]; try{ vs=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang)); }catch(e){}
-  el.innerHTML = `소리 장치: <b>${actx?actx.state:'아직 없음'}</b> · 한국어 목소리 <b>${vs.length}</b>개${vs.length?' ('+vs.slice(0,3).map(v=>esc(v.name)+(v.localService?'':'·인터넷')).join(', ')+')':''}<br>음성 상태: <b>${esc(ttsLog)}</b> · 앱 버전 ${VERSION}<br>소리가 하나도 안 나면 기기 음량·무음 모드를 확인하고, 화면을 한 번 누른 뒤 다시 눌러 봐요.${vs.length?'':'<div class="snd-warn">⚠️ 이 기기에 한국어 목소리가 없어서 음성이 안 나와요.<br>갤럭시: 설정 → 접근성 → TalkBack(켜지 말고) → 설정 → 텍스트 음성 변환 설정 → 기본 엔진을 「Google 음성 인식 및 합성」으로 → ⚙ → 음성 데이터 설치 → 한국어 받기 → 크롬을 완전히 껐다 켜기</div>'}`; }
+  el.innerHTML = `소리 장치: <b>${actx?actx.state:'아직 없음'}</b> · 한국어 목소리 <b>${vs.length}</b>개${vs.length?' ('+vs.slice(0,3).map(v=>esc(v.name)+(v.localService?'':'·인터넷')).join(', ')+')':''}<br>음성 상태: <b>${esc(ttsLog)}</b> · 앱 버전 ${VERSION}<br>소리가 하나도 안 나면 기기 음량·무음 모드를 확인하고, 화면을 한 번 누른 뒤 다시 눌러 봐요.${vs.length?'':'<div class="snd-warn">⚠️ 이 기기에 한국어 목소리가 없어서 음성이 안 나와요.<br>갤럭시: 설정 → 일반 → 글자 읽어주기 → 기본 엔진을 「Google 음성 인식 및 합성」으로 → ⚙ → 음성 데이터 설치 → 한국어 받기 → 크롬을 완전히 껐다 켜기</div>'}`; }
 function showLicense(){
   const L=[['qrcode-generator 1.4.4','Kazuhiko Arase','MIT License'], ['배민 한나체 Pro (BMHANNAPro)','(주)우아한형제들','배민글꼴 사용 허가 (무료 · 상업적 사용 가능)']];
   $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
@@ -2037,8 +2037,8 @@ function renderSettings(){
       <div class="snd-info" id="sndInfo"></div></div></div>
     <div class="card"><h3>🛠 음성(TTS)이 안 나올 때 <span class="r">안드로이드·갤럭시</span></h3><div class="box"><ol class="snd-help">
       <li>위 「음성」을 눌렀을 때 <b>한국어 목소리 0개 · 오류: synthesis-failed</b>가 나오면 기기에 한국어 목소리가 없는 거예요</li>
-      <li><b>갤럭시: 설정 → 접근성 → TalkBack</b> → (⚠️ TalkBack 스위치는 켜지 마세요) 그 화면의 <b>「설정」 → 「텍스트 음성 변환 설정」</b><br><small>다른 안드로이드: 설정 🔍 검색 「TTS」 또는 「텍스트 음성」 → 텍스트 음성 변환 출력</small></li>
-      <li><b>기본 엔진</b> 오른쪽 ⚙ → 「<b>Google 음성 인식 및 합성</b>」 · 목록에 없으면 Play 스토어에서 「Google 음성 인식 및 합성」 설치(「사용 중지됨」이면 「사용」)</li>
+      <li><b>갤럭시: 설정 → 일반 → 글자 읽어주기 → 기본 엔진</b><br><small>없으면: 설정 → 접근성 → TalkBack(⚠️ 켜지 말고) → 설정 → 텍스트 음성 변환 설정 · 다른 안드로이드: 설정 🔍 「TTS」</small></li>
+      <li>「<b>Google 음성 인식 및 합성</b>」을 골라요 (삼성 엔진은 삼성 계정이 필요해요)<br><small>안 바뀌면: Play 스토어에서 「Google 음성 인식 및 합성」 설치·업데이트·「사용」 → 다시 선택</small></li>
       <li><b>음성 데이터 설치 → 한국어(대한민국)</b> 받기</li>
       <li><b>크롬을 완전히 껐다가</b>(최근 앱에서 밀어서 닫기) 다시 열기</li>
       <li>다시 「음성」을 눌러 <b>한국어 목소리 1개 이상 · 말하는 중 ✓</b>이 나오면 해결!</li>
