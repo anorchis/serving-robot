@@ -1500,7 +1500,7 @@ function renderAdmin(){
   }else{
     const top = `<div class="ad-top"><button class="iconbtn" data-ad="${adView==='modes'?'back':'modes'}" aria-label="메뉴"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>${AD_LOGO}<button class="out" data-ad="logout">로그아웃</button></div>`;
     if(adView==='modes') h = top + `<div class="ad-body"><h3>꾸미고 싶은 모드를 눌러주세요.</h3>
-      <div class="ad-modes"><button data-adm="serve">서빙모드</button><button data-adm="roam">돌아다니기 모드</button><button data-adm="guide">안내모드</button><button data-adm="promo">홍보모드</button><button data-adm="bgm">배경음</button><button class="fill" data-adm="sync">로봇 동기화</button></div></div>`;
+      <div class="ad-modes"><button data-adm="serve">서빙모드</button><button data-adm="roam">돌아다니기 모드</button><button data-adm="guide">안내모드</button><button class="fill" data-adm="promo">홍보모드</button><button data-adm="bgm">배경음</button><button data-adm="sync">로봇 동기화</button></div></div>`;
     else { const m=adView, nm=m==='roam'?'돌아다니기모드':'홍보모드';
       h = top + `<div class="ad-body">${m==='promo'?newMenuCard():''}<h3>${nm}에서 꾸미고 싶은<br>화면을 클릭해주세요.</h3>
       <div class="ad-pick" data-adedit="${m}"><span class="tagb">${m==='roam'?'돌아다니기':'홍보'}</span><div class="ph-frame" style="position:absolute;inset:0;border:0;border-radius:0;width:auto">${contentHTML(S.content[m], imgOf(m), false)}</div></div></div>`; }
