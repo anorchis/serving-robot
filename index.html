@@ -1035,7 +1035,8 @@ document.addEventListener('pointerdown', keepAwake, {once:false, passive:true});
 /* ═════════ 서빙 홈 ═════════ */
 let kind='serve';            // serve | birthday | collect
 let slots=[], active=0, soup=false, typed='';
-function resetSlots(){ slots=Array.from({length:S.trays},()=>null); active=0; typed=''; }
+function myTable(){ try{ const P=(typeof BZ!=='undefined' && BZ.fam!=null) ? bizMine() : null; return P && bizCur() ? P.table : null; }catch(e){ return null; } }   // 영업 중이면 우리 가족 담당 테이블
+function resetSlots(){ slots=Array.from({length:S.trays},()=>null); active=0; typed=''; const T=myTable(); if(T){ slots[0]=T; active=Math.min(1,S.trays-1); } }   // 우리 테이블은 미리 들어가 있어요
 resetSlots();
 
 function renderHome(){
@@ -1305,7 +1306,7 @@ function renderGuide(){
     h = top + `<div class="gd"><div class="gd-center"><div class="gd-ok"><svg class="ico" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>확인 완료</div>
       <div class="gd-box"><div><span>예약여부</span><b>${gParty.reserved?'예약':'방문'}</b></div><div><span>인원</span><b>${gParty.count}명</b></div></div></div>
       <div class="gd-hint" style="margin-bottom:.4rem">잠시 기다리시면<br>직원이 도와드리겠습니다</div>
-      <button class="gd-staff" data-g="staff">직원: 안내할 테이블 선택</button></div>`;
+      <button class="gd-staff" data-g="staff">${myTable()?`직원: ${myTable()}번 테이블로 안내`:'직원: 안내할 테이블 선택'}</button></div>`;
   }
   $('#guide').innerHTML = h;
   if(gstep==='welcome') speak(S.guideMent);
@@ -1333,6 +1334,7 @@ $('#guide').addEventListener('click', e=>{
   else if(a==='yes' || a==='no'){ gParty.reserved = a==='yes'; gstep='people'; renderGuide(); speak('몇 분이신가요?'); }
   else if(a==='count'){ pickList('인원을 선택해 주세요', Array.from({length:10},(_,i)=>[i+1, (i+1)+'명']), gParty.count, v=>{ gParty.count=v; renderGuide(); }); }
   else if(a==='countok'){ gstep='confirm'; renderGuide(); speak('잠시 기다리시면 직원이 도와드리겠습니다.'); }
+  else if(a==='staff' && myTable()){ const n=myTable(); startGuide({type:'table', num:n, label:tableLabel(n), trays:[]}); }   // 영업 중: 담당 테이블로 바로
   else if(a==='staff'){ pickList('안내할 테이블을 선택하세요', Array.from({length:S.destCount},(_,i)=>[i+1, tableLabel(i+1)]), null, n=>{ startGuide({type:'table', num:n, label:tableLabel(n), trays:[]}); }); }
 });
 function startGuide(st){ trip={kind:'guide', stops:[st], i:0, soup:false, slots:[], returning:false, party:{...gParty}}; goMove(); }
@@ -1530,7 +1532,7 @@ setInterval(()=>{
 /* ═════════ 홍보하기 (실제 앱 흐름)
    미리보기 + 홍보 장소 미설정 → [홍보 장소 바꾸기] 홍보장소 설정 → [홍보 시작] 홍보 장소로 이동중 → (도착했어요) 홍보 화면(멘트 한 번) */
 var promoRun=false, pmDraft=null, pmSet=false;
-function openPromo(){ OPENED.promo=Date.now(); promoRun=false; S.promoPlace=null; save(); pmSet=false; renderPromo(); show('promo'); }   // 홍보하기를 열 때마다 장소 설정부터
+function openPromo(){ OPENED.promo=Date.now(); promoRun=false; S.promoPlace=myTable(); save(); pmSet=false; renderPromo(); show('promo'); }   // 홍보하기를 열 때마다 장소 설정부터
 function renderPromo(){
   if(pmSet){
     const v=pmDraft, keyHTML=(n,attr)=>`<button class="key" ${attr}="${n}">${n}${S.showDest&&S.names[n]?`<small>${esc(S.names[n])}</small>`:''}</button>`;
@@ -1615,7 +1617,7 @@ function bizLines(id, P){
     {t:'<b>손님 역할</b>이 「어서오세요」 화면을 터치해요', ok:()=>gAt(1)||gt()},
     {t:'예약했는지 「네 / 아니오」를 골라요', ok:()=>gAt(2)||gt()},
     {t:`손님 수에 맞게 인원을 골라 「확인」 (${T}번 테이블 손님 ${P.party}명)`, ok:()=>gAt(3)||gt()},
-    {t:`직원: 아래 「안내할 테이블 선택」에서 <b>${T}번</b>`, ok:()=>gt()},
+    {t:`직원: 「<b>${T}번 테이블로 안내</b>」를 눌러요`, ok:()=>gt()},
     {t:`${T}번 테이블에 닿으면 「<b>도착했어요</b>」`, ok:()=>gt() && (current==='arrive'||ret())},
     {t:`「복귀하기」 → ${waitPlace()}에 오면 「<b>도착했어요</b>」`} ]; }
   if(id==='promo'){ const pt=()=>tk()==='promoGo', st0=stageStart('promo'), mk=k=>((BZ.mk||{})[k]||0)>st0, up=()=>mk('up_promo')||mk('sync_promo'), sy=()=>mk('sync_promo');
@@ -1628,9 +1630,7 @@ function bizLines(id, P){
     {t:'「<b>이미지/동영상 넣기</b>」 → 「내 파일 업로드」로 우리가 만든 포스터를 골라요', ok:()=>mk('up_promo')},
     {t:'「<b>저장하기</b>」 → 「<b>동기화 적용</b>」', ok:()=>sy()},
     {t:'☰ 메뉴 → <b>홍보하기</b>를 눌러요', ok:()=>(OPENED.promo||0)>((BZ.mk||{}).sync_promo||0) && sy()||pt()},
-    {t:'「<b>홍보 장소 바꾸기</b>」를 눌러요', ok:()=>(current==='promo'&&pmSet)||S.promoPlace===T||pt()},
-    {t:`목록에서 <b>${T}번</b>을 고르고 「적용」`, ok:()=>(S.promoPlace===T&&!pmSet)||pt()},
-    {t:'「<b>홍보 시작</b>」을 눌러요', ok:()=>pt()},
+    {t:`홍보 장소가 <b>${T}번</b>으로 정해져 있어요 · 「<b>홍보 시작</b>」을 눌러요`, ok:()=>pt()},
     {t:`${T}번 테이블에 닿으면 「<b>도착했어요</b>」 → 손님에게 포스터를 보여 줘요`} ]; }
   if(id==='serve'){ const st=()=>tk()==='serve'||tk()==='birthday';
     const ss=bizStores(P), kt=()=>tk()==='kitchen', kd=sx=>((BZ.kit||{})[sx]||0)>stageStart('serve');
@@ -1638,9 +1638,8 @@ function bizLines(id, P){
       {t:`위쪽 <b>냄비 모양 주방 아이콘</b> → ${ss.map(sx=>'<b>'+STORES[sx].name+'</b>').join(' → ')} 순서로 고르고 「보내기」`, ok:()=>kt()||ss.some(kd)}];
     ss.forEach(sx=>{ const its=P.items.filter(i=>Math.floor(i/5)===sx);
       a.push({t:`<b>${STORES[sx].name}</b> 주방에 닿으면 「도착했어요」 → ${its.map(i=>esc(menuName(i))).join('·')} 싣고 「<b>로봇 보내기</b>」`, ok:()=>kd(sx)}); });
-    a.push({t:'주방에서 기다려요. 서빙 화면에서 목적지를 골라요', ok:()=>current==='home'||st()});
+    a.push({t:`주방에서 기다려요. 서빙 화면에 <b>${T}번</b>이 들어가 있어요`, ok:()=>current==='home'||st()});
     if(P.bday) a.push({t:'🎂 오늘 생일 손님! 위쪽 <b>케이크 아이콘</b>을 눌러요', ok:()=>kind==='birthday'||tk()==='birthday'});
-    a.push({t:`목적지 <b>${T}번</b>을 눌러요`, ok:()=>slots.includes(T)||st()});
     if(P.soup) a.push({t:'🍲 국물 메뉴가 있어요! 「<b>국물 모드</b>」를 켜요', ok:()=>soup||(st()&&trip.soup)});
     a.push({t:'「<b>보내기</b>」를 눌러요', ok:()=>st()},
       {t:`${T}번 테이블에 닿으면 「<b>도착했어요</b>」`, ok:()=>st() && (current==='arrive'||ret())},
@@ -1649,19 +1648,19 @@ function bizLines(id, P){
   if(id==='collect'){ const ct=()=>tk()==='collect'; return [
     {t:'☰ 메뉴 → <b>서빙하기</b>를 눌러요', ok:()=>current==='home'||ct()},
     {t:'위쪽 <b>🥣 그릇 회수</b> 아이콘을 눌러요', ok:()=>kind==='collect'||ct()},
-    {t:`<b>${T}번</b>을 누르고 「보내기」`, ok:()=>ct()},
+    {t:`<b>${T}번</b>이 들어가 있어요 · 「<b>보내기</b>」를 눌러요`, ok:()=>ct()},
     {t:'테이블에서 그릇을 싣고 「<b>로봇 보내기</b>」', ok:()=>ct() && (trip.i>=1||ret())},
     {t:'식기 반납대에서 그릇을 내리고 「<b>로봇 보내기</b>」', ok:()=>ct() && ret()},
     {t:`${waitPlace()}에 오면 「<b>도착했어요</b>」`} ]; }
   return [
     {t:'☰ 메뉴 → <b>돌아다니기</b>를 눌러요', ok:()=>(OPENED.roam||0)>stageStart('event')},
     {t:'「돌아다니기 경로 확인/수정」 → 「<b>+ 경로추가</b>」', ok:()=>current==='redit'||S.routes.some(r=>r.stops.some(x=>x.t===T))},
-    {t:`아래 테이블 번호에서 우리 테이블 <b>${T}번</b>을 누르고 「확인」`, ok:()=>S.routes.some(r=>r.stops.some(x=>x.t===T))},   // 경로명은 「경로1」로 이미 들어가 있어요
+    {t:`경로에 우리 테이블 <b>${T}번</b>이 들어가 있어요 · 「<b>확인</b>」을 눌러요`, ok:()=>S.routes.some(r=>r.stops.some(x=>x.t===T))},   // 경로명은 「경로1」로 이미 들어가 있어요
     {t:'「<b>로봇 출발</b>」 → 리뷰 이벤트를 보여 주며 돌아다녀요', ok:()=>((BZ.mk||{}).roamGo||0)>stageStart('event')},
     {t:'<b>n행시</b>를 짓고 돌아오세요', ok:()=>((BZ.mk||{}).poem||0)>stageStart('event')||((BZ.mk||{}).roamEnd||0)>stageStart('event')},
     {t:'위쪽 <b>냄비 모양 주방 아이콘</b> → 「<b>한글날 간식 매대</b>」 고르고 「보내기」', ok:()=>(tk()==='kitchen' && trip.stops.some(x=>x.store==='snack'))||((BZ.mk||{}).snackLoad||0)>stageStart('event')},
     {t:'간식 매대에 닿으면 「도착했어요」 → 간식을 싣고 「<b>로봇 보내기</b>」', ok:()=>((BZ.mk||{}).snackLoad||0)>stageStart('event')},
-    {t:`서빙 화면에서 우리 테이블 <b>${T}번</b>을 누르고 「보내기」`, ok:()=>(tk()==='serve'||tk()==='birthday') && trip.stops.some(x=>x.num===T)},
+    {t:`서빙 화면에 <b>${T}번</b>이 들어가 있어요 · 「<b>보내기</b>」를 눌러요`, ok:()=>(tk()==='serve'||tk()==='birthday') && trip.stops.some(x=>x.num===T)},
     {t:`${T}번 테이블에 닿으면 「도착했어요」 → 리뷰 쓴 손님에게 간식을 드리고 「로봇 보내기」 → ${waitPlace()}에 오면 「도착했어요」`} ];
 }
 function bizLineIdx(id){ return (BZ.li||{})[id]||0; }
@@ -1861,7 +1860,7 @@ $('#rpath').addEventListener('click', e=>{
 });
 function openREdit(i){
   rIdx=i;
-  rDraft = i>=0 ? JSON.parse(JSON.stringify(S.routes[i])) : {name:'경로'+(S.routes.length+1), wait:30, stops:[]};   // 새 경로는 「경로1」처럼 이름이 미리 들어가 있어요
+  rDraft = i>=0 ? JSON.parse(JSON.stringify(S.routes[i])) : {name:'경로'+(S.routes.length+1), wait:30, stops: myTable() ? [{t:myTable(), w:30}] : []};   // 새 경로는 「경로1」처럼 이름이 미리 들어가 있어요
   renderREdit(); show('redit');
 }
 function renderREdit(){
@@ -1925,7 +1924,7 @@ function openDrawer(){
   $('#dim').classList.add('on'); $('#drawer').classList.add('on');
 }
 function closeDrawer(){ $('#dim').classList.remove('on'); $('#drawer').classList.remove('on'); }
-function goServe(){ renderHome(); show('home'); }
+function goServe(){ const T=myTable(); if(T && slots.every(x=>x==null)){ slots[0]=T; active=Math.min(1,S.trays-1); } renderHome(); show('home'); }
 document.addEventListener('click', e=>{
   const a=e.target.closest('[data-act]'); if(!a) return;
   const act=a.dataset.act;
