@@ -85,7 +85,8 @@
   #confetti { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:40; }
   .shot { position:relative; }
   .shot img { display:block; width:100%; height:auto; border-radius:22px; }
-  .mark { position:absolute; border:5px solid #E53935; border-radius:14px; box-shadow:0 0 0 4px rgba(229,57,53,.2); pointer-events:none; }
+  .mark { position:absolute; border:5px solid #E53935; border-radius:14px; box-shadow:0 0 0 4px rgba(229,57,53,.2); cursor:pointer; }
+  .mark:hover { background:rgba(229,57,53,.12); }
   .act { display:flex; flex-direction:column; justify-content:center; align-items:flex-start; gap:16px; }
   .act-t { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:40px; line-height:1.18; }
   .act-k { font-size:22px; line-height:1.5; color:var(--ink-soft); }
@@ -240,7 +241,7 @@
     <span class="tag orange in">오늘의 활동</span><div class="h2 split in">우리 가게, 이렇게 꾸며요 ✨</div>
   </div>
   <!-- 왼쪽: 활동 ① 홍보 -->
-  <div class="abs f" data-f="1" style="left:4.6%; top:19.6%; width:23.6%;"><div class="phone"><div class="shot"><img src="앱_화면/3_홍보모드_신메뉴.png" alt="홍보모드 화면"><span class="mark" style="left:6.3%; top:26.6%; width:44%; height:8.6%;"></span></div></div></div>
+  <div class="abs f" data-f="1" style="left:4.6%; top:19.6%; width:23.6%;"><div class="phone"><div class="shot"><img src="앱_화면/3_홍보모드_신메뉴.png" alt="홍보모드 화면"><a class="mark" href="https://gemini.google.com/share/ae3138dbbf49?social_preview=false&amp;skid=21390b04-b78c-4dd7-b215-2768c12e827c" target="_blank" rel="noopener" title="메뉴명 짓기 앱 열기 (새 탭)" style="left:6.3%; top:26.6%; width:44%; height:8.6%;"></a></div></div></div>
   <div class="abs f act" data-f="1" style="left:29.4%; top:22%; width:15.6%; height:58%;">
     <span class="step-no">활동 ① 홍보</span>
     <div class="act-t">신메뉴 이름<br>+ 포스터</div>
@@ -248,7 +249,7 @@
     <ol><li>오늘 메뉴에 <b>새 이름</b></li><li><b>포스터</b> 만들기</li><li><b>홍보모드</b>로 홍보하기</li></ol>
   </div>
   <!-- 오른쪽: 활동 ② 이벤트 -->
-  <div class="abs f" data-f="2" style="left:49%; top:19.6%; width:23.6%;"><div class="phone"><div class="shot"><img src="앱_화면/4_돌아다니기_이벤트.png" alt="리뷰 이벤트 화면"><span class="mark" style="left:2.2%; top:73.6%; width:48.4%; height:10.6%;"></span></div></div></div>
+  <div class="abs f" data-f="2" style="left:49%; top:19.6%; width:23.6%;"><div class="phone"><div class="shot"><img src="앱_화면/4_돌아다니기_이벤트.png" alt="리뷰 이벤트 화면"><a class="mark" href="https://gemini.google.com/share/44429b2578dc?social_preview=false&amp;skid=28d3791a-c71c-46d4-84ea-27049e6671d0" target="_blank" rel="noopener" title="n행시 짓기 앱 열기 (새 탭)" style="left:2.2%; top:73.6%; width:48.4%; height:10.6%;"></a></div></div></div>
   <div class="abs f act" data-f="2" style="left:74.4%; top:22%; width:20.6%; height:58%;">
     <span class="step-no" style="background:var(--mint-deep);">활동 ② 이벤트</span>
     <div class="act-t">n행시<br>리뷰 이벤트</div>
