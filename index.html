@@ -1420,7 +1420,8 @@ function newMenuCard(){
   const m=MS();
   const st0=stageStart('promo'), posterDone=((BZ.mk||{}).poster||0)>st0, nameDone=cand.includes(m.newFood)&&!!m.newName;
   return `<div class="nm-card"><b>🌟 한글날 100주년 신메뉴 · 홍보 준비</b>
-    <div class="nm-step ${nameDone?'ok':''}"><span>${nameDone?'✓':'1'}</span><div><b>새 이름 짓기</b><small>오늘 손님이 주문할 메뉴 중 하나를 골라 한글날 100주년 기념 새 이름을 붙여요 · 앱 전체에 바로 적용돼요</small></div></div>
+    <div class="nm-step ${nameDone?'ok':''}"><span>${nameDone?'✓':'1'}</span><div><b>새 이름 짓기</b><small>오늘 손님이 주문할 메뉴 중 하나를 골라 한글날 100주년 기념 새 이름을 붙여요 · 앱 전체에 바로 적용돼요</small></div>
+      <a class="nm-btn" href="ogam.html?cand=${cand.join(',')}" style="text-decoration:none">👀👂 오감 탐험으로 짓기</a></div>
     <div class="nm-pick">${cand.map(i=>`<button class="${m.newFood===i?'on':''}" data-nmf="${i}">${foodPic(i)}${FOODS[i]}</button>`).join('')}</div>
     <input class="inp nm-inp" id="nmName" maxlength="12" placeholder="새 이름 (12글자까지) 예: 바삭바삭 황금 튀김" value="${esc(cand.includes(m.newFood)?m.newName:'')}">
     ${nameDone?`<div class="nm-ok">✓ 「${esc(FOODS[m.newFood])}」 → 「${esc(m.newName)}」로 바뀌었어요</div>`:''}
@@ -2220,6 +2221,13 @@ function ding(){
 if(S.guideStart>4) S.guideStart=null;   // 예전(테이블 번호) 출발지는 지워요
 if(S.guideStart && BZ.fam!==S.guideStart-1) bizStart(S.guideStart-1);
 goServe(); renderStrip();
+/* 오감 탐험(ogam.html)에서 「서빙로봇 앱에 넣기」로 오면: ?nf=음식번호&nn=새이름 */
+{ const q=new URLSearchParams(location.search), nf=q.get('nf'), nn=(q.get('nn')||'').trim().slice(0,12);
+  if(nf!=null && nn){ history.replaceState(null,'',location.pathname); const P=bizMine(), f=+nf;
+    if(!P) setTimeout(()=>toast('강사님이 가족 번호를 먼저 정해야 신메뉴를 넣을 수 있어요', true), 300);
+    else if(!P.keep.includes(f)) setTimeout(()=>toast(`「${FOODS[f]}」는 오늘 손님 메뉴가 아니에요 · ${P.keep.map(i=>FOODS[i]).join('·')} 중에서 지어 주세요`, true), 300);
+    else { MS().newFood=f; MS().newName=nn; save(); bizMark('name'); setTimeout(()=>toast(`🌟 「${FOODS[f]}」 → 「${nn}」 신메뉴 이름을 넣었어요!`, true), 300);
+      if(sessionStorage.getItem('srv_admin_in')){ adView='promo'; renderAdmin(); show('admin'); } } } }
 </script>
 </body>
 </html>
