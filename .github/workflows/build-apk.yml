@@ -1,0 +1,66 @@
+name: Build Offline APK
+
+# 앱(index.html 등)이나 android 폴더가 바뀌면 인터넷 없이 쓰는 태블릿용 APK를 새로 만들어요
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'slides/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Copy web app into APK
+        run: |
+          W=android/app/src/main/assets/www
+          mkdir -p $W
+          cp -r index.html BMHANNAPro.ttf food.png img lib $W/
+          rm -f $W/img/poster_example_src.html
+          cp android/android-tts.js $W/
+          # 음성 다리를 가장 먼저 읽게 <head> 맨 앞에 넣기
+          sed -i '0,/<head>/s//<head>\n<script src="android-tts.js"><\/script>/' $W/index.html
+          # 관리자 QR은 휴대폰에서 열려야 하니 웹 주소로
+          sed -i "s|location.href.split('#')\[0\] + '#admin'|'https://anorchis.github.io/serving-robot/#admin'|" $W/index.html
+          grep -c 'android-tts.js' $W/index.html
+          grep -c "serving-robot/#admin" $W/index.html
+
+      - name: Install Gradle 8.4
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.4-bin.zip
+          unzip -q gradle-8.4-bin.zip -d /opt
+          echo "/opt/gradle-8.4/bin" >> $GITHUB_PATH
+
+      - name: Build debug APK
+        working-directory: android
+        run: |
+          gradle assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk ../serving-robot.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: serving-robot-offline
+          path: serving-robot.apk
+          retention-days: 30
+
+      - name: Release APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: 서빙로봇 오프라인 APK
+          files: serving-robot.apk
+          body: "인터넷 없이 태블릿에서 쓰는 서빙로봇 앱 (최신 빌드)"

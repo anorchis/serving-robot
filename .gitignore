@@ -3,3 +3,9 @@ index_*.html
 food_원본.png
 사용안내.md
 img/poster_example_src.html
+
+# 안드로이드 빌드 결과물
+android/.gradle/
+android/app/build/
+android/build/
+android/app/src/main/assets/
