@@ -1798,7 +1798,7 @@ $('#rpath').addEventListener('click', e=>{
 });
 function openREdit(i){
   rIdx=i;
-  rDraft = i>=0 ? JSON.parse(JSON.stringify(S.routes[i])) : {name:'', wait:30, stops:[]};
+  rDraft = i>=0 ? JSON.parse(JSON.stringify(S.routes[i])) : {name:'경로'+(S.routes.length+1), wait:30, stops:[]};   // 새 경로는 「경로1」처럼 이름이 미리 들어가 있어요
   renderREdit(); show('redit');
 }
 function renderREdit(){
