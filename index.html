@@ -419,7 +419,7 @@ html.bz-on #bizStrip{display:block}
 .nm-step small{display:block;font-size:.75rem;color:var(--ink2);margin-top:.15rem;word-break:keep-all}
 .nm-btn{flex:none;align-self:center;background:#e9774c;color:#fff;border-radius:1rem;padding:.4rem .8rem;font-size:.78rem;font-weight:700}
 .nm-step.ok .nm-btn{background:#fff;color:var(--ink3);box-shadow:0 0 0 1px #e3e6ea inset}
-.roam-done{position:absolute;left:1rem;right:1rem;bottom:calc(env(safe-area-inset-bottom) + 3.4rem);z-index:5;height:3.6rem;border-radius:1rem;background:#2cc2b5;color:#fff;font-weight:800;font-size:1.2rem;box-shadow:0 .3rem 1rem rgba(0,0,0,.15)}
+.roam-done{position:absolute;left:1rem;right:1rem;bottom:calc(env(safe-area-inset-bottom) + 3.4rem);z-index:5;height:3.6rem;border-radius:1rem;background:#2cc2b5;color:#fff;font-weight:800;font-size:1.25rem;box-shadow:0 .3rem 1rem rgba(0,0,0,.15)}
 .roam-links{position:absolute;left:1rem;right:1rem;bottom:calc(env(safe-area-inset-bottom) + 3.4rem);}
 .roam-done ~ .roam-links{bottom:calc(env(safe-area-inset-bottom) + 7.7rem);}
 .roam-links{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;z-index:5}
@@ -805,13 +805,13 @@ const FOODS = [ // food.png 스프라이트 (행 0~3, 열 0~4)
   '떡볶이','순대','튀김','라면','김밥','비빔밥','된장찌개','불고기','냉면','제육볶음',
   '초밥','라멘','짜장면','짬뽕','마라탕','파스타','피자','스테이크','햄버거','리조또'];
 const BGS = [
-  {id:'white', bg:'#ffffff', fg:'#1f2328', sub:'#5b6370'},
-  {id:'blue',  bg:'linear-gradient(160deg,#7b7fe3 0%,#6aa6e8 100%)', fg:'#ffffff', sub:'#eef3ff'},
-  {id:'pink',  bg:'linear-gradient(160deg,#ffb3c6 0%,#ff8fab 100%)', fg:'#ffffff', sub:'#fff2f6'},
-  {id:'cream', bg:'#fff4d6', fg:'#6b3d12', sub:'#8a5a2b'},
-  {id:'mint',  bg:'linear-gradient(160deg,#5fd3c4 0%,#2cb5a8 100%)', fg:'#ffffff', sub:'#effffb'},
-  {id:'navy',  bg:'#1d2b4f', fg:'#ffffff', sub:'#c9d4f2'},
-  {id:'hanji', bg:'#f3ead8', fg:'#2b2118', sub:'#6d5a43'},
+  {id:'white', bg:'#ffffff', fg:'#1f2328', sub:'#5b6370', btn:'#2b2f36'},   // btn: 화면 위 버튼 색 (배경과 같은 계열로)
+  {id:'blue',  bg:'linear-gradient(160deg,#7b7fe3 0%,#6aa6e8 100%)', fg:'#ffffff', sub:'#eef3ff', btn:'#4b4fc4'},
+  {id:'pink',  bg:'linear-gradient(160deg,#ffb3c6 0%,#ff8fab 100%)', fg:'#ffffff', sub:'#fff2f6', btn:'#e8517f'},
+  {id:'cream', bg:'#fff4d6', fg:'#6b3d12', sub:'#8a5a2b', btn:'#c46a1f'},
+  {id:'mint',  bg:'linear-gradient(160deg,#5fd3c4 0%,#2cb5a8 100%)', fg:'#ffffff', sub:'#effffb', btn:'#127f75'},
+  {id:'navy',  bg:'#1d2b4f', fg:'#ffffff', sub:'#c9d4f2', btn:'#ff8a3d'},
+  {id:'hanji', bg:'#f3ead8', fg:'#2b2118', sub:'#6d5a43', btn:'#8a5a2b'},
 ];
 // 꿈트리 갤러리의 예시 포스터 (홍보 화면 포스터 영역 1200×1760 · 세로 2:3)
 const POSTERS = [['img/poster_example.png','한글날 우리말 새 메뉴'], ['img/poster_burger.png','두툼 버거 & 바싹 감튀'], ['img/poster_malatang.png','달큼알알 마라탕'], ['img/poster_tteokbokki.png','달큼알알 쫀득 떡볶이']];
@@ -1405,7 +1405,7 @@ function goDisplay(mode){
   displayMode=mode;
   const c=S.content[mode];
   $('#display').innerHTML = contentHTML(c, imgOf(mode), false)
-    + (mode==='roam' && bizCur() && bizCur().id==='event' ? `<button class="roam-done" data-reviewdone>✅ 리뷰 쓰기 완료</button>` : '')   // 이벤트 미션 중: 손님이 리뷰를 다 쓰면 화면에서 바로
+    + (mode==='roam' && bizCur() && bizCur().id==='event' ? `<button class="roam-done" data-reviewdone style="background:${(BGS.find(x=>x.id===c.bg)||BGS[0]).btn}">✓ 리뷰 쓰기 완료</button>` : '')   // 이벤트 미션 중: 손님이 리뷰를 다 쓰면 화면에서 바로
     + (mode==='roam' ? `<div class="roam-links"><a href="${LINK_POEM}" target="_blank" rel="noopener">✍️ n행시 짓기 ↗<small>구글 로그인 필요 · 새 탭</small></a><a href="${LINK_PADLET}" target="_blank" rel="noopener">📌 우리 패들렛 ↗<small>새 탭으로 열려요</small></a></div>` : '');   // 돌아다니는 동안 손님이 바로 리뷰·n행시
   show('display');
   const nf=MS().newFood; speak(mode==='promo' && c.tts===DEFAULTS.content.promo.tts && isNew(nf) ? `한글날 100주년 신메뉴, ${menuName(nf)} 출시 기념! 할인 이벤트를 진행해요.` : c.tts, c.ttsRate);
