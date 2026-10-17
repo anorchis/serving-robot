@@ -384,7 +384,6 @@
     else if (e.key === 'Home') { cur = 0; enter(0); }
   });
   $('nextBtn').onclick = next; $('prevBtn').onclick = prev;
-  stage.addEventListener('click', e => { if (e.target.closest('button,a')) return; next(); });
   setTimeout(() => $('help').classList.add('hide'), 5000);
   const h = parseInt(location.hash.slice(1), 10);
   cur = (h >= 1 && h <= slides.length) ? h - 1 : 0;
