@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>꿈트리 푸드테크 영업 대작전</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<script src="lib/gsap.min.js"></script>
+<script>window.gsap || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"><\/script>')</script>
+<style>
+  @font-face { font-family: 'Hanna'; src: url('BMHANNAPro.ttf') format('truetype'); font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00AF, U+00B1-00B6, U+00B8-00FF, U+2010-2027, U+3000-303F, U+3130-318F, U+AC00-D7A3, U+FF00-FFEF; }
+  :root { --cream:#FFF8EC; --ink:#2E3A35; --ink-soft:#5d6a64; --orange:#FF8A3D; --orange-deep:#E8691C; --mint:#5CCFB0; --mint-deep:#1F9E85;
+    --yellow:#FFD45C; --coral:#F2706A; --sky:#6DB8EA; --sky-deep:#2F86C2; --violet:#A68BEA; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { height:100%; background:#f3ead9; overflow:hidden; color:var(--ink); font-family:'Gowun Dodum','Noto Sans KR',sans-serif; }
+  #viewport { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; }
+  #stage { position:relative; width:1600px; height:900px; transform-origin:center center; overflow:hidden; background:var(--cream); border-radius:6px; box-shadow:0 20px 60px rgba(80,50,10,.18); }
+  .slide { position:absolute; inset:0; visibility:hidden; }
+  .slide.active { visibility:visible; }
+  .bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; }
+  .abs { position:absolute; }
+  .tag { display:inline-block; background:#DFF5EE; color:var(--mint-deep); font-weight:700; font-size:22px; padding:8px 20px; border-radius:999px; white-space:nowrap; }
+  .tag.orange { background:#FFE7D6; color:var(--orange-deep); }
+  .h1 { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:86px; line-height:1.14; letter-spacing:-1px; }
+  .h2 { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:52px; line-height:1.2; letter-spacing:-.5px; }
+  .h3 { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:34px; line-height:1.25; }
+  .lead { font-size:28px; line-height:1.55; color:var(--ink-soft); }
+  .small { font-size:21px; line-height:1.5; color:var(--ink-soft); }
+  .accent { color:var(--orange-deep); } .mint { color:var(--mint-deep); } .sky { color:var(--sky-deep); }
+  .center { text-align:center; }
+  .ch { display:inline-block; will-change:transform; }
+  .cap { font-size:14px; color:#a3927a; }
+  .credit { position:absolute; left:2%; bottom:1.2%; font-size:12px; color:#a3927a; }
+  .photo { background:#fff; border-radius:22px; padding:10px; box-shadow:0 8px 22px rgba(80,50,10,.12); display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .photo img { width:100%; flex:1; min-height:0; object-fit:cover; border-radius:14px; }
+  .phone { background:#16181c; border-radius:30px; padding:10px; box-shadow:0 14px 30px rgba(40,30,10,.22); }
+  .phone img { display:block; width:100%; height:100%; object-fit:cover; object-position:top; border-radius:22px; }
+  .pin { display:flex; gap:14px; align-items:center; background:#fff; border-radius:18px; padding:12px 18px; box-shadow:0 5px 0 rgba(46,58,53,.07); font-size:24px; line-height:1.35; }
+  .pin .ico { font-size:38px; line-height:1; flex:none; }
+  .pin b { font-family:'Hanna','Gowun Dodum',sans-serif; font-weight:normal; font-size:28px; }
+  .key { display:inline-flex; align-items:center; justify-content:center; width:46px; height:46px; border-radius:12px; font-size:28px; font-weight:800; color:#fff; flex:none; }
+  .k-y { background:#F5C542; } .k-b { background:#2F6FBF; } .k-r { background:#E0574F; } .k-g { background:#5DBB63; } .k-o { background:#F2862E; }
+  .step-box { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:8px; padding:12px; }
+  .step-no { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:24px; color:#fff; background:var(--orange); border-radius:999px; padding:3px 16px; }
+  .step-title { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:29px; line-height:1.2; }
+  .formula { display:flex; align-items:center; justify-content:center; gap:14px; font-family:'Hanna','Gowun Dodum',sans-serif; font-size:32px; height:100%; }
+  .formula .pill { background:#fff; border-radius:16px; padding:4px 16px; }
+  .formula .ar { color:var(--mint-deep); font-family:'Gowun Dodum',sans-serif; font-weight:700; }
+  .mcard { position:absolute; top:28%; width:17.4%; height:52%; justify-content:center; background:#fff; border-radius:24px; box-shadow:0 8px 0 rgba(46,58,53,.06),0 6px 20px rgba(46,58,53,.07); display:flex; flex-direction:column; align-items:center; text-align:center; padding:22px 14px; gap:10px; }
+  .mcard .e { font-size:84px; line-height:1; }
+  .mcard .n { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:24px; color:#fff; background:var(--c); border-radius:999px; padding:2px 14px; }
+  .mcard .t { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:42px; }
+  .mcard .btn-name { font-size:22px; color:var(--c); font-weight:800; background:#F6F1E7; border-radius:10px; padding:4px 10px; }
+  .mcard .d { font-size:23px; line-height:1.45; color:var(--ink-soft); word-break:keep-all; }
+  .linkbtn { display:inline-flex; align-items:center; gap:10px; font-family:'Hanna','Gowun Dodum',sans-serif; font-size:28px; color:#fff; background:#E0453C; border-radius:999px; padding:12px 28px; text-decoration:none; box-shadow:0 6px 0 rgba(0,0,0,.12); }
+  .btn { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:24px; border:none; border-radius:14px; padding:10px 18px; cursor:pointer; color:#fff; background:var(--ink); box-shadow:0 5px 0 rgba(0,0,0,.15); }
+  .btn.orange { background:var(--orange); } .btn.sky { background:var(--sky-deep); } .btn.mint { background:var(--mint-deep); }
+  .btn:active { transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.15); }
+  .readout { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:28px; padding:8px 20px; border-radius:999px; display:inline-block; background:#DDF6EF; color:var(--mint-deep); }
+  .ex { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:30px; line-height:1.4; background:#fff; border-radius:18px; padding:14px 20px; box-shadow:0 5px 0 rgba(46,58,53,.07); }
+
+  .rule { display:flex; gap:14px; align-items:center; font-size:24px; line-height:1.4; padding:10px 0; border-bottom:2px dashed #EFE3CC; }
+  .rule:last-child { border-bottom:0; }
+  .rule .sv { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:26px; background:#F6EEDD; border-radius:10px; padding:4px 10px; white-space:nowrap; }
+  .rule b { font-family:'Hanna','Gowun Dodum',sans-serif; font-weight:normal; font-size:27px; }
+  .fk-rules .rule { padding:9px 0; font-size:27px; } .fk-rules .rule b { font-size:30px; } .fk-rules .rule .sv { font-size:26px; padding:3px 11px; }
+  .fk-rules .btn { font-size:30px; padding:12px 24px; }
+  .big-pins .pin { font-size:27px; padding:20px 26px; gap:20px; } .big-pins .pin b { font-size:35px; } .big-pins .pin .ico { font-size:52px; }
+  .pin .key { width:40px; height:40px; font-size:24px; }
+  .phone { position:relative; }
+  .redbox { position:absolute; left:4px; right:4px; top:4px; height:calc((100% - 20px) * .0812 + 12px); border:5px solid #E53935; border-radius:12px; pointer-events:none; box-shadow:0 0 0 3px rgba(229,57,53,.18); }
+  .mission-call { display:inline-block; font-family:'Hanna','Gowun Dodum',sans-serif; font-size:28px; color:#fff; background:#E53935; border-radius:999px; padding:6px 18px; box-shadow:0 5px 0 rgba(0,0,0,.12); }
+  .team { display:flex; align-items:center; justify-content:center; gap:16px; }
+  .team div { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .team span { font-size:76px; line-height:1; }
+  .team b { font-family:'Hanna','Gowun Dodum',sans-serif; font-weight:normal; font-size:26px; }
+  .team i { font-style:normal; font-family:'Hanna','Gowun Dodum',sans-serif; font-size:44px; color:var(--orange); margin-bottom:30px; }
+  .flowchips { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:16px; }
+  .flowchips span { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:25px; background:#F6F1E7; border-radius:14px; padding:8px 14px; white-space:nowrap; }
+  .flowchips em { font-style:normal; color:var(--mint-deep); font-weight:800; font-size:24px; }
+  .quote { background:rgba(255,255,255,.88); border-radius:24px; padding:18px 24px; font-size:23px; line-height:1.6; box-shadow:0 8px 22px rgba(80,50,10,.08); border-left:10px solid var(--mint); }
+  .quote b { font-family:'Hanna','Gowun Dodum',sans-serif; font-weight:normal; font-size:28px; color:var(--mint-deep); }
+  #confetti { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:40; }
+  .shot { position:relative; }
+  .shot img { display:block; width:100%; height:auto; border-radius:22px; }
+  .mark { position:absolute; border:5px solid #E53935; border-radius:14px; box-shadow:0 0 0 4px rgba(229,57,53,.2); pointer-events:none; }
+  .act { display:flex; flex-direction:column; justify-content:center; align-items:flex-start; gap:16px; }
+  .act-t { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:40px; line-height:1.18; }
+  .act-k { font-size:22px; line-height:1.5; color:var(--ink-soft); }
+  .redtag { display:inline-block; font-family:'Hanna','Gowun Dodum',sans-serif; font-size:23px; color:#E53935; border:3px solid #E53935; border-radius:10px; padding:1px 10px; margin-right:4px; background:#fff; }
+  .act ol { list-style:none; counter-reset:a; display:flex; flex-direction:column; gap:8px; font-size:22px; line-height:1.35; }
+  .act ol li { counter-increment:a; position:relative; padding-left:38px; }
+  .act ol li::before { content:counter(a); flex:none; width:28px; height:28px; border-radius:50%; background:#F6EEDD; font-family:'Hanna','Gowun Dodum',sans-serif; font-size:18px; display:flex; align-items:center; justify-content:center; position:absolute; left:0; top:2px; }
+  .act ol b { font-family:'Hanna','Gowun Dodum',sans-serif; font-weight:normal; font-size:24px; }
+  #progress { position:absolute; left:0; top:0; height:6px; background:var(--orange); z-index:50; width:0; }
+  #nav { position:fixed; right:18px; bottom:16px; display:flex; gap:8px; align-items:center; z-index:60; font-family:'Hanna','Gowun Dodum',sans-serif; }
+  #nav button { width:46px; height:46px; border-radius:50%; border:none; background:rgba(46,58,53,.75); color:#fff; font-size:22px; cursor:pointer; }
+  #nav .num { background:rgba(46,58,53,.75); color:#fff; border-radius:999px; padding:10px 16px; font-size:18px; }
+  #notes { position:fixed; left:50%; top:14px; transform:translateX(-50%); pointer-events:none; width:min(1100px,92vw); background:rgba(30,36,33,.94); color:#fff; border-radius:18px; padding:18px 24px; font-size:19px; line-height:1.6; z-index:60; display:none; }
+  #notes b { color:var(--yellow); }
+  #notes.show { display:block; }
+  #help { position:fixed; left:18px; bottom:18px; font-size:14px; color:#fff; background:rgba(46,58,53,.75); padding:6px 12px; border-radius:999px; z-index:60; transition:opacity .6s; }
+  #help.hide { opacity:0; pointer-events:none; }
+</style>
+</head>
+<body>
+<div id="viewport">
+<div id="stage">
+<div id="progress"></div>
+
+<!-- 1. 표지 -->
+<section class="slide" data-note="<b>인사:</b> “오늘 우리 가족은 한글날 100주년을 맞은 <b>푸드테크 사장님</b>이에요. 손님을 자리로 안내하고, 신메뉴를 홍보하고, 음식을 서빙하고, 이벤트까지 열어요. 우리 가게 직원은 바로 <b>서빙로봇</b>!” 흐름: 푸드테크 → 서빙로봇 → 카미봇 조종 → 오늘의 영업.">
+  <img class="bg" src="PPT배경템플릿_6종/01_표지형.png" alt="">
+  <div class="abs" style="left:5%; top:13%; width:56%;">
+    <div class="tag orange in">한글날 100주년 · 꿈트리 푸드테크</div>
+    <div class="h1 split in" style="margin-top:26px;">서빙로봇과 함께<br><span class="accent">영업 대작전!</span></div>
+    <div class="lead in" style="margin-top:22px;">오늘 우리 가족은 푸드테크 사장님이에요</div>
+    <div class="in" style="margin-top:26px; display:flex; flex-wrap:wrap; gap:10px; max-width:660px;">
+      <span class="tag">🍳 푸드테크</span><span class="tag">🤖 서빙로봇</span><span class="tag">🎮 카미봇 조종</span><span class="tag">🏪 오늘의 영업</span>
+    </div>
+  </div>
+</section>
+
+<!-- 2. 푸드테크란 -->
+<section class="slide" data-note="<b>질문으로 열기:</b> “식당에서 사람 대신 기계나 로봇이 일하는 걸 본 적 있나요?” 아이들 대답을 듣고 하나씩 보여 주세요(→). <b>푸드테크 = 음식(Food) + 기술(Technology)</b>. 주문(키오스크) · 요리(로봇 바리스타) · 서빙(서빙로봇) · 배달(배달로봇). 길게 설명하지 말고 1~2분 안에 넘어가요.">
+  <img class="bg" src="PPT배경템플릿_6종/04_큰작업공간형.png" alt="">
+  <div class="abs center" style="left:12%; top:4.5%; width:76%;"><div class="h2 split in">푸드테크 = <span class="accent">음식</span> + <span class="mint">기술</span></div></div>
+  <div class="abs" style="left:4%; top:25%; width:92%; height:66%; display:grid; grid-template-columns:repeat(4,1fr); gap:18px;">
+    <div class="photo f" data-f="1"><img src="푸드테크_사진/kiosk.jpg" alt="키오스크"><div class="h3">🧾 주문</div><span class="small">키오스크</span></div>
+    <div class="photo f" data-f="2"><img src="푸드테크_사진/barista.jpg" alt="로봇 바리스타"><div class="h3">🍳 요리</div><span class="small">로봇 바리스타</span></div>
+    <div class="photo f" data-f="3"><img src="푸드테크_사진/serving.jpg" alt="서빙로봇"><div class="h3">🍽️ 서빙</div><span class="small">서빙로봇</span></div>
+    <div class="photo f" data-f="4"><img src="푸드테크_사진/delivery.jpg" alt="배달로봇"><div class="h3">🛵 배달</div><span class="small">배달로봇</span></div>
+  </div>
+  <div class="credit">사진: Wikimedia Commons — N509FZ (CC BY-SA 4.0), Nick-D (CC BY-SA 4.0), MIKI Yoshihito (CC BY 2.0), Estormiz (CC0)</div>
+</section>
+
+<!-- 3. 서빙로봇은 어떻게 일할까 -->
+<section class="slide" data-note="<b>영상(1분 남짓):</b> 「영상 보기」를 누르면 새 탭에서 실제 서빙로봇 사용법 영상이 열려요. 보고 나서 묻기: “로봇은 어디서 음식을 싣고, 어디로 가고, 끝나면 어디로 갈까요?” → <b>주방에서 싣기 → 테이블로 이동 → 다시 대기 장소로</b>. 사람이 앱으로 목적지를 정해 주면 로봇이 움직여요. 오늘 우리도 앱으로 똑같이 해요!">
+  <img class="bg" src="PPT배경템플릿_6종/02_좌우비교형.png" alt="">
+  <div class="abs" style="left:4%; top:5%; width:85%; display:flex; align-items:center; gap:18px;">
+    <span class="tag orange in">서빙로봇</span><div class="h2 split in">서빙로봇은 어떻게 일할까? 🤖</div>
+  </div>
+  <div class="abs in" style="left:3.6%; top:25%; width:41%; height:52%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;">
+    <img src="푸드테크_사진/서빙로봇영상_썸네일.jpg" alt="서빙로봇 사용법 영상" style="width:100%; border-radius:18px; box-shadow:0 8px 20px rgba(0,0,0,.15);">
+    <a class="linkbtn" href="https://www.youtube.com/watch?v=wHeS2Yf40-o" target="_blank" rel="noopener">▶ 영상 보기</a>
+  </div>
+  <div class="abs" style="left:48%; top:26%; width:47%; display:flex; flex-direction:column; gap:16px;">
+    <div class="pin f" data-f="1"><span class="ico">🍳</span><div><b>① 주방에서 음식을 싣고</b><br>트레이에 음식을 올려요</div></div>
+    <div class="pin f" data-f="2"><span class="ico">📱</span><div><b>② 앱에서 테이블 번호 → 보내기</b><br>사람이 목적지를 정해 줘요</div></div>
+    <div class="pin f" data-f="3"><span class="ico">🍽️</span><div><b>③ 테이블에 도착하면</b><br>손님이 음식을 내리고 「로봇 보내기」</div></div>
+    <div class="pin f" data-f="4"><span class="ico">🏠</span><div><b>④ 다시 대기 장소로</b><br>다음 주문을 기다려요</div></div>
+  </div>
+  <div class="credit">영상: 배민로봇 S 사용법 | 서빙하기 모드 (B-ROBOTICS, YouTube)</div>
+</section>
+
+<!-- 4. 카미봇 리모콘 -->
+<section class="slide" data-note="<b>오늘 우리 가게 로봇 = 카미봇!</b> 「카미봇리모콘」 앱으로 조종해요. 딱 두 가지만 기억해요. ① <b>노랑 = 앞으로, 파랑 = 뒤로, 빨강·초록 = 제자리에서 돌기</b>. 옆으로 바로 가는 버튼은 없어요 → <b>먼저 돌고, 그다음 앞으로!</b> ② 위쪽 <b>주황 버튼 = 위 회전판(머리) 돌리기</b> → 머리의 톱니바퀴가 지게차 톱니 막대를 타고 돌아서, 한쪽으로 돌리면 포크가 올라가고 반대로 돌리면 내려가요(오른쪽 「올리기」「내리기」로 보여 주세요).">
+  <img class="bg" src="PPT배경템플릿_6종/07_좌우큰칸형.png" alt="">
+  <div class="abs" style="left:4%; top:5%; width:90%; display:flex; align-items:center; gap:18px;">
+    <span class="tag orange in">카미봇 조종</span><div class="h2 split in">카미봇리모콘으로 움직여요 🎮</div>
+  </div>
+  <div class="abs in" style="left:5%; top:21%; width:19.5%;"><div class="phone"><img src="카미봇_사진/리모콘앱_2.png" alt="카미봇리모콘 앱 화면" style="height:auto;"></div></div>
+  <div class="abs" style="left:26%; top:26%; width:18.5%; height:51%; display:flex; flex-direction:column; justify-content:center; gap:16px;">
+    <div class="pin f" data-f="1" style="font-size:20px; padding:10px 14px;"><span class="key k-y">↑</span><span class="key k-b">↓</span><div><b>앞으로</b> · <b>뒤로</b></div></div>
+    <div class="pin f" data-f="2" style="font-size:20px; padding:10px 14px;"><span class="key k-r">↶</span><span class="key k-g">↷</span><div><b>제자리 돌기</b><br>왼쪽 · 오른쪽</div></div>
+    <div class="pin f" data-f="3" style="font-size:20px; padding:10px 14px; background:#FFF1E6;"><span class="ico">↪️</span><div><b>옆으로 가려면?</b><br><span class="accent" style="font-weight:800;">먼저 돌고 → 앞으로!</span></div></div>
+    <div class="pin f" data-f="4" style="font-size:20px; padding:10px 14px;"><span class="key k-o">⟲</span><div><b>위 회전판 돌리기</b><br>= 지게차 ⬆⬇</div></div>
+  </div>
+  <!-- 지게차: 회전판(머리)이 돌면 톱니바퀴가 톱니 막대를 타고 포크가 오르내려요 (로봇직원교육 8번과 같은 그림) -->
+  <div class="abs f" data-f="4" style="left:47%; top:18.5%; width:49.6%; height:65%; display:flex; gap:6px; align-items:center; padding:0 24px 0 8px;">
+    <svg viewBox="30 20 260 290" style="width:47%; height:96%;">
+      <rect x="40" y="290" width="230" height="12" rx="6" fill="#E8DCC5"/>
+      <rect x="60" y="190" width="120" height="100" rx="26" fill="#fff" stroke="#2E3A35" stroke-width="5"/>
+      <rect x="168" y="40" width="22" height="250" rx="6" fill="#F3EBDD" stroke="#2E3A35" stroke-width="4"/>
+      <g id="rackTeeth"></g>
+      <g id="fkGear" transform="translate(150,170)"></g>
+      <g id="fkFork"><rect x="190" y="0" width="16" height="70" rx="5" fill="#E8691C"/><rect x="190" y="58" width="90" height="12" rx="5" fill="#E8691C"/><rect x="214" y="30" width="56" height="26" rx="6" fill="#FFD45C" stroke="#2E3A35" stroke-width="3"/></g>
+    </svg>
+    <div class="fk-rules" style="width:53%; display:flex; flex-direction:column; gap:2px;">
+      <div class="rule"><span class="sv">1</span><div><b>회전판(머리)</b>이 돌면</div></div>
+      <div class="rule"><span class="sv">2</span><div><b>톱니바퀴</b>가 돌고</div></div>
+      <div class="rule"><span class="sv">3</span><div><b>톱니 막대</b>를 타고</div></div>
+      <div class="rule"><span class="sv">4</span><div><b>포크</b>가 오르내려요!</div></div>
+      <div class="rule"><span class="sv">⬆</span><div>한쪽으로 돌리면 <b>올라가고</b></div></div>
+      <div class="rule"><span class="sv">⬇</span><div>반대로 돌리면 <b>내려가요</b></div></div>
+      <div style="display:flex; gap:10px; margin-top:10px;">
+        <button class="btn orange" id="fkUp">⬆ 올리기</button>
+        <button class="btn sky" id="fkDown">⬇ 내리기</button>
+      </div>
+    </div>
+  </div>
+  <div class="credit">화면: 카미봇리모콘 앱 (Google Play)</div>
+</section>
+
+<!-- 5. 오늘의 미션: 한 가족 = 한 테이블, 미션 보고 따라 하기 -->
+<section class="slide" data-note="<b>오늘의 미션 한 줄 요약:</b> “<b>한 가족이 한 테이블을 맡아서</b>, 로봇 1대로 손님 한 팀을 끝까지 모셔요!” 강사님이 태블릿마다 가족 번호를 정해 주면 담당 테이블이 정해지고, 번호는 앱이 알아서 넣어 줘요. 어떻게 하는지 외울 필요 없어요 → <b>앱 맨 위 빨간 네모 칸(미션)을 보고 그대로 따라 하면 돼요.</b> 해내면 「띵」 하고 다음 미션이 나와요. 막히면 미션 칸을 눌러 전체 순서를 봐요. 자세한 5단계는 다음 장에서!">
+  <img class="bg" src="PPT배경템플릿_6종/07_좌우큰칸형.png" alt="">
+  <div class="abs" style="left:4%; top:5%; width:90%; display:flex; align-items:center; gap:18px;">
+    <span class="tag orange in">오늘의 미션</span><div class="h2 split in">미션을 보고, 따라 해요! 📱</div>
+  </div>
+  <div class="abs in" style="left:7%; top:20%; width:24%;"><div class="phone"><img style="height:auto;" src="앱_화면/1_서빙화면_미션띠.png" alt="서빙 화면"><span class="redbox f" data-f="2"></span></div></div>
+  <div class="abs f" data-f="2" style="left:31.6%; top:21.2%;"><span class="mission-call">◀ 미션!</span></div>
+  <div class="abs f" data-f="3" style="left:31.8%; top:31%; width:13%; font-size:21px; line-height:1.5; color:var(--ink-soft);">여기에 지금 할 일이<br><b style="color:#E53935;">한 줄씩</b> 나와요</div>
+  <div class="abs center" style="left:48%; top:20%; width:47.6%; height:62%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;">
+    <div class="f" data-f="1">
+      <div class="team">
+        <div><span>👨‍👩‍👧</span><b>우리 가족</b></div><i>+</i>
+        <div><span>🤖</span><b>로봇 1대</b></div><i>=</i>
+        <div><span>🍽️</span><b>테이블 1개</b></div>
+      </div>
+      <div class="h2" style="font-size:44px; margin-top:14px;">한 가족이 <span class="accent">한 테이블</span>을 맡아요</div>
+      <div class="lead" style="font-size:25px; margin-top:4px;">손님 한 팀을 로봇으로 끝까지 모셔요</div>
+    </div>
+    <div class="f" data-f="2" style="width:92%; border-top:3px dashed #EFE3CC;"></div>
+    <div class="f" data-f="3">
+      <div class="h2" style="font-size:44px;"><span style="color:#E53935;">미션</span>을 보고 → <span class="mint">따라 하기!</span></div>
+      <div class="flowchips"><span>👀 미션 읽기</span><em>→</em><span>🤖 로봇 움직이기</span><em>→</em><span>✅ 띵! 다음 미션</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. 영업 5단계 -->
+<section class="slide" data-note="<b>오늘의 영업 순서:</b> 손님 한 팀이 우리 가게에 와서 나갈 때까지예요. ①자리 안내(안내하기) → ②홍보(홍보하기, 신메뉴 포스터) → ③서빙(서빙하기, 주방들 들러서 싣기) → ④이벤트(돌아다니기, n행시 리뷰 → 간식) → ⑤퇴식(그릇 회수) → 🎉영업 완료면 <b>진짜 간식</b>! 버튼 이름은 외우지 않아도 돼요. 위쪽 띠가 알려 줘요.">
+  <img class="bg" src="PPT배경템플릿_6종/04_큰작업공간형.png" alt="">
+  <div class="abs center" style="left:10%; top:4.5%; width:80%;"><div class="h2 split in">오늘의 영업 <span class="accent">5단계</span></div></div>
+  <div class="mcard f" data-f="1" style="left:3.5%; --c:#4f8cff;"><span class="e">🙋</span><span class="n">1</span><span class="t">자리 안내</span><span class="btn-name">안내하기</span><span class="d">손님을 우리 테이블로 모셔요</span></div>
+  <div class="mcard f" data-f="2" style="left:22.3%; --c:#E8691C;"><span class="e">📣</span><span class="n">2</span><span class="t">홍보</span><span class="btn-name">홍보하기</span><span class="d">신메뉴 이름 짓고 포스터로 홍보</span></div>
+  <div class="mcard f" data-f="3" style="left:41.1%; --c:#1F9E85;"><span class="e">🍽️</span><span class="n">3</span><span class="t">서빙</span><span class="btn-name">서빙하기</span><span class="d">주방들을 돌며 싣고 테이블로</span></div>
+  <div class="mcard f" data-f="4" style="left:59.9%; --c:#A66BD9;"><span class="e">🎉</span><span class="n">4</span><span class="t">이벤트</span><span class="btn-name">돌아다니기</span><span class="d">n행시 리뷰 이벤트 · 간식 배달</span></div>
+  <div class="mcard f" data-f="5" style="left:78.7%; --c:#2F86C2;"><span class="e">🥣</span><span class="n">5</span><span class="t">퇴식</span><span class="btn-name">그릇 회수</span><span class="d">다 먹은 그릇을 반납대로</span></div>
+  <div class="abs f center" data-f="6" style="left:25%; top:86%; width:50%;"><span class="tag orange" style="font-size:26px; padding:10px 28px;">🎉 영업 완료 → 진짜 간식을 받아요!</span></div>
+</section>
+
+<!-- 7. 오늘의 활동 두 가지: 앱 화면에서 어디를 누르는지 빨간 네모로 -->
+<section class="slide" data-note="<b>오늘 할 활동 두 가지:</b> <b>① 홍보</b> — 관리자 페이지 홍보모드에서 빨간 네모 「메뉴명 짓기 앱」을 누르면 새 탭이 열려요. 오늘 메뉴 중 하나(앱이 후보 2개를 보여 줘요)에 한글날 100주년 기념 새 이름을 짓고 포스터를 만들어 태블릿에 저장 → 홍보모드에 올려 손님에게 홍보해요. <b>② 이벤트</b> — 돌아다니기 화면의 빨간 네모 「n행시 짓기」를 손님 역할이 눌러 메뉴 이름으로 n행시를 짓고, 「우리 패들렛」에 올린 뒤 「리뷰 쓰기 완료」 → 로봇이 간식을 싣고 테이블로 배달해요. 두 앱 모두 <b>구글 로그인</b>이 필요해요.">
+  <img class="bg" src="PPT배경템플릿_6종/07_좌우큰칸형.png" alt="">
+  <div class="abs" style="left:4%; top:5%; width:90%; display:flex; align-items:center; gap:18px;">
+    <span class="tag orange in">오늘의 활동</span><div class="h2 split in">우리 가게, 이렇게 꾸며요 ✨</div>
+  </div>
+  <!-- 왼쪽: 활동 ① 홍보 -->
+  <div class="abs f" data-f="1" style="left:4.6%; top:19.6%; width:23.6%;"><div class="phone"><div class="shot"><img src="앱_화면/3_홍보모드_신메뉴.png" alt="홍보모드 화면"><span class="mark" style="left:6.3%; top:26.6%; width:44%; height:8.6%;"></span></div></div></div>
+  <div class="abs f act" data-f="1" style="left:29.4%; top:22%; width:15.6%; height:58%;">
+    <span class="step-no">활동 ① 홍보</span>
+    <div class="act-t">신메뉴 이름<br>+ 포스터</div>
+    <div class="act-k">👆 <span class="redtag">메뉴명 짓기 앱</span></div>
+    <ol><li>오늘 메뉴에 <b>새 이름</b></li><li><b>포스터</b> 만들기</li><li><b>홍보모드</b>로 홍보하기</li></ol>
+  </div>
+  <!-- 오른쪽: 활동 ② 이벤트 -->
+  <div class="abs f" data-f="2" style="left:49%; top:19.6%; width:23.6%;"><div class="phone"><div class="shot"><img src="앱_화면/4_돌아다니기_이벤트.png" alt="리뷰 이벤트 화면"><span class="mark" style="left:2.2%; top:73.6%; width:48.4%; height:10.6%;"></span></div></div></div>
+  <div class="abs f act" data-f="2" style="left:74.4%; top:22%; width:20.6%; height:58%;">
+    <span class="step-no" style="background:var(--mint-deep);">활동 ② 이벤트</span>
+    <div class="act-t">n행시<br>리뷰 이벤트</div>
+    <div class="act-k">👆 <span class="redtag">n행시 짓기</span></div>
+    <ol><li>메뉴 이름으로 <b>n행시</b></li><li><b>패들렛</b>에 리뷰 올리기</li><li>로봇이 <b>간식 배달</b> 🍪</li></ol>
+  </div>
+</section>
+
+<!-- 8. 끝인사 (마무리_우리맛집소개 마지막 장) -->
+<section class="slide" data-note="<b>끝인사 (약 40초):</b> “세종대왕은 백성 누구나 쉽게 글을 쓰라고 한글을 만들었어요. 한글날 100번째 생일인 올해, 우리는 그 한글로 메뉴에 새 이름을 지어 주고, 그 이름으로 n행시를 짓고, 서빙로봇과 함께 손님을 모셨어요. <b>기술은 돕고, 마음은 우리말이 전해요.</b>” → 키로 ‘집에서 이어 하기’를 보여 주고, 마지막 → 키(또는 🎉 버튼)로 한글 꽃가루를 뿌리며 큰 박수로 마칩니다.">
+  <img class="bg" src="PPT배경템플릿_6종/01_표지형.png" alt="">
+  <canvas id="confetti" width="1600" height="900"></canvas>
+  <div class="abs" style="left:5%; top:8%; width:52%;">
+    <div class="tag orange in">한글날 100주년 푸드테크 · 영업 끝!</div>
+    <div class="h1 split in" style="margin-top:22px; font-size:80px;">오늘의 사장님들,<br><span class="accent">수고하셨습니다!</span></div>
+    <div class="quote in" style="margin-top:26px;">세종대왕은 누구나 쉽게 쓰라고 <b>한글</b>을 만들었어요.<br>한글날 100번째 생일에, 우리는 그 한글로 메뉴에 <b>새 이름</b>을<br>지어 주고, 그 이름으로 <b>n행시</b>를 짓고, <b>서빙로봇</b>과 함께 손님을 모셨어요.</div>
+    <div class="pin f" data-f="1" style="margin-top:18px; width:92%;"><span class="ico">🏠</span><div><b>집에서 이어 하기</b><br>오늘 저녁 반찬에 우리말 이름을 붙이고 n행시도 지어 보세요</div></div>
+    <div class="f" data-f="2" data-anim="party" style="margin-top:18px;"><button class="btn orange" id="partyBtn">🎉 다 같이 박수!</button></div>
+  </div>
+</section>
+
+</div>
+</div>
+<div id="notes"></div>
+<div id="nav"><button id="prevBtn" aria-label="이전">‹</button><span class="num" id="num">1 / 8</span><button id="nextBtn" aria-label="다음">›</button></div>
+<div id="help">→ / Space 다음 · ← 이전 · N 강사 대본 · F 전체화면</div>
+
+<script>
+(() => {
+  const stage = document.getElementById('stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const notes = document.getElementById('notes');
+  const $ = id => document.getElementById(id);
+  let cur = 0, step = 0;
+  function fit() { stage.style.transform = `scale(${Math.min(innerWidth / 1600, innerHeight / 900)})`; }
+  addEventListener('resize', fit); fit();
+  function splitNode(node) {
+    [...node.childNodes].forEach(n => {
+      if (n.nodeType === 3) { const frag = document.createDocumentFragment();
+        [...n.textContent].forEach(c => { if (c === ' ') { frag.appendChild(document.createTextNode(' ')); return; } const s = document.createElement('span'); s.className = 'ch'; s.textContent = c; frag.appendChild(s); });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== 'BR') splitNode(n);
+    });
+  }
+  document.querySelectorAll('.split').forEach(splitNode);
+  const stop = e => e.stopPropagation();
+
+  // ── 4. 지게차: 회전판이 돌면 톱니바퀴 → 톱니 막대 → 포크 ──
+  const gear = $('fkGear'), fork = $('fkFork');
+  let gh = '<circle r="34" fill="#fff" stroke="#2E3A35" stroke-width="4"/><circle r="8" fill="#2E3A35"/>';
+  for (let i = 0; i < 12; i++) gh += `<rect x="-6" y="-44" width="12" height="14" rx="2" fill="#2E3A35" transform="rotate(${i * 30})"/>`;
+  gh += '<line x1="0" y1="0" x2="0" y2="-26" stroke="#E8691C" stroke-width="6" stroke-linecap="round"/>';
+  gear.innerHTML = gh;
+  let rt = ''; for (let y = 50; y < 285; y += 14) rt += `<path d="M168 ${y} l-8 7 l8 7" fill="#2E3A35"/>`;
+  $('rackTeeth').innerHTML = rt;
+  const fk = { a: 360 };
+  function fkDraw() { gear.setAttribute('transform', `translate(150,170) rotate(${fk.a})`); fork.setAttribute('transform', `translate(0,${80 + fk.a / 360 * 150})`); }
+  function fkTo(a) { gsap.to(fk, { a, duration: 1.4, ease: 'power1.inOut', onUpdate: fkDraw }); }
+  function fkReset() { gsap.killTweensOf(fk); fk.a = 360; fkDraw(); }
+  fkReset();
+  $('fkUp').addEventListener('click', e => { stop(e); fkTo(0); });
+  $('fkDown').addEventListener('click', e => { stop(e); fkTo(360); });
+  // ── 9. 한글 꽃가루 ──
+  let ac;
+  function beep(freq = 880, dur = .18, type = 'sine', vol = .15) {
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.setValueAtTime(vol, ac.currentTime); g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + dur);
+      o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + dur);
+    } catch (e) {}
+  }
+  const fanfare = () => [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => beep(f, .22, 'triangle', .1), i * 120));
+  const cv = $('confetti'), cx = cv.getContext('2d');
+  const JAMO = [...'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㅏㅑㅓㅕㅗㅛㅜㅠㅡㅣ가나다맛'];
+  const PAL = ['#FF8A3D', '#5CCFB0', '#FFD45C', '#F2706A', '#6DB8EA', '#A68BEA'];
+  let parts = [], raf = 0;
+  function party() {
+    for (let i = 0; i < 160; i++) {
+      parts.push({ x: Math.random() * 1600, y: -40 - Math.random() * 700, vx: (Math.random() - .5) * 2, vy: 2 + Math.random() * 3, w: Math.random() * 6,
+        r: Math.random() * 6, vr: (Math.random() - .5) * .3, s: 26 + Math.random() * 30, c: PAL[i % PAL.length], ch: JAMO[(Math.random() * JAMO.length) | 0] });
+    }
+    fanfare();
+    if (!raf) raf = requestAnimationFrame(confTick);
+  }
+  function confTick() {
+    cx.clearRect(0, 0, 1600, 900);
+    parts = parts.filter(p => p.y < 980);
+    parts.forEach(p => {
+      p.vy = Math.min(p.vy + .05, 6); p.w += .05; p.x += p.vx + Math.sin(p.w) * 1.2; p.y += p.vy; p.r += p.vr;
+      cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r);
+      cx.font = `${p.s}px Hanna, 'Gowun Dodum', sans-serif`; cx.fillStyle = p.c; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+      cx.fillText(p.ch, 0, 0); cx.restore();
+    });
+    raf = parts.length ? requestAnimationFrame(confTick) : 0;
+  }
+  $('partyBtn').addEventListener('click', e => { stop(e); party(); });
+  document.querySelectorAll('a').forEach(a => a.addEventListener('click', stop));
+
+  // ── 단계 공개 · 장면 전환 ──
+  const groups = s => [...new Set([...s.querySelectorAll('.f')].map(e => +e.dataset.f))].sort((a, b) => a - b);
+  function revealGroup(s, n, instant, delay = 0) {
+    s.querySelectorAll(`.f[data-f="${n}"]`).forEach(el => { gsap.killTweensOf(el);
+      if (instant) { gsap.set(el, { autoAlpha: 1, y: 0, scale: 1 }); return; }
+      gsap.fromTo(el, { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: .55, delay, ease: 'back.out(1.6)' }); });
+  }
+  function enter(i, revealAll) {
+    slides.forEach(s => s.classList.remove('active'));
+    const s = slides[i]; s.classList.add('active');
+    const g = groups(s);
+    s.querySelectorAll('.f').forEach(el => gsap.set(el, { autoAlpha: 0 }));
+    step = 0;
+    // 클릭 없이: 슬라이드에 들어오면 묶음(data-f)이 차례대로 저절로 나타나요 (뒤로 오면 바로 다 보여요)
+    g.forEach((n, k) => revealGroup(s, n, revealAll, .5 + k * .35)); step = g.length;
+    gsap.fromTo(s.querySelectorAll('.in'), { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: .6, stagger: .08, ease: 'power3.out' });
+    s.querySelectorAll('.split').forEach(sp => gsap.fromTo(sp.querySelectorAll('.ch'), { y: 40, autoAlpha: 0, rotate: -8 }, { y: 0, autoAlpha: 1, rotate: 0, duration: .55, stagger: .025, ease: 'back.out(2)' }));
+    gsap.fromTo(s.querySelector('.bg'), { scale: 1.04 }, { scale: 1, duration: 1.2, ease: 'power2.out' });
+    if (i === 3) fkReset();
+    $('num').textContent = `${i + 1} / ${slides.length}`;
+    gsap.to('#progress', { width: `${(i + 1) / slides.length * 100}%`, duration: .5 });
+    notes.innerHTML = s.dataset.note || '';
+    try { history.replaceState(null, '', '#' + (i + 1)); } catch (e) {}
+  }
+  function next() { const s = slides[cur], g = groups(s); if (step < g.length) { revealGroup(s, g[step]); step++; return; } if (cur < slides.length - 1) { cur++; enter(cur); } else party(); }   // 마지막 장에서 한 번 더 누르면 꽃가루
+  function prev() { if (cur > 0) { cur--; enter(cur, true); } }
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    if (['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+    else if (e.key === 'n' || e.key === 'N' || e.key === 'ㅜ') notes.classList.toggle('show');
+    else if (e.key === 'f' || e.key === 'F' || e.key === 'ㄹ') { if (!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
+    else if (e.key === 'Home') { cur = 0; enter(0); }
+  });
+  $('nextBtn').onclick = next; $('prevBtn').onclick = prev;
+  stage.addEventListener('click', e => { if (e.target.closest('button,a')) return; next(); });
+  setTimeout(() => $('help').classList.add('hide'), 5000);
+  const h = parseInt(location.hash.slice(1), 10);
+  cur = (h >= 1 && h <= slides.length) ? h - 1 : 0;
+  enter(cur, cur > 0);
+})();
+</script>
+</body>
+</html>
