@@ -354,7 +354,7 @@
   function revealGroup(s, n, instant, delay = 0) {
     s.querySelectorAll(`.f[data-f="${n}"]`).forEach(el => { gsap.killTweensOf(el);
       if (instant) { gsap.set(el, { autoAlpha: 1, y: 0, scale: 1 }); return; }
-      gsap.fromTo(el, { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: .55, delay, ease: 'back.out(1.6)' }); });
+      gsap.fromTo(el, { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: .35, delay, ease: 'back.out(1.6)' }); });
   }
   function enter(i, revealAll) {
     slides.forEach(s => s.classList.remove('active'));
@@ -363,9 +363,9 @@
     s.querySelectorAll('.f').forEach(el => gsap.set(el, { autoAlpha: 0 }));
     step = 0;
     // 클릭 없이: 슬라이드에 들어오면 묶음(data-f)이 차례대로 저절로 나타나요 (뒤로 오면 바로 다 보여요)
-    g.forEach((n, k) => revealGroup(s, n, revealAll, .5 + k * .35)); step = g.length;
-    gsap.fromTo(s.querySelectorAll('.in'), { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: .6, stagger: .08, ease: 'power3.out' });
-    s.querySelectorAll('.split').forEach(sp => gsap.fromTo(sp.querySelectorAll('.ch'), { y: 40, autoAlpha: 0, rotate: -8 }, { y: 0, autoAlpha: 1, rotate: 0, duration: .55, stagger: .025, ease: 'back.out(2)' }));
+    g.forEach((n, k) => revealGroup(s, n, revealAll, .15 + k * .15)); step = g.length;
+    gsap.fromTo(s.querySelectorAll('.in'), { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: .4, stagger: .04, ease: 'power3.out' });
+    s.querySelectorAll('.split').forEach(sp => gsap.fromTo(sp.querySelectorAll('.ch'), { y: 40, autoAlpha: 0, rotate: -8 }, { y: 0, autoAlpha: 1, rotate: 0, duration: .4, stagger: .012, ease: 'back.out(2)' }));
     gsap.fromTo(s.querySelector('.bg'), { scale: 1.04 }, { scale: 1, duration: 1.2, ease: 'power2.out' });
     if (i === 3) fkReset();
     $('num').textContent = `${i + 1} / ${slides.length}`;
