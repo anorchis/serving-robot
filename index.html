@@ -237,9 +237,6 @@ html.bz-on #bizStrip{display:block}
 .bs-item .ck{font-size:.7rem;padding:.25rem .5rem;border-radius:1rem;background:#fff;box-shadow:0 0 0 1px #d8cdb6 inset;color:var(--ink2);flex:none}
 .bs-item.on{background:#e6f8f6}.bs-item.on .ck{background:#2cc2b5;color:#fff;box-shadow:none}
 .bs-note{font-size:.75rem;color:#c4561f;margin-top:.3rem}
-.bs-role{display:flex;gap:.4rem;font-size:.75rem;color:var(--ink2);margin-bottom:.7rem}
-.bs-role span{background:#fff;border-radius:.4rem;padding:.3rem .55rem;box-shadow:0 0 0 1px #efe6d2 inset}
-.bs-role b{color:var(--ink)}
 .bs-done{text-align:center;padding:.4rem 0}
 .bs-done .big{font-family:'Hanna',sans-serif;font-size:1.6rem;color:#178f86}
 .bs-teacher{display:block;margin:.4rem auto 0;font-size:.72rem;color:var(--ink3);text-decoration:underline}
@@ -1085,9 +1082,7 @@ function goMove(){
   else if(st.type==='base'){ num.classList.add('ret','wp'); num.innerHTML=esc(waitPlace().replace(/ 장소$/,''))+'<small>장소로</small>'; nm.textContent=''; }
   else { num.classList.add('text'); num.textContent=st.label; nm.textContent = st.type==='kitchen' ? '주방' : ''; }
   $('#mvState').textContent = trip.returning ? '이동중' : trip.kind==='guide' ? '안내중' : '이동중';
-  if(trip.kind==='guideStart'){ nm.textContent='안내 출발지'; }
   if(trip.kind==='guide' && !trip.returning && trip.party){ const c=$('#mvChip'); c.style.display=''; c.textContent=`${trip.party.reserved?'예약':'방문'} · ${trip.party.count}명`; }
-  if(trip.returning && trip.kind==='guide' && S.guideStart){ nm.textContent='안내 출발지'; }
   $('#mvHello').textContent = trip.kind==='birthday' && !trip.returning ? '생일 축하합니다!' : trip.kind==='guide' && !trip.returning ? '저를 따라오세요' : '';
   const chip=$('#mvChip');
   if(trip.soup && !trip.returning){ chip.style.display=''; chip.textContent='🍲 국물 모드 · 천천히 이동해요'; } else chip.style.display='none';
@@ -1690,10 +1685,10 @@ function renderBizPanel(){
       <li>네 태블릿이 같은 <b>영업 번호</b>인지 확인해요 (지금 영업 ${BZ.round})</li></ol>
       <button class="btn btn-fill bs-go" data-bz="go-guide">안내하기 열기</button></div>`;
   }else{
-    const k=cur?BSTEPS.indexOf(cur):4, r=roleOf(k);
+    const k=cur?BSTEPS.indexOf(cur):4;
     h = `<div class="bs-head"><div class="fn" style="background:${FAM_COL[BZ.fam]}">${BZ.fam+1}</div><div><div class="t">가족 ${BZ.fam+1} · ${P.table}번 테이블 손님 ${P.party}명</div><div class="s">영업 ${BZ.round} / ${BIZ_MAX} · 출발: 가족 ${BZ.fam+1} 대기</div></div></div>
       <div class="bs-steps">${BSTEPS.map((x,i)=>`<div class="${BZ.done[x.id]?'on':cur&&cur.id===x.id?'cur':''}"><b>${BZ.done[x.id]?'✓':x.e}</b>${i+1}. ${x.t}</div>`).join('')}</div>
-      ${cur?`<div class="bs-role"><span>🎮 조종 <b>${r.drive}</b></span><span>🧾 확인·싣기 <b>${r.crew}</b></span></div>`:''}`;
+      `;
     const orderCard = ()=>`<div class="bs-card"><h4>🧾 ${P.table}번 테이블오더 <small>${P.count}개 · 손님 ${P.party}명</small></h4>
       <div class="m-sub" style="margin:-.2rem 0 .5rem">🎂 오늘 생일인 친구가 있으면 서빙할 때 <b>케이크 아이콘</b>으로 축하해 줄 수 있어요 (선택)</div>
       ${(P.soup||P.bday||P.extra)?`<div class="bs-req">${P.soup?'<span>🍲 국물 메뉴 있어요 → 국물 모드</span>':''}${P.bday?'<span>🎂 오늘 생일이에요!</span>':''}${P.extra?'<span>🍽️ 나눠 먹을 메뉴 하나 더!</span>':''}</div>`:''}
