@@ -201,6 +201,8 @@ html.bz-on #bizStrip{display:block}
 .bs-lines li.now span b{color:#ffd166}
 .bs-man2{margin-left:.3rem;background:#2cc2b5;color:#fff;border-radius:1rem;padding:.15rem .6rem;font-size:.72rem}
 .bs-skip{display:block;margin:.6rem auto 0;font-size:.7rem;color:var(--ink3)}
+.bs-ctl2{display:flex;gap:.35rem;margin-top:.45rem}
+.bs-ctl2 button{flex:1;height:2.2rem;border-radius:.5rem;background:#fff;box-shadow:0 0 0 1px #e9dfc7 inset;font-size:.72rem;font-weight:700;color:var(--ink2)}
 .bs-ctl{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:.35rem;margin-top:.6rem}
 .bs-ctl button{height:2.3rem;border-radius:.5rem;background:#f3ecdc;font-size:.75rem;font-weight:700;color:var(--ink2)}
 .bs-dots{display:flex;gap:.25rem;flex:none}.bs-dots i{width:.55rem;height:.55rem;border-radius:50%;background:#5b6370}
@@ -1648,6 +1650,14 @@ function bizBack(){ const cur=bizCur(); if(!cur) return; bizBackTo(cur.id, Math.
 function bizRestart(){ const cur=bizCur(); if(!cur) return; if(cur.id==='serve'){ BZ.loaded={}; BZ.kit={}; } bizBackTo(cur.id, 0); toast(`${cur.e} ${cur.t} 단계를 처음부터 다시 해요`, true); }
 function bizPrevStage(){ const cur=bizCur(), k=cur?BSTEPS.indexOf(cur):BSTEPS.length; const prev=BSTEPS[k-1]; if(!prev) return;
   delete BZ.done[prev.id]; if(BZ.note) delete BZ.note[prev.id]; if(prev.id==='serve'){ BZ.loaded={}; BZ.kit={}; } bizBackTo(prev.id, 0); toast(`${prev.e} ${prev.t} 단계로 돌아갔어요`, true); }
+// 시간이 모자랄 때: 지금 단계를 건너뛰고 다음 단계로 (기록에 「건너뜀」 메모)
+function bizSkipStage(){ const cur=bizCur(); if(!cur) return; const nx=BSTEPS[BSTEPS.indexOf(cur)+1];
+  $('#modal').innerHTML = `<h4>${cur.e} ${cur.t} 단계를 건너뛸까요?<br><span style="font-weight:400;font-size:.8rem;color:var(--ink2)">${nx?`바로 ${nx.e} ${nx.t} 단계로 넘어가요`:'영업을 여기서 끝내요'}${cur.id==='promo'?' · 주문은 그대로 들어와요':''}</span></h4>
+    <div class="two"><button class="btn btn-gray" data-m="no">취소</button><button class="btn btn-fill" data-m="yes">건너뛰기</button></div>`;
+  openModal();
+  $('#modal').onclick=e=>{ const b=e.target.closest('[data-m]'); if(!b) return; closeModal(); if(b.dataset.m!=='yes') return;
+    bizToggle(false); bizOk(cur.id, [`⏭ ${cur.t} 단계는 시간이 없어 건너뛰었어요`]); };
+}
 function bizSkip(){ const P=bizMine(), cur=bizCur(); if(!P||!cur) return; const L=bizLines(cur.id,P); BZ.li=BZ.li||{}; BZ.li[cur.id]=Math.min(bizLineIdx(cur.id)+1, L.length-1); saveBZ(); renderStrip(); }
 function bizMap(P){
   const M=([x,y],cls,txt)=>`<span class="mk ${cls}" style="left:${x/20}%;top:${y/13.08}%">${txt}</span>`;
@@ -1692,7 +1702,7 @@ function renderBizPanel(){
     if(cur){
       h += `<div class="bs-card"><h4>${cur.e} ${BSTEPS.indexOf(cur)+1}. ${cur.t} </h4><ol class="bs-lines">${(()=>{ const L=bizLines(cur.id,P), i=Math.min(bizLineIdx(cur.id),L.length-1); return L.map((x,k)=>`<li class="${k<i?'ok':k===i?'now':''}"><b>${k<i?'✓':k+1}</b><span>${x.t}${k===i&&x.man?` <button class="bs-man2" data-bzman>${x.man} ✓</button>`:''}</span></li>`).join(''); })()}</ol>
         <div class="bs-ctl"><button data-bzback>◀ 이전 줄</button><button data-bzrestart>↺ 이 단계 처음부터</button><button data-bzskip>다음 줄 ▶</button></div>
-        ${BSTEPS.indexOf(cur)>0?`<button class="bs-skip" data-bzprev>⏮ 이전 단계(${BSTEPS[BSTEPS.indexOf(cur)-1].t})로 돌아가기</button>`:''}
+        <div class="bs-ctl2">${BSTEPS.indexOf(cur)>0?`<button data-bzprev>⏮ 이전 단계(${BSTEPS[BSTEPS.indexOf(cur)-1].t})로</button>`:''}<button data-bznext>${BSTEPS[BSTEPS.indexOf(cur)+1]?`다음 단계(${BSTEPS[BSTEPS.indexOf(cur)+1].t})로 건너뛰기 ⏭`:'영업 끝내기 ⏭'}</button></div>
         <button class="btn btn-fill bs-go" data-bz="go-${cur.id}">${cur.id==='guide'?'안내하기':cur.id==='promo'?(bizLineIdx('promo')<6?'관리자 페이지':'홍보하기'):cur.id==='event'?'돌아다니기':'서빙하기'} 열기</button></div>`;
       if(cur.id==='serve' || cur.id==='collect') h += orderCard();
     }else{
@@ -1757,6 +1767,7 @@ $('#bizStrip').addEventListener('click', e=>{
   if(T('[data-bzback]')){ bizBack(); return; }
   if(T('[data-bzrestart]')){ bizRestart(); return; }
   if(T('[data-bzprev]')){ bizPrevStage(); return; }
+  if(T('[data-bznext]')){ bizSkipStage(); return; }
   if(T('#bsBar')){ bizToggle(); return; }
   if(T('.bs-dim')){ bizToggle(false); return; }
   if((b=T('[data-bzload]'))){ const i=+b.dataset.bzload; BZ.loaded[i]=!BZ.loaded[i]; saveBZ(); renderBizPanel(); return; }
