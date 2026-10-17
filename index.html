@@ -260,6 +260,8 @@ html.bz-on #bizStrip{display:block}
 .kit-grid button img{width:70%;aspect-ratio:1;object-fit:cover;border-radius:.5rem}
 .kit-grid button small{font-size:.65rem;color:var(--ink3)}
 .kit-grid button.on{border-color:var(--blue);background:var(--blue-ll)}
+.kit-grid button.snack{grid-column:1/3;flex-direction:row;justify-content:center;gap:.8rem}
+.kit-grid button.snack img{width:6rem;aspect-ratio:3/2}
 .kit-grid .ord{position:absolute;top:.35rem;left:.35rem;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:.8rem;display:grid;place-items:center}
 .kit-items{display:flex;flex-wrap:wrap;justify-content:center;gap:.7rem;margin-top:.6rem}
 .kit-items div{display:flex;flex-direction:column;align-items:center;gap:.2rem;width:8rem;font-size:.9rem;text-align:center;word-break:keep-all;line-height:1.3}   /* 긴 신메뉴 이름도 줄바꿈 */
@@ -417,6 +419,15 @@ html.bz-on #bizStrip{display:block}
 .nm-step small{display:block;font-size:.75rem;color:var(--ink2);margin-top:.15rem;word-break:keep-all}
 .nm-btn{flex:none;align-self:center;background:#e9774c;color:#fff;border-radius:1rem;padding:.4rem .8rem;font-size:.78rem;font-weight:700}
 .nm-step.ok .nm-btn{background:#fff;color:var(--ink3);box-shadow:0 0 0 1px #e3e6ea inset}
+.roam-done{position:absolute;left:1rem;right:1rem;bottom:calc(env(safe-area-inset-bottom) + 3.4rem);z-index:5;height:3.6rem;border-radius:1rem;background:#2cc2b5;color:#fff;font-weight:800;font-size:1.2rem;box-shadow:0 .3rem 1rem rgba(0,0,0,.15)}
+.roam-links{position:absolute;left:1rem;right:1rem;bottom:calc(env(safe-area-inset-bottom) + 3.4rem);}
+.roam-done ~ .roam-links{bottom:calc(env(safe-area-inset-bottom) + 7.7rem);}
+.roam-links{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;z-index:5}
+.roam-links a{display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.9rem .6rem;border-radius:.9rem;background:rgba(255,255,255,.95);color:#2b2f36;text-decoration:none;font-weight:800;font-size:1.05rem;box-shadow:0 .3rem 1rem rgba(0,0,0,.15)}
+.roam-links a small{font-weight:400;font-size:.7rem;color:#8a8f98}
+.nm-links{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.7rem 0 .2rem}
+.nm-links a{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.1rem;padding:.7rem .6rem;border-radius:.6rem;background:#fff;box-shadow:0 0 0 1.5px #f3dfb0 inset;color:var(--ink);text-decoration:none;font-weight:800;font-size:.82rem}
+.nm-links a small{font-weight:400;font-size:.66rem;color:var(--ink3);margin:0}
 .nm-ok{font-size:.8rem;color:#178f86;font-weight:700;margin-top:.4rem}
 .qrbox{width:min(70%,14rem);margin:.6rem auto 0;background:#fff}
 .qrbox svg{width:100%;height:auto;display:block}
@@ -529,6 +540,19 @@ textarea.inp{height:auto;min-height:4.2rem;padding:.5rem .6rem;line-height:1.45;
   font-size:.85rem;padding:.65rem 1.1rem;border-radius:2rem;z-index:90;opacity:0;pointer-events:none;transition:all .25s;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .toast.mid{bottom:auto;top:50%;transform:translate(-50%,-50%);border-radius:.3rem;padding:.9rem 1.6rem}.toast.mid.on{transform:translate(-50%,-50%)}
+.party{position:absolute;inset:0;z-index:85;display:none;align-items:center;justify-content:center;padding:1.5rem;background:radial-gradient(circle at 50% 40%,#fff6d9 0%,#ffd9c2 55%,#ffb4a2 100%)}
+.party.on{display:flex}
+.pt-in{text-align:center;animation:ptpop .6s cubic-bezier(.2,1.4,.4,1)}
+@keyframes ptpop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.pt-e{font-size:5rem;animation:ptjump 1s infinite}
+@keyframes ptjump{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-.6rem) rotate(6deg)}}
+.pt-t{font-family:'Hanna',sans-serif;font-size:3.6rem;color:#c0392b;line-height:1.1;margin:.3rem 0}
+.pt-s{font-size:1rem;color:#6d5a43;margin-bottom:1.4rem}
+.pt-gift{display:flex;align-items:center;gap:.8rem;background:#fff;border-radius:1.2rem;padding:1rem 1.2rem;text-align:left;box-shadow:0 .5rem 1.5rem rgba(192,57,43,.18);margin:0 auto 1.4rem;max-width:26rem}
+.pt-gift span{font-size:3rem;animation:ptjump 1.2s infinite}
+.pt-gift b{display:block;font-family:'Hanna',sans-serif;font-weight:400;font-size:1.6rem;color:#2b2118}
+.pt-gift small{font-size:.85rem;color:#6d5a43}
+.pt-ok{height:3.4rem;padding:0 2.2rem;border-radius:1.7rem;background:#e9774c;color:#fff;font-weight:800;font-size:1.1rem}
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
 
 /* ═════════ 공용 카드·맵 (영업 미션) ═════════ */
@@ -761,6 +785,7 @@ textarea.inp{height:auto;min-height:4.2rem;padding:.5rem .6rem;line-height:1.45;
 </div>
 
 <div class="modal-wrap" id="modalWrap"><div class="modal" id="modal"></div></div>
+<div class="party" id="party"><div class="pt-in"><div class="pt-e">🎉</div><div class="pt-t">영업 완료!</div><div class="pt-s" id="ptSub"></div><div class="pt-gift"><span>🍪</span><div><b>진짜 간식을 드려요!</b><small>선생님께 가서 「영업 완료」 화면을 보여 주세요</small></div></div><button class="pt-ok" id="ptOk">고마워요! 🙌</button></div></div>
 <canvas id="confetti"></canvas>
 <div class="toast" id="toast"></div>
 
@@ -984,8 +1009,10 @@ function stopSong(){ if(songStop){ songStop(); songStop=null; } }
 const cvs=$('#confetti'), cctx=cvs.getContext('2d'); let parts=[], confOn=false, raf=0;
 function sizeCanvas(){ const f=$('#frame'); cvs.width=(f?f.clientWidth:innerWidth)*devicePixelRatio; cvs.height=(f?f.clientHeight:innerHeight)*devicePixelRatio; }
 addEventListener('resize', sizeCanvas); sizeCanvas();
+var partyOn=false;
 function updateConfetti(){
-  const want = (current==='home' && kind==='birthday') || (trip && trip.kind==='birthday' && !trip.returning && (current==='moving'||current==='arrive'));
+  const want = partyOn || (current==='home' && kind==='birthday') || (trip && trip.kind==='birthday' && !trip.returning && (current==='moving'||current==='arrive'));
+  cvs.style.zIndex = partyOn ? 90 : 40;   // 영업 완료 축하 때는 축하 화면 위로 날려요
   if(want===confOn) return; confOn=want;
   if(confOn){ parts=Array.from({length:70},()=>newPart(true)); loop(); } else { cancelAnimationFrame(raf); cctx.clearRect(0,0,cvs.width,cvs.height); }
 }
@@ -1080,7 +1107,7 @@ function goMove(){
   num.className='mv-num';
   if(st.type==='table'){ num.textContent=st.num; nm.textContent = S.showDest && S.names[st.num] ? S.names[st.num] : ''; }
   else if(st.type==='base'){ num.classList.add('ret','wp'); num.innerHTML=esc(waitPlace().replace(/ 장소$/,''))+'<small>장소로</small>'; nm.textContent=''; }
-  else { num.classList.add('text'); num.textContent=st.label; nm.textContent = st.type==='kitchen' ? '주방' : ''; }
+  else { num.classList.add('text'); num.textContent=st.label; nm.textContent = st.type==='kitchen' ? (st.store==='snack' ? '' : '주방') : ''; }
   $('#mvState').textContent = trip.returning ? '이동중' : trip.kind==='guide' ? '안내중' : '이동중';
   if(trip.kind==='guide' && !trip.returning && trip.party){ const c=$('#mvChip'); c.style.display=''; c.textContent=`${trip.party.reserved?'예약':'방문'} · ${trip.party.count}명`; }
   $('#mvHello').textContent = trip.kind==='birthday' && !trip.returning ? '생일 축하합니다!' : trip.kind==='guide' && !trip.returning ? '저를 따라오세요' : '';
@@ -1151,7 +1178,10 @@ function arrived(){
   const trayList = (hits, txt)=> `<div class="arr-trays">${trip.slots.map((t,i)=>{
       const hit = hits.includes(i);
       return `<div class="arr-tray ${hit?'hit':''}"><span class="no">${i+1}</span>${hit? txt(t) : ''}</div>`; }).join('')}</div>`;
-  if(k==='kitchen'){   // 주방(가게)에 도착: 실을 메뉴를 보여 줘요
+  if(k==='kitchen' && st.store==='snack'){   // 간식 매대: 리뷰 이벤트 선물
+    html = `<div class="arr-big">한글날 간식 매대</div><div class="arr-msg">간식 매대에 도착했어요.<br>간식을 실은 후 로봇 보내기 버튼을 눌러주세요</div><div class="kit-items"><div><img src="img/snack.jpg" alt="" style="width:12rem;border-radius:.6rem"><b>리뷰 이벤트 선물</b></div></div>`;
+    speak('간식 매대에 도착했어요. 간식을 실어 주세요.');
+  }else if(k==='kitchen'){   // 주방(가게)에 도착: 실을 메뉴를 보여 줘요
     const P=bizMine(), its = P ? P.items.filter(i=>Math.floor(i/5)===st.store) : [];
     html = `<div class="arr-big">${esc(st.label)}</div><div class="arr-msg">주방에 도착했어요.<br>음식을 실은 후 로봇 보내기 버튼을 눌러주세요</div>`
       + (its.length ? `<div class="kit-items">${its.map(i=>`<div>${foodPic(i)}<b>${esc(menuName(i))}</b></div>`).join('')}</div>` : '');
@@ -1190,7 +1220,7 @@ function next(){
   clearTimers(); stopSong();
   if(trip.kind==='kitchen'){ const st=trip.stops[trip.i]; bizKitchen(st.store);
     if(trip.i < trip.stops.length-1){ trip.i++; goMove(); }
-    else { trip=null; resetSlots(); kind='serve'; goServe(); toast('주방에서 기다려요 · 목적지를 골라 보내 주세요', true); }   // 실제 로봇처럼 음식을 실은 곳에서 바로 테이블로
+    else { trip=null; resetSlots(); kind='serve'; goServe(); toast(st.store==='snack' ? '간식 매대에서 기다려요 · 목적지를 골라 보내 주세요' : '주방에서 기다려요 · 목적지를 골라 보내 주세요', true); }   // 실제 로봇처럼 음식을 실은 곳에서 바로 테이블로
     return; }
   if(trip.i < trip.stops.length-1){ trip.i++; goMove(); }
   else { trip.returning=true; goMove(); }
@@ -1215,13 +1245,13 @@ document.querySelector('[data-act="toKitchen"]').onclick=()=>{
   let pick=[];
   const draw=()=>{ $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     <h4>어느 주방으로 갈까요?</h4><div class="m-sub" style="text-align:center;margin:-.3rem 0 .7rem">들를 순서대로 눌러 주세요</div>
-    <div class="kit-grid">${STORES.map((x,i)=>{ const o=pick.indexOf(i); return `<button class="${o>=0?'on':''}" data-kit="${i}"><img src="${x.img}" alt="">${o>=0?`<span class="ord">${o+1}</span>`:''}<b>${x.name}</b><small>${x.kind}</small></button>`; }).join('')}</div>
+    <div class="kit-grid">${[...STORES.map((x,i)=>[i,x.img,x.name,x.kind]), ['snack','img/snack.jpg','한글날 간식 매대','과자·컵라면']].map(([i,img,nm,kd])=>{ const o=pick.indexOf(i); return `<button class="${o>=0?'on':''} ${i==='snack'?'snack':''}" data-kit="${i}"><img src="${img}" alt="">${o>=0?`<span class="ord">${o+1}</span>`:''}<b>${nm}</b><small>${kd}</small></button>`; }).join('')}</div>
     <div class="two" style="margin-top:.8rem"><button class="btn btn-gray" data-m="x">취소</button><button class="btn btn-fill" data-m="go" ${pick.length?'':'disabled'}>보내기</button></div>`; };
   draw(); openModal();
   $('#modal').onclick=e=>{ const k=e.target.closest('[data-kit]'), m=e.target.closest('[data-m]');
-    if(k){ const i=+k.dataset.kit, o=pick.indexOf(i); if(o>=0) pick.splice(o,1); else pick.push(i); draw(); return; }
+    if(k){ const i=k.dataset.kit==='snack'?'snack':+k.dataset.kit, o=pick.indexOf(i); if(o>=0) pick.splice(o,1); else pick.push(i); draw(); return; }
     if(!m) return; if(m.dataset.m==='x'){ closeModal(); return; }
-    if(m.dataset.m==='go' && pick.length){ closeModal(); trip={kind:'kitchen', stops:pick.map(i=>({type:'kitchen', store:i, label:STORES[i].name, trays:[]})), i:0, soup:false, slots:[], returning:false}; goMove(); } };
+    if(m.dataset.m==='go' && pick.length){ closeModal(); trip={kind:'kitchen', stops:pick.map(i=>({type:'kitchen', store:i, label:i==='snack'?'한글날 간식 매대':STORES[i].name, trays:[]})), i:0, soup:false, slots:[], returning:false}; goMove(); } };
 };
 document.querySelector('[data-act="toDish"]').onclick=()=>{ startTrip('collect', [{type:'dish', label:S.dishName, trays:[]}]); };
 document.querySelector('[data-act="toBase"]').onclick=()=>{ trip={kind:'serve', stops:[], i:0, soup:false, slots:[], returning:true}; goMove(); };
@@ -1359,7 +1389,9 @@ let displayMode=null;
 function goDisplay(mode){
   displayMode=mode;
   const c=S.content[mode];
-  $('#display').innerHTML = contentHTML(c, imgOf(mode), false);
+  $('#display').innerHTML = contentHTML(c, imgOf(mode), false)
+    + (mode==='roam' && bizCur() && bizCur().id==='event' ? `<button class="roam-done" data-reviewdone>✅ 리뷰 쓰기 완료</button>` : '')   // 이벤트 미션 중: 손님이 리뷰를 다 쓰면 화면에서 바로
+    + (mode==='roam' ? `<div class="roam-links"><a href="${LINK_POEM}" target="_blank" rel="noopener">✍️ n행시 짓기 ↗<small>구글 로그인 필요 · 새 탭</small></a><a href="${LINK_PADLET}" target="_blank" rel="noopener">📌 우리 패들렛 ↗<small>새 탭으로 열려요</small></a></div>` : '');   // 돌아다니는 동안 손님이 바로 리뷰·n행시
   show('display');
   const nf=MS().newFood; speak(mode==='promo' && c.tts===DEFAULTS.content.promo.tts && isNew(nf) ? `한글날 100주년 신메뉴, ${menuName(nf)} 출시 기념! 할인 이벤트를 진행해요.` : c.tts, c.ttsRate);
   startRepeat();
@@ -1367,7 +1399,9 @@ function goDisplay(mode){
 function startRepeat(){ clearInterval(repT); if(displayMode==='roam' || displayMode==='promo') return;   // 돌아다니기·홍보하기 멘트는 한 번만
   const c=S.content[displayMode]; if(c && c.repeat) repT=setInterval(()=>{ if(current==='display') speak(c.tts, c.ttsRate); }, c.repeat*1000); }
 function stopDisplay(){ clearInterval(repT); hush(); displayMode=null; }
-$('#display').addEventListener('click', ()=>{
+$('#display').addEventListener('click', e=>{
+  if(e.target.closest('.roam-links')) return;   // 링크 버튼은 새 탭만 열고 일시정지하지 않아요
+  if(e.target.closest('[data-reviewdone]')){ bizMark('poem'); bizMark('roamEnd'); bizRoamToServe(); toast('리뷰 고마워요! 간식 매대로 로봇을 보내요', true); return; }
   clearInterval(repT); hush();
   if((displayMode==='roam' && roamRun) || (displayMode==='promo' && promoRun)){ roamPause(); return; }
   const roam = displayMode==='roam';
@@ -1414,19 +1448,24 @@ if(location.hash==='#admin' || location.hash==='#settings') setTimeout(openAdmin
 let adView='login';
 function bizMark(k){ BZ.mk=BZ.mk||{}; BZ.mk[k]=Date.now(); saveBZ(); }   // 영업 미션 줄 체크용 (관리자 로그인·포스터 업로드·동기화)
 /* 🌟 한글날 100주년 신메뉴: 이번 영업 우리 주문 메뉴 중에서만 고를 수 있어요 (그래서 네 태블릿이 겹치지 않아요) */
+// 홍보 준비에서 새 탭으로 여는 링크 (메뉴명 짓기·포스터: 제미나이 공유 앱 · 우리 반 패들렛)
+const LINK_POSTER='https://gemini.google.com/share/ae3138dbbf49?social_preview=false&skid=21390b04-b78c-4dd7-b215-2768c12e827c';
+const LINK_PADLET='https://padlet.com/aibus/padlet-8frpqu6p37gr2bgk';
+const LINK_POEM='https://gemini.google.com/share/44429b2578dc?social_preview=false&skid=28d3791a-c71c-46d4-84ea-27049e6671d0';   // n행시 짓기 앱
 function newMenuCard(){
   const P=bizMine(), cand = P ? P.keep : [];
   if(!cand.length) return `<div class="nm-card"><b>🌟 한글날 100주년 신메뉴</b><div class="m-sub">강사님이 가족 번호를 정하면 이번 손님 메뉴가 나와요</div></div>`;
   const m=MS();
-  const st0=stageStart('promo'), posterDone=((BZ.mk||{}).poster||0)>st0, nameDone=cand.includes(m.newFood)&&!!m.newName;
+  const st0=stageStart('promo'), posterDone=((BZ.mk||{}).poster||0)>st0, syncDone=((BZ.mk||{}).sync_promo||0)>st0, nameDone=cand.includes(m.newFood)&&!!m.newName;   // 3번: 포스터 올리고 동기화까지 하면 ✓
   return `<div class="nm-card"><b>🌟 한글날 100주년 신메뉴 · 홍보 준비</b>
+    <div class="nm-links"><a href="${LINK_POSTER}" target="_blank" rel="noopener">✏️ 메뉴명 짓기 앱 ↗<small>구글 로그인 필요 · 새 탭</small></a><a href="${LINK_PADLET}" target="_blank" rel="noopener">📌 우리 패들렛 ↗<small>새 탭으로 열려요</small></a></div>
     <div class="nm-step ${nameDone?'ok':''}"><span>${nameDone?'✓':'1'}</span><div><b>새 이름 짓기</b><small>오늘 손님이 주문할 메뉴 중 하나를 골라 한글날 100주년 기념 새 이름을 붙여요 · 앱 전체에 바로 적용돼요</small></div></div>
     <div class="nm-pick">${cand.map(i=>`<button class="${m.newFood===i?'on':''}" data-nmf="${i}">${foodPic(i)}${FOODS[i]}</button>`).join('')}</div>
     <input class="inp nm-inp" id="nmName" placeholder="새 이름 예: 바삭바삭 황금 튀김" value="${esc(cand.includes(m.newFood)?m.newName:'')}">
     ${nameDone?`<div class="nm-ok">✓ 「${esc(FOODS[m.newFood])}」 → 「${esc(m.newName)}」로 바뀌었어요</div>`:''}
     <div class="nm-step ${posterDone?'ok':''}"><span>${posterDone?'✓':'2'}</span><div><b>포스터 만들어 오기</b><small>포스터 만드는 앱에서 ${nameDone?'「'+esc(m.newName)+'」':'새 이름'}으로 포스터를 만들어 이 태블릿에 저장해 와요</small></div>
       <button class="nm-btn" data-nmposter>${posterDone?'완료 ✓':'만들어 왔어요 ✓'}</button></div>
-    <div class="nm-step"><span>3</span><div><b>포스터 올리기</b><small>아래 미리보기를 눌러 「이미지/동영상 넣기」로 포스터를 올리고 「저장하기 → 동기화 적용」</small></div></div></div>`;
+    <div class="nm-step ${syncDone?'ok':''}"><span>${syncDone?'✓':'3'}</span><div><b>포스터 올리기</b><small>아래 미리보기를 눌러 「이미지/동영상 넣기」로 포스터를 올리고 「저장하기 → 동기화 적용」</small></div></div></div>`;
 }
 function openAdmin(){ adView = sessionStorage.getItem('srv_admin_in') ? 'modes' : 'login'; if(adView==='modes') bizMark('admin'); renderAdmin(); show('admin'); }
 const AD_LOGO = `<div class="ad-logo">꿈트리 푸드테크 <span>서빙로봇</span></div>`;
@@ -1616,11 +1655,14 @@ function bizLines(id, P){
     {t:`${waitPlace()}에 오면 「<b>도착했어요</b>」`} ]; }
   return [
     {t:'☰ 메뉴 → <b>돌아다니기</b>를 눌러요', ok:()=>(OPENED.roam||0)>stageStart('event')},
-    {t:'「돌아다니기 경로 확인/수정」 → 「<b>+ 경로추가</b>」', ok:()=>current==='redit'||S.routes.some(r=>r.stops.length)},
-    {t:'경로명을 쓰고 테이블 번호를 눌러 경로를 만든 뒤 「확인」', ok:()=>S.routes.some(r=>r.stops.length)},
+    {t:'「돌아다니기 경로 확인/수정」 → 「<b>+ 경로추가</b>」', ok:()=>current==='redit'||S.routes.some(r=>r.stops.some(x=>x.t===T))},
+    {t:`아래 테이블 번호에서 우리 테이블 <b>${T}번</b>을 누르고 「확인」`, ok:()=>S.routes.some(r=>r.stops.some(x=>x.t===T))},   // 경로명은 「경로1」로 이미 들어가 있어요
     {t:'「<b>로봇 출발</b>」 → 리뷰 이벤트를 보여 주며 돌아다녀요', ok:()=>((BZ.mk||{}).roamGo||0)>stageStart('event')},
-    {t:'리뷰를 쓴 손님에게 <b>간식 매대</b>의 간식을 드려요', man:'간식 드렸어요', act:()=>bizMark('snack'), ok:()=>((BZ.mk||{}).snack||0)>stageStart('event')},
-    {t:`화면을 터치 → 「<b>대기 장소로 보내기</b>」 → ${waitPlace()}에 오면 「도착했어요」`} ];
+    {t:'<b>n행시</b>를 짓고 돌아오세요', ok:()=>((BZ.mk||{}).poem||0)>stageStart('event')||((BZ.mk||{}).roamEnd||0)>stageStart('event')},
+    {t:'위쪽 <b>냄비 모양 주방 아이콘</b> → 「<b>한글날 간식 매대</b>」 고르고 「보내기」', ok:()=>(tk()==='kitchen' && trip.stops.some(x=>x.store==='snack'))||((BZ.mk||{}).snackLoad||0)>stageStart('event')},
+    {t:'간식 매대에 닿으면 「도착했어요」 → 간식을 싣고 「<b>로봇 보내기</b>」', ok:()=>((BZ.mk||{}).snackLoad||0)>stageStart('event')},
+    {t:`서빙 화면에서 우리 테이블 <b>${T}번</b>을 누르고 「보내기」`, ok:()=>(tk()==='serve'||tk()==='birthday') && trip.stops.some(x=>x.num===T)},
+    {t:`${T}번 테이블에 닿으면 「도착했어요」 → 리뷰 쓴 손님에게 간식을 드리고 「로봇 보내기」 → ${waitPlace()}에 오면 「도착했어요」`} ];
 }
 function bizLineIdx(id){ return (BZ.li||{})[id]||0; }
 function tick(){ try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume();
@@ -1638,7 +1680,20 @@ setInterval(()=>{
   if(nd && i>nd.k) BZ.need=null;
   if(i!==i0){ BZ.li=BZ.li||{}; BZ.li[cur.id]=i; saveBZ(); tick(); renderStrip(); const b=$('#bsBar'); b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash'); }
 }, 300);
-function bizKitchen(sx){ BZ.kit=BZ.kit||{}; BZ.kit[sx]=Date.now(); const P=bizMine(); if(P) P.items.filter(i=>Math.floor(i/5)===sx).forEach(i=>BZ.loaded[i]=true); saveBZ(); }
+function bizKitchen(sx){ if(sx==='snack'){ bizMark('snackLoad'); return; } BZ.kit=BZ.kit||{}; BZ.kit[sx]=Date.now(); const P=bizMine(); if(P) P.items.filter(i=>Math.floor(i/5)===sx).forEach(i=>BZ.loaded[i]=true); saveBZ(); }
+// 리뷰 등록 완료: 돌아다니기를 멈추고 바로 서빙 화면으로 (간식 매대로 보내러)
+function bizRoamToServe(){ if(typeof roamClose==='function' && $('#rpause').classList.contains('on')) roamClose(); if(roamRun){ roamRun=false; stopDisplay(); } paused=false; goServe(); }
+/* 🎉 영업 완료 축하: 색종이 + 팡파르 + 진짜 간식 안내 → 「고마워요」를 누르면 영업 기록(판)이 열려요 */
+function fanfare(){ try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state!=='running') actx.resume();
+  const comp=actx.createDynamicsCompressor(); comp.connect(actx.destination); const g=actx.createGain(); g.gain.value=.4*S.volume; g.connect(comp);
+  let t=actx.currentTime+.05; [[523.25,.14],[659.25,.14],[783.99,.14],[1046.5,.5]].forEach(([f,d])=>{ [[1,'triangle',1],[2,'sine',.4]].forEach(([m,ty,lv])=>{
+    const o=actx.createOscillator(), e=actx.createGain(); o.type=ty; o.frequency.value=f*m; e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(lv,t+.02); e.gain.exponentialRampToValueAtTime(.001,t+d+.35);
+    o.connect(e); e.connect(g); o.start(t); o.stop(t+d+.4); }); t+=d; }); }catch(e){} }
+function bizParty(){ partyOn=true; bizToggle(false);
+  const P=bizMine(); $('#ptSub').textContent = `${P?P.table+'번 테이블 손님을 멋지게 모셨어요 · ':''}${fmtMS((BZ.done.collect||Date.now())-BZ.t0)}`;
+  $('#party').classList.add('on'); updateConfetti(); fanfare();
+  setTimeout(()=>speak('영업 완료! 정말 수고했어요. 이제 진짜 간식을 받으러 가요!'), 900); }
+$('#ptOk').onclick=()=>{ partyOn=false; $('#party').classList.remove('on'); updateConfetti(); bizToggle(true); };
 function bizManual(){ const P=bizMine(), cur=bizCur(); if(!P||!cur) return; const L=bizLines(cur.id,P), ln=L[bizLineIdx(cur.id)]; if(ln&&ln.act){ ln.act(); saveBZ(); renderStrip(); } }
 function bizBackTo(id, k){ BZ.li=BZ.li||{}; BZ.rs=BZ.rs||{}; BZ.li[id]=k; BZ.rs[id]=Date.now(); BZ.need={id, k, f:0, t:Date.now()}; saveBZ(); renderStrip(); }
 function bizBack(){ const cur=bizCur(); if(!cur) return; bizBackTo(cur.id, Math.max(0, bizLineIdx(cur.id)-1)); toast('한 줄 앞으로 돌아갔어요', true); }
@@ -1712,11 +1767,10 @@ function bizToggle(v){ bzOpen = v==null ? !bzOpen : v; renderStrip(); }
 function bizOk(id, notes){
   BZ.li=BZ.li||{}; BZ.done[id]=Date.now(); if(notes && notes.length) BZ.note[id]=notes; saveBZ();
   const nx=bizCur();
-  if(id==='collect'){ speak('영업 완료! 손님 한 팀을 멋지게 모셨어요. 수고했어요!'); }
+  if(id==='collect'){ bizParty(); }
   else if(id==='promo'){ setTimeout(()=>{ const P=bizMine(); ding(); speak(`띵동! ${P.table}번 테이블에서 주문이 들어왔어요. ${P.items.map(menuName).join(', ')}.`); bizToggle(true); }, 6000); }
   toast(`${BSTEPS.find(x=>x.id===id).e} ${BSTEPS.find(x=>x.id===id).t} 성공!` + (nx && id!=='collect' && id!=='promo' ? ` 다음은 ${nx.e} ${nx.t}` : ''), true);
   renderStrip();
-  if(id==='collect') setTimeout(()=>bizToggle(true), 1600);   // 한 줄씩 보여 주니까, 판은 영업 완료 때만 펼쳐요
 }
 // 실제 앱에서 한 일을 보고 미션을 체크해요
 function bizEvent(ev){
@@ -1725,13 +1779,16 @@ function bizEvent(ev){
   if(ev.kind==='guide'){ if(cur.id!=='guide') return turn(); if(ev.table!==T) return toast(`안내할 테이블은 ${T}번이에요!`, true); bizOk('guide', ev.count!=null && ev.count!==P.party ? [`👥 ${T}번 테이블 손님은 ${P.party}명이었어요 (${ev.count}명으로 골랐어요)`] : []); }
   else if(ev.kind==='promoArrive'){ if(cur.id!=='promo') return turn(); if(ev.table!==T) return toast(`홍보 장소는 ${T}번 테이블이에요!`, true); bizOk('promo'); }
   else if(ev.kind==='serve' || ev.kind==='birthday'){
+    if(cur.id==='event'){ if(!ev.tables.includes(T)) return toast(`간식은 우리 테이블 ${T}번으로 가져가요!`, true);
+      if(!(((BZ.mk||{}).snackLoad||0)>stageStart('event'))) return toast('간식 매대에서 간식을 먼저 실어요', true);
+      return bizOk('event', ((BZ.mk||{}).poem||0)>stageStart('event') ? [] : ['✍️ n행시·리뷰를 올렸는지 확인해요']); }
     if(cur.id!=='serve') return turn(); if(!ev.tables.includes(T)) return toast(`주문한 테이블은 ${T}번이에요!`, true);
     const n=[]; if(P.soup && !ev.soup) n.push('🍲 국물 메뉴였는데 국물 모드를 안 켰어요'); if(P.bday && ev.kind!=='birthday') n.push('🎂 생일 손님인데 케이크 아이콘을 안 눌렀어요');
     if(P.items.some(i=>!BZ.loaded[i])) n.push('🧾 주문서에서 싣기 체크를 다 안 했어요');
     bizOk('serve', n); }
   else if(ev.kind==='collect'){ if(cur.id!=='collect') return turn(); if(!ev.tables.includes(T) || !ev.dish) return toast(`${T}번 테이블 그릇을 식기 반납대까지 가져가요!`, true); bizOk('collect'); }
   else if(ev.kind==='roamStart'){ if(cur.id==='event') bizMark('roamGo'); else turn(); }
-  else if(ev.kind==='roamEnd'){ if(cur.id==='event' && ((BZ.mk||{}).roamGo||0)>stageStart('event')) bizOk('event', ((BZ.mk||{}).snack||0)>stageStart('event') ? [] : ['🍪 리뷰 쓴 손님에게 간식을 드렸는지 확인해요']); }
+  else if(ev.kind==='roamEnd'){ if(cur.id==='event' && ((BZ.mk||{}).roamGo||0)>stageStart('event')) bizMark('roamEnd'); }   // 다 돌아다니면 → 간식 매대로
 }
 function bizTrip(t){
   if(!t || t.mission || t.canceled) return;
