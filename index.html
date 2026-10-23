@@ -1691,6 +1691,9 @@ function bizPlan(round){
 }
 function bizMine(){ return BZ.fam==null ? null : bizPlan(BZ.round)[BZ.fam]; }
 function bizCur(){ return BSTEPS.find(x=>!BZ.done[x.id]); }
+// 서빙 2~4: 홍보는 빼고 서빙 → 퇴식 (퇴식해야 다음 서빙) · 서빙 3만 리뷰 이벤트가 한 번 더
+function bizOff(id){ return !!BZ.xs && (id==='guide' || id==='promo' || (id==='event' && BZ.xs!==3)); }
+function bizSteps(){ return BSTEPS.filter(x=>!bizOff(x.id)); }
 function bizStart(fam){ BZ.xs=0; const pair=Math.ceil(BZ.round/2); if(BZ.namePair!==pair){ MS().newFood=-1; MS().newName=''; BZ.namePair=pair; }   // 영업 1·2 / 3·4 사이에만 신메뉴 유지
   BZ.fam=fam; BZ.go=0; BZ.done={}; BZ.note={}; BZ.loaded={}; BZ.kit={}; BZ.li={}; BZ.rs={}; BZ.need=null; BZ.rating=[]; BZ.t0=Date.now(); saveBZ();
   MS().family=fam; S.baseName=(fam+1)+'번 대기'; save(); renderStrip(); }
@@ -1785,7 +1788,7 @@ function bizParty(){ partyOn=true; bizToggle(false);
   setTimeout(()=>speak(xs ? `서빙 ${xs} 완료! 잘했어요.` : '영업 완료! 정말 수고했어요. 이제 진짜 간식을 받으러 가요!'), 900); }
 // 서빙만 더 하기: 다른 단계는 끝난 것으로 두고 서빙만 · 주문은 「서빙 번호 + 가족 번호」로 정해져서 같은 번호끼리 안 겹쳐요
 function bizServeMore(n){ const t=Date.now();
-  BZ.round=n; BZ.xs=n; BZ.xsT=t; BZ.done={guide:t, promo:t, event:t, collect:t}; BZ.li={}; BZ.loaded={}; BZ.kit={}; BZ.rs={}; BZ.need=null; BZ.note={}; saveBZ();
+  BZ.round=n; BZ.xs=n; BZ.xsT=t; BZ.done={guide:t, promo:t}; if(n!==3) BZ.done.event=t; BZ.li={}; BZ.loaded={}; BZ.kit={}; BZ.rs={}; BZ.need=null; BZ.note={}; saveBZ();
   kind='serve'; soup=false; slots=[]; resetSlots(); goServe(); renderStrip();
   setTimeout(()=>{ const P=bizMine(); if(!P) return; ding(); speak(`띵동! ${P.table}번 테이블에서 주문이 들어왔어요. ${P.items.map(menuName).join(', ')}.`); alertPop('order'); }, 1200); }
 $('#ptOk').onclick=()=>{ partyOn=false; $('#party').classList.remove('on'); updateConfetti(); bizToggle(true); };
@@ -1794,10 +1797,10 @@ function bizManual(){ const P=bizMine(), cur=bizCur(); if(!P||!cur) return; cons
 function bizBackTo(id, k){ BZ.li=BZ.li||{}; BZ.rs=BZ.rs||{}; BZ.li[id]=k; BZ.rs[id]=Date.now(); BZ.need={id, k, f:0, t:Date.now()}; saveBZ(); renderStrip(); }
 function bizBack(){ const cur=bizCur(); if(!cur) return; bizBackTo(cur.id, Math.max(0, bizLineIdx(cur.id)-1)); toast('한 줄 앞으로 돌아갔어요', true); }
 function bizRestart(){ const cur=bizCur(); if(!cur) return; if(cur.id==='serve'){ BZ.loaded={}; BZ.kit={}; } bizBackTo(cur.id, 0); toast(`${cur.e} ${cur.t} 단계를 처음부터 다시 해요`, true); }
-function bizPrevStage(){ const cur=bizCur(), k=cur?BSTEPS.indexOf(cur):BSTEPS.length; const prev=BSTEPS[k-1]; if(!prev) return;
+function bizPrevStage(){ const SS=bizSteps(), cur=bizCur(), k=cur?SS.indexOf(cur):SS.length; const prev=SS[k-1]; if(!prev) return;
   delete BZ.done[prev.id]; if(BZ.note) delete BZ.note[prev.id]; if(prev.id==='serve'){ BZ.loaded={}; BZ.kit={}; } bizBackTo(prev.id, 0); toast(`${prev.e} ${prev.t} 단계로 돌아갔어요`, true); }
 // 시간이 모자랄 때: 지금 단계를 건너뛰고 다음 단계로 (기록에 「건너뜀」 메모)
-function bizSkipStage(){ const cur=bizCur(); if(!cur) return; const nx=BSTEPS[BSTEPS.indexOf(cur)+1];
+function bizSkipStage(){ const cur=bizCur(); if(!cur) return; const SS=bizSteps(), nx=SS[SS.indexOf(cur)+1];
   $('#modal').innerHTML = `<h4>${cur.e} ${cur.t} 단계를 건너뛸까요?<br><span style="font-weight:400;font-size:.8rem;color:var(--ink2)">${nx?`바로 ${nx.e} ${nx.t} 단계로 넘어가요`:'영업을 여기서 끝내요'}${cur.id==='promo'?' · 주문은 그대로 들어와요':''}</span></h4>
     <div class="two"><button class="btn btn-gray" data-m="no">취소</button><button class="btn btn-fill" data-m="yes">건너뛰기</button></div>`;
   openModal();
@@ -1816,7 +1819,7 @@ function renderStrip(){
   const el=$('#bizStrip'); if(!el) return;
   el.classList.toggle('open', bzOpen && on);
   const P=bizMine(), cur=bizCur();
-  const dots = BSTEPS.map(x=>`<i class="${BZ.done[x.id]?'on':cur&&cur.id===x.id?'cur':''}"></i>`).join('');
+  const dots = bizSteps().map(x=>`<i class="${BZ.done[x.id]?'on':cur&&cur.id===x.id?'cur':''}"></i>`).join('');
   let now, man='';
   if(!P) now='강사님: 안내 출발지(가족 번호)를 정해 주세요';
   else if(!cur) now='🎉 오늘 영업 끝! 수고했어요';
@@ -1837,10 +1840,10 @@ function renderBizPanel(){
       <li>네 태블릿이 같은 <b>영업 번호</b>인지 확인해요 (지금 영업 ${BZ.round})</li></ol>
       <button class="btn btn-fill bs-go" data-bz="go-guide">안내하기 열기</button></div>`;
   }else{
-    const k=cur?BSTEPS.indexOf(cur):4;
+    const SS=bizSteps(), k=cur?SS.indexOf(cur):SS.length;
     h = `<div class="bs-head"><div class="fn" style="background:${FAM_COL[BZ.fam]}">${BZ.fam+1}</div><div><div class="t">가족 ${BZ.fam+1} · ${P.table}번 테이블 손님 ${P.party}명</div><div class="s">${BZ.xs?`서빙 ${BZ.xs} / 4 · `:''}출발: ${BZ.fam+1}번 대기 장소</div></div></div>
       ${nameCard(P)}
-      <div class="bs-steps">${BSTEPS.map((x,i)=>`<div class="${BZ.done[x.id]?'on':cur&&cur.id===x.id?'cur':''}"><b>${BZ.done[x.id]?'✓':x.e}</b>${i+1}. ${x.t}</div>`).join('')}</div>
+      <div class="bs-steps">${SS.map((x,i)=>`<div class="${BZ.done[x.id]?'on':cur&&cur.id===x.id?'cur':''}"><b>${BZ.done[x.id]?'✓':x.e}</b>${i+1}. ${x.t}</div>`).join('')}</div>
       `;
     const orderCard = ()=>`<div class="bs-card"><h4>🧾 ${P.table}번 테이블오더 <small>${P.count}개 · 손님 ${P.party}명</small></h4>
       <div class="m-sub" style="margin:-.2rem 0 .5rem">🎂 오늘 생일인 친구가 있으면 서빙할 때 <b>케이크 아이콘</b>으로 축하해 줄 수 있어요 (선택)</div>
@@ -1848,14 +1851,14 @@ function renderBizPanel(){
       <div class="bs-items">${P.items.map(i=>`<button class="bs-item ${BZ.loaded[i]?'on':''}" data-bzload="${i}">${foodPic(i)}<span class="nm">${esc(menuName(i))}${isNew(i)?' <span class="newtag">신메뉴</span>':''}<small>${STORES[Math.floor(i/5)].name}${SOUP.includes(i)?' · 🍲 국물':''}</small></span><span class="ck">${BZ.loaded[i]?'실었어요 ✓':'싣기'}</span></button>`).join('')}</div>
       ${bizMap(P)}<div class="m-sub" style="margin-top:.4rem">출발 → ① ② … 가게에서 싣고 → <b style="color:#1f7cf5">${P.table}번</b> 테이블</div></div>`;
     if(cur){
-      h += `<div class="bs-card"><h4>${cur.e} ${BSTEPS.indexOf(cur)+1}. ${cur.t} </h4><ol class="bs-lines">${(()=>{ const L=bizLines(cur.id,P), i=Math.min(bizLineIdx(cur.id),L.length-1); return L.map((x,k)=>`<li class="${k<i?'ok':k===i?'now':''}"><b>${k<i?'✓':k+1}</b><span>${x.t}${k===i&&x.man?` <button class="bs-man2" data-bzman>${x.man} ✓</button>`:''}</span></li>`).join(''); })()}</ol>
+      h += `<div class="bs-card"><h4>${cur.e} ${k+1}. ${cur.t} </h4><ol class="bs-lines">${(()=>{ const L=bizLines(cur.id,P), i=Math.min(bizLineIdx(cur.id),L.length-1); return L.map((x,k)=>`<li class="${k<i?'ok':k===i?'now':''}"><b>${k<i?'✓':k+1}</b><span>${x.t}${k===i&&x.man?` <button class="bs-man2" data-bzman>${x.man} ✓</button>`:''}</span></li>`).join(''); })()}</ol>
         <div class="bs-ctl"><button data-bzback>◀ 이전 줄</button><button data-bzrestart>↺ 이 단계 처음부터</button><button data-bzskip>다음 줄 ▶</button></div>
-        <div class="bs-ctl2">${BSTEPS.indexOf(cur)>0?`<button data-bzprev>⏮ 이전 단계(${BSTEPS[BSTEPS.indexOf(cur)-1].t})로</button>`:''}<button data-bznext>${BSTEPS[BSTEPS.indexOf(cur)+1]?`다음 단계(${BSTEPS[BSTEPS.indexOf(cur)+1].t})로 건너뛰기 ⏭`:'영업 끝내기 ⏭'}</button></div>
+        <div class="bs-ctl2">${k>0?`<button data-bzprev>⏮ 이전 단계(${SS[k-1].t})로</button>`:''}<button data-bznext>${SS[k+1]?`다음 단계(${SS[k+1].t})로 건너뛰기 ⏭`:BZ.xs?`서빙 ${BZ.xs} 끝내기 ⏭`:'영업 끝내기 ⏭'}</button></div>
         <button class="btn btn-fill bs-go" data-bz="go-${cur.id}">${cur.id==='guide'?'안내하기':cur.id==='promo'?(bizLineIdx('promo')<4?'관리자 페이지':'홍보하기'):'서빙하기'} 열기</button></div>`;
       if(cur.id==='serve' || cur.id==='collect') h += orderCard();
     }else{
       const nx=(BZ.xs||1)+1;
-      h += `<div class="bs-card bs-done"><div class="big">${BZ.xs?`서빙 ${BZ.xs} 끝! 🏆`:'오늘 영업 끝! 🏆'}</div><div class="m-sub">${BZ.xs?'새 손님 주문을 잘 날랐어요':fmtMS((BZ.done.collect||Date.now())-BZ.t0)+' 만에 손님 한 팀을 모셨어요'}</div>${noteHTML()}
+      h += `<div class="bs-card bs-done"><div class="big">${BZ.xs?`서빙 ${BZ.xs} 끝! 🏆`:'오늘 영업 끝! 🏆'}</div><div class="m-sub">${BZ.xs?(BZ.xs===3?'서빙 → 리뷰 이벤트 → 퇴식까지 잘 해냈어요':'서빙하고 퇴식까지 잘 해냈어요'):fmtMS((BZ.done.collect||Date.now())-BZ.t0)+' 만에 손님 한 팀을 모셨어요'}</div>${noteHTML()}
         ${nx<=4?`<button class="btn btn-fill bs-go" data-bzmore>🍽️ 서빙 ${nx} 하기 · 새 손님 주문</button>`:''}</div>`;
     }
   }
@@ -1913,7 +1916,7 @@ function bizToggle(v){ bzOpen = v==null ? !bzOpen : v; renderStrip(); }
 function bizOk(id, notes){
   BZ.li=BZ.li||{}; BZ.done[id]=Date.now(); if(notes && notes.length) BZ.note[id]=notes; saveBZ();
   const nx=bizCur();
-  if(id==='collect' || (id==='serve' && BZ.xs)){ bizParty(); renderStrip(); return; }
+  if(id==='collect'){ bizParty(); renderStrip(); return; }
   else if(id==='promo'){ setTimeout(()=>{ const P=bizMine(); if(!P) return; ding(); speak(`띵동! ${P.table}번 테이블에서 주문이 들어왔어요. ${P.items.map(menuName).join(', ')}.`); alertPop('order'); }, 6000); }
   toast(`${BSTEPS.find(x=>x.id===id).e} ${BSTEPS.find(x=>x.id===id).t} 성공!` + (nx && id!=='collect' && id!=='promo' ? ` 다음은 ${nx.e} ${nx.t}` : ''), true);
   renderStrip();
