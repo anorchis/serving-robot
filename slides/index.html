@@ -84,6 +84,13 @@
   .team span { font-size:76px; line-height:1; }
   .team b { font-family:'Hanna','Gowun Dodum',sans-serif; font-weight:normal; font-size:26px; }
   .team i { font-style:normal; font-family:'Hanna','Gowun Dodum',sans-serif; font-size:44px; color:var(--orange); margin-bottom:30px; }
+  .roles { display:flex; align-items:stretch; justify-content:center; gap:14px; margin-top:18px; }
+  .roles > div { display:flex; flex-direction:column; align-items:center; gap:4px; background:#F6F1E7; border-radius:18px; padding:14px 20px; min-width:250px; }
+  .roles > div > span { font-size:46px; line-height:1; }
+  .roles > div > b { font-family:'Hanna','Gowun Dodum',sans-serif; font-weight:normal; font-size:30px; }
+  .roles small { font-size:21px; color:var(--ink-soft); }
+  .roles small b { color:var(--ink); }
+  .roles em { align-self:center; font-style:normal; color:var(--mint-deep); font-weight:800; font-size:34px; }
   .flowchips { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:16px; }
   .flowchips span { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:25px; background:#F6F1E7; border-radius:14px; padding:8px 14px; white-space:nowrap; }
   .flowchips em { font-style:normal; color:var(--mint-deep); font-weight:800; font-size:24px; }
@@ -215,12 +222,12 @@
 </section>
 
 <!-- 5. 오늘의 미션: 한 가족 = 한 테이블, 미션 보고 따라 하기 -->
-<section class="slide" data-note="<b>오늘의 미션 한 줄 요약:</b> “<b>한 가족이 한 테이블을 맡아서</b>, 로봇 1대로 손님 한 팀을 끝까지 모셔요!” 강사님이 태블릿마다 가족 번호를 정해 주면 담당 테이블이 정해지고, 번호는 앱이 알아서 넣어 줘요. 어떻게 하는지 외울 필요 없어요 → <b>앱 맨 위 빨간 네모 칸(미션)을 보고 그대로 따라 하면 돼요.</b> 해내면 「띵」 하고 다음 미션이 나와요. 막히면 미션 칸을 눌러 전체 순서를 봐요. 자세한 4단계는 다음 장에서!">
+<section class="slide" data-note="<b>오늘의 미션 한 줄 요약:</b> “<b>한 가족이 한 테이블을 맡아서</b>, 로봇 1대로 우리 테이블 손님을 모셔요!” <b>태블릿은 가족마다 2대</b>예요. <b>부모님</b>은 서빙로봇 앱 화면의 미션을 읽어 주고, <b>자녀</b>는 카미봇리모콘으로 로봇을 조종해요. 강사님이 태블릿마다 가족 번호를 정해 주면 담당 테이블이 정해지고, 번호는 앱이 알아서 넣어 줘요. 어떻게 하는지 외울 필요 없어요 → <b>앱 맨 위 빨간 네모 칸(미션)을 보고 그대로 따라 하면 돼요.</b> 해내면 「띵」 하고 다음 미션이 나와요. 막히면 미션 칸을 눌러 전체 순서를 봐요. 자세한 4단계는 다음 장에서!">
   <img class="bg" src="PPT배경템플릿_6종/07_좌우큰칸형.png" alt="">
   <div class="abs" style="left:4%; top:5%; width:90%; display:flex; align-items:center; gap:18px;">
     <span class="tag orange in">오늘의 미션</span><div class="h2 split in">미션을 보고, 따라 해요! 📱</div>
   </div>
-  <div class="abs in" style="left:7%; top:20%; width:24%;"><div class="phone"><img style="height:auto;" src="앱_화면/1_서빙화면_미션띠.png" alt="서빙 화면"><span class="redbox f" data-f="2"></span></div></div>
+  <div class="abs in" style="left:7%; top:20%; width:24%;"><div class="phone"><img style="height:auto;" src="앱_화면/1_서빙화면_미션띠.png?v=1024" alt="서빙 화면"><span class="redbox f" data-f="2"></span></div></div>
   <div class="abs f" data-f="2" style="left:31.6%; top:21.2%;"><span class="mission-call">◀ 미션!</span></div>
   <div class="abs f" data-f="3" style="left:31.8%; top:31%; width:13%; font-size:21px; line-height:1.5; color:var(--ink-soft);">여기에 지금 할 일이<br><b style="color:#E53935;">한 줄씩</b> 나와요</div>
   <div class="abs center" style="left:48%; top:20%; width:47.6%; height:62%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;">
@@ -231,12 +238,11 @@
         <div><span>🍽️</span><b>테이블 1개</b></div>
       </div>
       <div class="h2" style="font-size:44px; margin-top:14px;">한 가족이 <span class="accent">한 테이블</span>을 맡아요</div>
-      <div class="lead" style="font-size:25px; margin-top:4px;">손님 한 팀을 로봇으로 끝까지 모셔요</div>
     </div>
     <div class="f" data-f="2" style="width:92%; border-top:3px dashed #EFE3CC;"></div>
     <div class="f" data-f="3">
       <div class="h2" style="font-size:44px;"><span style="color:#E53935;">미션</span>을 보고 → <span class="mint">따라 하기!</span></div>
-      <div class="flowchips"><span>👀 미션 읽기</span><em>→</em><span>🤖 로봇 움직이기</span><em>→</em><span>✅ 띵! 다음 미션</span></div>
+      <div class="roles"><div><span>👩‍🦰📱</span><b>부모님 태블릿</b><small>서빙로봇 앱 · <b>미션을 읽어 줘요</b></small></div><em>→</em><div><span>🧒🎮</span><b>자녀 태블릿</b><small>카미봇리모콘 · <b>로봇을 조종해요</b></small></div></div>
     </div>
   </div>
 </section>
