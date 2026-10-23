@@ -72,6 +72,13 @@
   .phone { position:relative; }
   .redbox { position:absolute; left:4px; right:4px; top:4px; height:calc((100% - 20px) * .0812 + 12px); border:5px solid #E53935; border-radius:12px; pointer-events:none; box-shadow:0 0 0 3px rgba(229,57,53,.18); }
   .mission-call { display:inline-block; font-family:'Hanna','Gowun Dodum',sans-serif; font-size:28px; color:#fff; background:#E53935; border-radius:999px; padding:6px 18px; box-shadow:0 5px 0 rgba(0,0,0,.12); }
+  .famtbl { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .famtbl > div { background:#fff; border-radius:22px; padding:18px 10px 20px; text-align:center; box-shadow:0 6px 0 rgba(46,58,53,.06); border-top:10px solid var(--c); }
+  .famtbl .fn { font-family:'Hanna','Gowun Dodum',sans-serif; font-size:30px; color:var(--c); }
+  .famtbl .fd { display:flex; justify-content:center; gap:6px; margin-top:8px; }
+  .famtbl .fd span { display:flex; flex-direction:column; align-items:center; gap:6px; font-weight:800; font-size:26px; }
+  .famtbl .fd i { width:120px; height:120px; background:url(../food.png) 0 0/500% 400% no-repeat; border-radius:50%; }
+  .famtbl .or { font-size:18px; color:var(--ink-soft); align-self:center; }
   .team { display:flex; align-items:center; justify-content:center; gap:16px; }
   .team div { display:flex; flex-direction:column; align-items:center; gap:4px; }
   .team span { font-size:76px; line-height:1; }
@@ -112,12 +119,12 @@
 <div id="progress"></div>
 
 <!-- 1. 표지 -->
-<section class="slide" data-note="<b>인사:</b> “오늘 우리 가족은 한글날 100주년을 맞은 <b>푸드테크 사장님</b>이에요. 손님을 자리로 안내하고, 신메뉴를 홍보하고, 음식을 서빙하고, 이벤트까지 열어요. 우리 가게 직원은 바로 <b>서빙로봇</b>!” 흐름: 푸드테크 → 서빙로봇 → 카미봇 조종 → 오늘의 영업.">
+<section class="slide" data-note="<b>인사:</b> “오늘 우리 가족은 <b>서빙로봇을 운영하는 푸드테크 먹자골목 사장님</b>이에요. 손님을 자리로 안내하고, 신메뉴를 홍보하고, 음식을 서빙하고, 이벤트까지 열어요. 우리 가게 직원은 바로 <b>서빙로봇</b>!” 흐름: 푸드테크 → 페르소나·미션(새 이름·포스터) → 서빙로봇 → 카미봇 조종 → 오늘의 영업.">
   <img class="bg" src="PPT배경템플릿_6종/01_표지형.png" alt="">
   <div class="abs" style="left:5%; top:13%; width:56%;">
     <div class="tag orange in">한글날 100주년 · 꿈트리 푸드테크</div>
     <div class="h1 split in" style="margin-top:26px;">서빙로봇과 함께<br><span class="accent">영업 대작전!</span></div>
-    <div class="lead in" style="margin-top:22px;">오늘 우리 가족은 푸드테크 사장님이에요</div>
+    <div class="lead in" style="margin-top:22px;">오늘 우리 가족은 서빙로봇을 운영하는<br>푸드테크 먹자골목 사장님이에요</div>
     <div class="in" style="margin-top:26px; display:flex; flex-wrap:wrap; gap:10px; max-width:660px;">
       <span class="tag">🍳 푸드테크</span><span class="tag">🤖 서빙로봇</span><span class="tag">🎮 카미봇 조종</span><span class="tag">🏪 오늘의 영업</span>
     </div>
@@ -135,6 +142,18 @@
     <div class="photo f" data-f="4"><img src="푸드테크_사진/delivery.jpg" alt="배달로봇"><div class="h3">🛵 배달</div><span class="small">배달로봇</span></div>
   </div>
   <div class="credit">사진: Wikimedia Commons — N509FZ (CC BY-SA 4.0), Nick-D (CC BY-SA 4.0), MIKI Yoshihito (CC BY 2.0), Estormiz (CC0)</div>
+</section>
+
+<!-- 3. 우리의 페르소나와 미션 -->
+<section class="slide" data-note="<b>페르소나 → 미션 (약 2분):</b> “우리 가족은 가게 네 곳(봄날떡집·훈훈비빔·분노라멘·콤비키친)이 모인 <b>서빙로봇을 운영하는 푸드테크 먹자골목</b>의 사장님이에요. 테이블오더로 주문받고 서빙로봇이 음식을 날라요. 올해는 한글날 100주년! 그래서 <b>원래 있던 메뉴에 우리말 새 이름</b>을 지어 주려고 해요.” → 가족마다 맡을 메뉴를 보여 주세요(오늘 우리 테이블 손님이 주문하는 메뉴라서 가족끼리 안 겹쳐요). 둘 중 하나를 골라 <b>「새 이름 짓기·포스터」</b>로 새 이름과 포스터를 만들어 태블릿에 저장해 와요. 서빙로봇 앱은 강사님이 가족 번호(대기 장소)를 정하면 <b>「오늘의 미션」 화면</b>이 떠요 → 메뉴를 고르고, 포스터를 만들어 와서 <b>바뀐 이름</b>을 적으면 「영업 시작!」. ※ 영업이 끝나고 시간이 남으면 「🍽️ 서빙 2·3·4 하기」로 <b>서빙만</b> 더 할 수 있어요(새 손님 주문 · 서빙 번호가 같으면 가족끼리 안 겹쳐요).">
+  <img class="bg" src="PPT배경템플릿_6종/04_큰작업공간형.png" alt="">
+  <div class="abs center" style="left:8%; top:4.5%; width:84%;"><div class="lead in" style="font-size:30px;">서빙로봇을 운영하는</div><div class="h2 split in">우리 가족은 <span class="accent">푸드테크 먹자골목</span> 사장님!</div></div>
+  <div class="abs" style="left:6%; top:21%; width:88%; display:grid; grid-template-columns:1fr 1fr; gap:22px;">
+    <div class="pin f" data-f="1"><span class="ico">🏪</span><div><b>가게 4곳을 함께 운영해요</b><br>테이블오더로 주문받고, 서빙로봇이 날라요</div></div>
+    <div class="pin f" data-f="2" style="background:#FFF1E6;"><span class="ico">📜</span><div><b>미션! 한글날 100주년 기념</b><br>원래 메뉴에 <span class="accent" style="font-weight:800;">우리말 새 이름</span> 짓기</div></div>
+  </div>
+  <div class="abs f" data-f="3" style="left:6%; top:36%; width:88%;"><div class="famtbl"><div class="f" data-f="3" style="--c:#e9774c"><div class="fn">가족 1</div><div class="fd"><span><i style="background-position:50% 66.6667%"></i>짜장면</span><em class="or">또는</em><span><i style="background-position:25% 66.6667%"></i>라멘</span></div></div><div class="f" data-f="3" style="--c:#3fa58b"><div class="fn">가족 2</div><div class="fd"><span><i style="background-position:0% 0.0000%"></i>떡볶이</span><em class="or">또는</em><span><i style="background-position:75% 100.0000%"></i>햄버거</span></div></div><div class="f" data-f="3" style="--c:#5583c2"><div class="fn">가족 3</div><div class="fd"><span><i style="background-position:75% 33.3333%"></i>냉면</span><em class="or">또는</em><span><i style="background-position:75% 0.0000%"></i>라면</span></div></div><div class="f" data-f="3" style="--c:#c8963a"><div class="fn">가족 4</div><div class="fd"><span><i style="background-position:100% 33.3333%"></i>제육볶음</span><em class="or">또는</em><span><i style="background-position:100% 66.6667%"></i>마라탕</span></div></div></div></div>
+  <div class="abs center f" data-f="4" style="left:20%; top:81%; width:60%;"><a class="linkbtn" href="https://gemini.google.com/share/6a022e6f00bb?social_preview=false&amp;skid=cb117393-9182-4f4f-872e-c9b713b32e87" target="_blank" rel="noopener">✏️ 새 이름 지으러 가기 ↗</a></div>
 </section>
 
 <!-- 3. 서빙로봇은 어떻게 일할까 -->
@@ -196,7 +215,7 @@
 </section>
 
 <!-- 5. 오늘의 미션: 한 가족 = 한 테이블, 미션 보고 따라 하기 -->
-<section class="slide" data-note="<b>오늘의 미션 한 줄 요약:</b> “<b>한 가족이 한 테이블을 맡아서</b>, 로봇 1대로 손님 한 팀을 끝까지 모셔요!” 강사님이 태블릿마다 가족 번호를 정해 주면 담당 테이블이 정해지고, 번호는 앱이 알아서 넣어 줘요. 어떻게 하는지 외울 필요 없어요 → <b>앱 맨 위 빨간 네모 칸(미션)을 보고 그대로 따라 하면 돼요.</b> 해내면 「띵」 하고 다음 미션이 나와요. 막히면 미션 칸을 눌러 전체 순서를 봐요. 자세한 5단계는 다음 장에서!">
+<section class="slide" data-note="<b>오늘의 미션 한 줄 요약:</b> “<b>한 가족이 한 테이블을 맡아서</b>, 로봇 1대로 손님 한 팀을 끝까지 모셔요!” 강사님이 태블릿마다 가족 번호를 정해 주면 담당 테이블이 정해지고, 번호는 앱이 알아서 넣어 줘요. 어떻게 하는지 외울 필요 없어요 → <b>앱 맨 위 빨간 네모 칸(미션)을 보고 그대로 따라 하면 돼요.</b> 해내면 「띵」 하고 다음 미션이 나와요. 막히면 미션 칸을 눌러 전체 순서를 봐요. 자세한 4단계는 다음 장에서!">
   <img class="bg" src="PPT배경템플릿_6종/07_좌우큰칸형.png" alt="">
   <div class="abs" style="left:4%; top:5%; width:90%; display:flex; align-items:center; gap:18px;">
     <span class="tag orange in">오늘의 미션</span><div class="h2 split in">미션을 보고, 따라 해요! 📱</div>
@@ -222,51 +241,50 @@
   </div>
 </section>
 
-<!-- 6. 영업 5단계 -->
-<section class="slide" data-note="<b>오늘의 영업 순서:</b> 손님 한 팀이 우리 가게에 와서 나갈 때까지예요. ①자리 안내(안내하기) → ②홍보(홍보하기, 신메뉴 포스터) → ③서빙(서빙하기, 주방들 들러서 싣기) → ④이벤트(돌아다니기, n행시 리뷰 → 간식) → ⑤퇴식(그릇 회수) → 🎉영업 완료면 <b>진짜 간식</b>! 버튼 이름은 외우지 않아도 돼요. 위쪽 띠가 알려 줘요.">
+<!-- 6. 영업 4단계 -->
+<section class="slide" data-note="<b>오늘의 영업 순서:</b> 손님 한 팀이 우리 가게에 와서 나갈 때까지예요. ①홍보(설정에서 포스터 올리고 → 홍보하기) → ②서빙(서빙하기, 주방들 들러서 싣기) → ③이벤트(서빙을 마치면 손님 리뷰가 주문처럼 들어와요 → 간식 매대에서 싣고 간식 배달) → ④퇴식(그릇 회수) → 🎉영업 완료면 <b>진짜 간식</b>! 시간이 남으면 완료 화면의 「서빙 2 하기」로 서빙만 더 해요(주문 수 = 손님 수). 버튼 이름은 외우지 않아도 돼요. 위쪽 띠가 알려 줘요.">
   <img class="bg" src="PPT배경템플릿_6종/04_큰작업공간형.png" alt="">
-  <div class="abs center" style="left:10%; top:4.5%; width:80%;"><div class="h2 split in">오늘의 영업 <span class="accent">5단계</span></div></div>
-  <div class="mcard f" data-f="1" style="left:3.5%; --c:#4f8cff;"><span class="e">🙋</span><span class="n">1</span><span class="t">자리 안내</span><span class="btn-name">안내하기</span><span class="d">손님을 우리 테이블로 모셔요</span></div>
-  <div class="mcard f" data-f="2" style="left:22.3%; --c:#E8691C;"><span class="e">📣</span><span class="n">2</span><span class="t">홍보</span><span class="btn-name">홍보하기</span><span class="d">신메뉴 이름 짓고 포스터로 홍보</span></div>
-  <div class="mcard f" data-f="3" style="left:41.1%; --c:#1F9E85;"><span class="e">🍽️</span><span class="n">3</span><span class="t">서빙</span><span class="btn-name">서빙하기</span><span class="d">주방들을 돌며 싣고 테이블로</span></div>
-  <div class="mcard f" data-f="4" style="left:59.9%; --c:#A66BD9;"><span class="e">🎉</span><span class="n">4</span><span class="t">이벤트</span><span class="btn-name">돌아다니기</span><span class="d">n행시 리뷰 이벤트 · 간식 배달</span></div>
-  <div class="mcard f" data-f="5" style="left:78.7%; --c:#2F86C2;"><span class="e">🥣</span><span class="n">5</span><span class="t">퇴식</span><span class="btn-name">그릇 회수</span><span class="d">다 먹은 그릇을 반납대로</span></div>
-  <div class="abs f center" data-f="6" style="left:25%; top:86%; width:50%;"><span class="tag orange" style="font-size:26px; padding:10px 28px;">🎉 영업 완료 → 진짜 간식을 받아요!</span></div>
+  <div class="abs center" style="left:10%; top:4.5%; width:80%;"><div class="h2 split in">오늘의 영업 <span class="accent">4단계</span></div></div>
+  <div class="mcard f" data-f="1" style="left:4.5%; width:21%; --c:#E8691C;"><span class="e">📣</span><span class="n">1</span><span class="t">홍보</span><span class="btn-name">홍보하기</span><span class="d">만들어 온 포스터로 신메뉴 홍보</span></div>
+  <div class="mcard f" data-f="2" style="left:27.5%; width:21%; --c:#1F9E85;"><span class="e">🍽️</span><span class="n">2</span><span class="t">서빙</span><span class="btn-name">서빙하기</span><span class="d">주방들을 돌며 싣고 테이블로</span></div>
+  <div class="mcard f" data-f="3" style="left:50.5%; width:21%; --c:#A66BD9;"><span class="e">🎉</span><span class="n">3</span><span class="t">이벤트</span><span class="btn-name">서빙하기</span><span class="d">리뷰가 들어오면 간식 배달</span></div>
+  <div class="mcard f" data-f="4" style="left:73.5%; width:21%; --c:#2F86C2;"><span class="e">🥣</span><span class="n">4</span><span class="t">퇴식</span><span class="btn-name">그릇 회수</span><span class="d">다 먹은 그릇을 반납대로</span></div>
+  <div class="abs f center" data-f="5" style="left:25%; top:86%; width:50%;"><span class="tag orange" style="font-size:26px; padding:10px 28px;">🎉 영업 완료 → 진짜 간식을 받아요!</span></div>
 </section>
 
 <!-- 7. 오늘의 활동 두 가지: 앱 화면에서 어디를 누르는지 빨간 네모로 -->
-<section class="slide" data-note="<b>오늘 할 활동 두 가지:</b> <b>① 홍보</b> — 관리자 페이지 홍보모드에서 빨간 네모 「새 이름 짓기」를 누르면 새 탭이 열려요. 오늘 메뉴 중 하나(앱이 후보 2개를 보여 줘요)에 한글날 100주년 기념 새 이름을 짓고 포스터를 만들어 태블릿에 저장 → 홍보모드에 올려 손님에게 홍보해요. <b>② 이벤트</b> — 돌아다니기 화면의 빨간 네모 「n행시 짓기」를 손님 역할이 눌러 메뉴 이름으로 n행시를 짓고, 「우리 패들렛」에 올린 뒤 「리뷰 쓰기 완료」 → 로봇이 간식을 싣고 테이블로 배달해요. 두 앱 모두 <b>구글 로그인</b>이 필요해요.">
+<section class="slide" data-note="<b>오늘 할 활동 두 가지:</b> <b>① 홍보</b> — 수업 처음에 만들어 온 포스터를 올려요. ☰ 메뉴 → 「설정」을 누르면 로그인 없이 홍보모드가 바로 열려요. 빨간 네모(포스터 미리보기) → 「이미지/동영상 넣기」로 포스터 → 「저장하기 → 동기화 적용」 → ☰ 메뉴 「홍보하기」로 손님 테이블에 가서 홍보해요. <b>② 이벤트</b> — 우리는 서빙로봇 쪽이라 리뷰를 직접 쓰지 않아요. 서빙을 마치고 대기 장소에 오면 잠시 뒤 <b>🔔 손님 리뷰가 주문처럼 들어와요</b>. 리뷰도 서빙이에요! 확인 → 서빙 화면 아래 주문표에서 「간식 매대」 → 「출발」 → 간식을 싣고 우리 테이블로 배달해요.">
   <img class="bg" src="PPT배경템플릿_6종/07_좌우큰칸형.png" alt="">
   <div class="abs" style="left:4%; top:5%; width:90%; display:flex; align-items:center; gap:18px;">
     <span class="tag orange in">오늘의 활동</span><div class="h2 split in">우리 가게, 이렇게 꾸며요 ✨</div>
   </div>
   <!-- 왼쪽: 활동 ① 홍보 -->
-  <div class="abs f" data-f="1" style="left:4.6%; top:19.6%; width:23.6%;"><div class="phone"><div class="shot"><img src="앱_화면/3_홍보모드_신메뉴.png?v=1017b" alt="홍보모드 화면"><a class="mark" href="https://gemini.google.com/share/ae3138dbbf49?social_preview=false&amp;skid=21390b04-b78c-4dd7-b215-2768c12e827c" target="_blank" rel="noopener" title="새 이름 짓기 열기 (새 탭)" style="left:6.3%; top:26.6%; width:44%; height:8.6%;"></a></div></div></div>
+  <div class="abs f" data-f="1" style="left:4.6%; top:19.6%; width:23.6%;"><div class="phone"><div class="shot"><img src="앱_화면/3_홍보모드_포스터.png?v=1023" alt="홍보모드 화면"><span class="mark" style="left:28.5%; top:32.3%; width:43%; height:45.3%;"></span></div></div></div>
   <div class="abs f act" data-f="1" style="left:29.4%; top:22%; width:15.6%; height:58%;">
     <span class="step-no">활동 ① 홍보</span>
-    <div class="act-t">신메뉴 이름<br>+ 포스터</div>
-    <div class="act-k">👆 <span class="redtag">새 이름 짓기</span></div>
-    <ol><li>오늘 메뉴에 <b>새 이름</b></li><li><b>포스터</b> 만들기</li><li><b>홍보모드</b>로 홍보하기</li></ol>
+    <div class="act-t">만든 포스터로<br>홍보</div>
+    <div class="act-k">👆 <span class="redtag">포스터 미리보기</span></div>
+    <ol><li>☰ → <b>설정</b></li><li>미리보기 눌러 <b>포스터 올리기</b></li><li><b>홍보하기</b>로 손님에게!</li></ol>
   </div>
   <!-- 오른쪽: 활동 ② 이벤트 -->
-  <div class="abs f" data-f="2" style="left:49%; top:19.6%; width:23.6%;"><div class="phone"><div class="shot"><img src="앱_화면/4_돌아다니기_이벤트.png?v=1017b" alt="리뷰 이벤트 화면"><a class="mark" href="https://gemini.google.com/share/44429b2578dc?social_preview=false&amp;skid=28d3791a-c71c-46d4-84ea-27049e6671d0" target="_blank" rel="noopener" title="n행시 짓기 앱 열기 (새 탭)" style="left:2.2%; top:73.6%; width:48.4%; height:10.6%;"></a></div></div></div>
+  <div class="abs f" data-f="2" style="left:49%; top:19.6%; width:23.6%;"><div class="phone"><div class="shot"><img src="앱_화면/4_리뷰도착.png?v=1024b" alt="리뷰 도착 알림"><span class="mark" style="left:10.5%; top:29%; width:79%; height:41.5%;"></span></div></div></div>
   <div class="abs f act" data-f="2" style="left:74.4%; top:22%; width:20.6%; height:58%;">
     <span class="step-no" style="background:var(--mint-deep);">활동 ② 이벤트</span>
-    <div class="act-t">n행시<br>리뷰 이벤트</div>
-    <div class="act-k">👆 <span class="redtag">n행시 짓기</span></div>
-    <ol><li>메뉴 이름으로 <b>n행시</b></li><li><b>패들렛</b>에 리뷰 올리기</li><li>로봇이 <b>간식 배달</b> 🍪</li></ol>
+    <div class="act-t">리뷰가<br>들어와요!</div>
+    <div class="act-k">🔔 <span class="redtag">리뷰 도착</span></div>
+    <ol><li>손님 <b>리뷰</b>가 들어오면</li><li><b>간식 매대</b>에서 싣고</li><li>테이블로 <b>간식 배달</b> 🍪</li></ol>
   </div>
 </section>
 
 <!-- 8. 끝인사 (마무리_우리맛집소개 마지막 장) -->
-<section class="slide" data-note="<b>끝인사 (약 40초):</b> “세종대왕은 백성 누구나 쉽게 글을 쓰라고 한글을 만들었어요. 한글날 100번째 생일인 올해, 우리는 그 한글로 메뉴에 새 이름을 지어 주고, 그 이름으로 n행시를 짓고, 서빙로봇과 함께 가게를 운영했어요. <b>기술은 돕고, 마음은 우리말이 전해요.</b>” → 키로 ‘집에서 이어 하기’를 보여 주고, 마지막 → 키(또는 🎉 버튼)로 한글 꽃가루를 뿌리며 큰 박수로 마칩니다.">
+<section class="slide" data-note="<b>끝인사 (약 40초):</b> “세종대왕은 백성 누구나 쉽게 글을 쓰라고 한글을 만들었어요. 한글날 100번째 생일인 올해, 우리는 그 한글로 메뉴에 새 이름을 지어 주고, 포스터로 홍보하고, 서빙로봇과 함께 가게를 운영했어요. <b>기술은 돕고, 마음은 우리말이 전해요.</b>” → 키로 ‘집에서 이어 하기’를 보여 주고, 마지막 → 키(또는 🎉 버튼)로 한글 꽃가루를 뿌리며 큰 박수로 마칩니다.">
   <img class="bg" src="PPT배경템플릿_6종/01_표지형.png" alt="">
   <canvas id="confetti" width="1600" height="900"></canvas>
   <div class="abs" style="left:5%; top:8%; width:52%;">
     <div class="tag orange in">한글날 100주년 푸드테크 · 영업 끝!</div>
     <div class="h1 split in" style="margin-top:22px; font-size:80px;">오늘의 사장님들,<br><span class="accent">수고하셨습니다!</span></div>
-    <div class="quote in" style="margin-top:26px;">세종대왕은 누구나 쉽게 쓰라고 <b>한글</b>을 만들었어요.<br>한글날 100번째 생일에, 우리는 그 한글로 메뉴에 <b>새 이름</b>을<br>지어 주고, 그 이름으로 <b>n행시</b>를 짓고, <b>서빙로봇</b>과 함께 가게를 운영했어요.</div>
-    <div class="pin f" data-f="1" style="margin-top:18px; width:92%;"><span class="ico">🏠</span><div><b>집에서 이어 하기</b><br>오늘 저녁 반찬에 우리말 이름을 붙이고 n행시도 지어 보세요</div></div>
+    <div class="quote in" style="margin-top:26px;">세종대왕은 누구나 쉽게 쓰라고 <b>한글</b>을 만들었어요.<br>한글날 100번째 생일에, 우리는 그 한글로 메뉴에 <b>새 이름</b>을<br>지어 주고, <b>포스터</b>로 홍보하고, <b>서빙로봇</b>과 함께 가게를 운영했어요.</div>
+    <div class="pin f" data-f="1" style="margin-top:18px; width:92%;"><span class="ico">🏠</span><div><b>집에서 이어 하기</b><br>오늘 저녁 반찬에 우리말 이름을 붙여 보세요</div></div>
     <div class="f" data-f="2" data-anim="party" style="margin-top:18px;"><button class="btn orange" id="partyBtn">🎉 다 같이 박수!</button></div>
   </div>
 </section>
@@ -376,6 +394,9 @@
   }
   function next() { const s = slides[cur], g = groups(s); if (step < g.length) { revealGroup(s, g[step]); step++; return; } if (cur < slides.length - 1) { cur++; enter(cur); } else party(); }   // 마지막 장에서 한 번 더 누르면 꽃가루
   function prev() { if (cur > 0) { cur--; enter(cur, true); } }
+  // 마우스 휠: 내리면 다음, 올리면 이전 (한 번 굴릴 때 한 장만 넘어가게 잠깐 쉬어요)
+  let wheelAt = 0;
+  addEventListener('wheel', e => { if (Math.abs(e.deltaY) < 8) return; e.preventDefault(); const t = Date.now(); if (t - wheelAt < 700) return; wheelAt = t; e.deltaY > 0 ? next() : prev(); }, { passive: false });
   document.addEventListener('keydown', e => {
     if (e.target.tagName === 'INPUT') return;
     if (['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }

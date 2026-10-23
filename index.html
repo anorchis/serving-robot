@@ -560,6 +560,9 @@ textarea.inp{height:auto;min-height:4.2rem;padding:.5rem .6rem;line-height:1.45;
 .pt-gift b{display:block;font-family:'Hanna',sans-serif;font-weight:400;font-size:1.6rem;color:#2b2118}
 .pt-gift small{font-size:.85rem;color:#6d5a43}
 .pt-ok{height:3.4rem;padding:0 2.2rem;border-radius:1.7rem;background:#e9774c;color:#fff;font-weight:800;font-size:1.1rem}
+.pt-btns{display:flex;flex-direction:column;align-items:center;gap:.7rem}
+.pt-more{background:var(--blue);font-size:1.25rem;height:3.8rem;padding:0 2.4rem}
+.pt-more + .pt-ok{background:#fff;color:#c0392b;box-shadow:0 0 0 2px #e9774c inset}
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
 
 /* ═════════ 공용 카드·맵 (영업 미션) ═════════ */
@@ -573,6 +576,88 @@ textarea.inp{height:auto;min-height:4.2rem;padding:.5rem .6rem;line-height:1.45;
 .food{display:inline-block;aspect-ratio:1;background-image:url('food.png');background-size:500% 400%;background-repeat:no-repeat;flex:none}
 .newtag{display:inline-block;font-size:.62rem;font-weight:700;color:#fff;background:#e9774c;border-radius:1rem;padding:.08rem .45rem;vertical-align:middle}
 
+/* 테이블오더 주문표 (서빙 화면) */
+.ob{margin:.7rem 0 .2rem;border-radius:.8rem;background:#fff;box-shadow:0 0 0 1.5px #dfe7f3 inset;padding:.8rem .8rem .9rem}
+.ob-h{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;font-size:1rem}
+.ob-h b{font-size:1.1rem;color:var(--blue)}
+.ob-h small{font-size:.75rem;color:var(--ink2)}
+.ob-tag{background:#2b2f36;color:#fff;border-radius:.35rem;padding:.15rem .5rem;font-size:.78rem;font-weight:800}
+.ob-tag.rv{background:#f5b700;color:#2b2f36}
+.ob-rv{margin:.5rem 0 .1rem;background:#fff8e1;border-radius:.5rem;padding:.55rem .7rem;font-size:.92rem;color:#5b4300;font-weight:700}
+.ob-items{display:flex;gap:.4rem;margin:.55rem 0 .1rem;flex-wrap:wrap}
+.ob-items>div{flex:1 1 0;min-width:8rem;display:flex;align-items:center;gap:.4rem;background:var(--blue-ll);border-radius:.5rem;padding:.3rem .45rem}
+.ob-items>div.done{opacity:.55}
+.ob-items .food{width:2.2rem}
+.ob-items span{display:flex;flex-direction:column;font-weight:800;font-size:.86rem;line-height:1.2;word-break:keep-all}
+.ob-items em{font-style:normal;font-size:.6rem;color:#fff;background:#e9774c;border-radius:.6rem;padding:0 .35rem;align-self:flex-start;margin-top:.1rem}
+.ob-items small{font-weight:500;font-size:.68rem;color:var(--ink2)}
+.ob-l{font-size:.8rem;color:var(--ink2);margin:.7rem 0 .4rem}
+.ob-l b{color:var(--ink)}
+.ob-ks{display:grid;grid-template-columns:repeat(5,1fr);gap:.35rem}
+.ob-k{position:relative;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.35rem .2rem .4rem;border-radius:.55rem;border:2px solid #e3e6ea;background:#fff;font-size:.78rem}
+.ob-k img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:.35rem}
+.ob-k.need{border-color:#8fbaf5}
+.ob-k.off{opacity:.45}
+.ob-k.on{border-color:var(--blue);background:var(--blue-l);opacity:1}
+.ob-k .ord{position:absolute;top:.2rem;left:.2rem;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:.8rem;display:grid;place-items:center}
+.ob-k .ck{position:absolute;top:.2rem;right:.2rem;background:#2cc2b5;color:#fff;border-radius:.4rem;font-size:.62rem;font-weight:800;padding:.05rem .3rem}
+.ob-go{width:100%;height:2.9rem;margin-top:.55rem;font-weight:800;font-size:1rem}
+.ob-go:disabled{background:#c9d3e0}
+/* 강사님 메뉴: 서빙 번호 · 가족 번호 */
+.tm-lb{font-weight:800;font-size:.9rem;margin:.7rem 0 .4rem}
+.tm-lb small{font-weight:500;font-size:.7rem;color:var(--ink3);margin-left:.3rem}
+.tm-g{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem}
+.tm-g button{height:3.2rem;border-radius:.5rem;background:var(--key);font-weight:800;font-size:.95rem;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;border:2px solid transparent;color:var(--c,inherit)}
+.tm-g button small{font-size:.58rem;font-weight:600;color:var(--ink3)}
+.tm-g button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.tm-g button.on small{color:#e9f2fe}
+.tm-g button[data-tmf].on{background:var(--c);border-color:var(--c)}
+/* 영업 시작 전: 미션 안내 (전체 화면) */
+.su-g{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.7rem}
+.su-g button{display:flex;flex-direction:column;align-items:center;gap:.1rem;padding:.8rem .3rem;border-radius:.8rem;background:#fff;border:2.5px solid #eee4cf}
+.su-g button b{font-family:'Hanna',sans-serif;font-weight:400;font-size:2.4rem;line-height:1;color:var(--c)}
+.su-g button small{font-size:.75rem;color:#6d5a43}
+.su-g button.on{border-color:var(--c);background:color-mix(in srgb, var(--c) 14%, #fff)}
+.su-g.r button{font-weight:800;font-size:1.05rem;padding:.9rem .3rem}
+.su-g.r button.on{border-color:#2b2f36;background:#2b2f36;color:#fff}
+.intro{position:absolute;inset:0;z-index:66;display:none;overflow:auto;background:linear-gradient(170deg,#fff6e3 0%,#ffe3d1 100%);padding:1.2rem 1.4rem 1.4rem}
+.intro.on{display:block}
+.intro .ttag{display:inline-block;background:#e9774c;color:#fff;border-radius:1rem;padding:.25rem .9rem;font-weight:800;font-size:.85rem}
+.intro h2{font-family:'Hanna',sans-serif;font-weight:400;font-size:1.9rem;line-height:1.2;margin:.5rem 0 .2rem;color:#2b2118}
+.intro h2 em{font-style:normal;color:#e9774c}
+.intro h2 .h2s{display:block;font-size:1.05rem;color:#6d5a43;margin-bottom:.15rem}
+.intro .intro-hero{position:relative;padding-right:25%;min-height:5.3rem;display:flex;align-items:center;margin:.25rem 0}
+.intro .intro-hero h2{font-size:1.7rem;margin:.25rem 0;position:relative;z-index:1}
+.intro .intro-robot{position:absolute;right:0;top:50%;transform:translateY(-50%);width:24%;height:6.4rem;object-fit:contain;pointer-events:none}
+.intro .who{font-size:1rem;color:#6d5a43;line-height:1.5;margin-bottom:1rem}
+.intro .tbl1{display:flex;align-items:center;gap:.7rem;background:#fff;border-radius:1rem;padding:.7rem 1rem;margin-bottom:.7rem;box-shadow:0 0 0 2px #8fbaf5 inset}
+.intro .tbl1 > span{font-size:2.2rem}
+.intro .tbl1 b{font-size:1.1rem;display:block}
+.intro .tbl1 small{font-size:.85rem;color:#6d5a43}
+.intro .tbl1 em{font-style:normal;font-weight:800;color:var(--blue);font-size:1rem}
+.intro .msn{background:#fff;border-radius:1rem;padding:1rem 1.1rem;box-shadow:0 .3rem 1rem rgba(192,57,43,.1);margin-bottom:.9rem}
+.intro .msn > b{font-family:'Hanna',sans-serif;font-weight:400;font-size:1.35rem;display:block;margin-bottom:.15rem}
+.intro .msn.mtop{position:relative;margin-top:4.2rem;padding-top:1.2rem}
+.intro .msn .fam{display:inline-block;font-size:.8rem;font-weight:800;color:#fff;background:#e9774c;border-radius:1rem;padding:.15rem .7rem;margin-bottom:.35rem}
+.intro .msn-robot{position:absolute;right:.6rem;top:-4.4rem;width:9.5rem;pointer-events:none;filter:drop-shadow(0 .4rem .6rem rgba(0,0,0,.12))}
+.intro .msn > small{font-size:.85rem;color:#6d5a43}
+.intro .st{display:flex;gap:.6rem;align-items:flex-start;margin-top:.7rem}
+.intro .st > span{flex:none;width:1.8rem;height:1.8rem;border-radius:50%;background:#e9774c;color:#fff;font-weight:800;display:grid;place-items:center}
+.intro .st.ok > span{background:#2cc2b5}
+.intro .st > div{flex:1}
+.intro .st b{font-size:1.05rem}
+.intro .st small{display:block;font-size:.8rem;color:#6d5a43;margin-top:.1rem;word-break:keep-all}
+.intro .nm-pick button{font-size:1.05rem;padding:.6rem}
+.intro .nm-pick button .food{width:4.2rem}
+.intro .plink{display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:.5rem;height:3rem;border-radius:.7rem;background:#fff1e8;box-shadow:0 0 0 1.5px #f3c9ad inset;color:#c4532a;font-weight:800;text-decoration:none}
+.intro .plink small{font-weight:500;font-size:.7rem;color:#9a7a63}
+.intro .nm-inp{height:3.2rem;font-size:1.15rem;flex:1;margin:0}
+.intro .nrow{display:flex;align-items:center;gap:.6rem;margin-top:.9rem}
+.intro .nrow > span{flex:none;font-weight:800;font-size:1.15rem}
+.intro .nm-pick{margin-top:.9rem}
+.intro .gobtn{width:100%;height:3.8rem;border-radius:1.9rem;background:#e9774c;color:#fff;font-weight:800;font-size:1.3rem;margin-top:.4rem;box-shadow:0 .4rem 1rem rgba(233,119,76,.35)}
+.intro .gobtn:disabled{background:#d9c6b8;box-shadow:none}
+.intro .tch{display:block;margin:1rem auto 0;font-size:.75rem;color:#9a7a63}
 /* 가족 배너 */
 .fam{display:flex;align-items:center;gap:.7rem;padding:.8rem;border-radius:.8rem;color:#fff;margin:.2rem 0 .7rem}
 .fam .n{font-family:'Hanna',sans-serif;font-size:1.9rem;width:3rem;height:3rem;border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center;flex:none}
@@ -680,7 +765,6 @@ textarea.inp{height:auto;min-height:4.2rem;padding:.5rem .6rem;line-height:1.45;
       <button class="iconbtn" data-kind="collect" aria-label="그릇 회수"><svg class="ico" viewBox="0 0 24 24"><path d="M3.5 12.5h17a8.5 8.5 0 0 1-17 0zM12 3.5v5.5M9.3 6 12 3.3 14.7 6"/></svg></button>
     </div>
     <div class="grp">
-      <button class="iconbtn" data-act="toKitchen" aria-label="주방으로 보내기"><svg class="ico" viewBox="0 0 24 24"><path d="M4 10h16v3.5a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6zM2.5 10h19M9 7c-.6-.8 0-1.8 0-1.8s.6 1-.0 1.8M12 7c-.6-.8 0-1.8 0-1.8s.6 1 0 1.8M15 7c-.6-.8 0-1.8 0-1.8s.6 1 0 1.8"/></svg></button>
       <button class="iconbtn" data-act="toDish" aria-label="퇴식구로 보내기"><svg class="ico" viewBox="0 0 24 24"><path d="M4 9.5h16l-1.6 8.3a2 2 0 0 1-2 1.7H7.6a2 2 0 0 1-2-1.7zM7 6.5h10"/></svg></button>
       <button class="iconbtn" data-act="toBase" aria-label="대기 장소로 복귀"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M7.8 12h8.4M13 8.6l3.4 3.4-3.4 3.4"/></svg></button>
     </div>
@@ -690,6 +774,7 @@ textarea.inp{height:auto;min-height:4.2rem;padding:.5rem .6rem;line-height:1.45;
     <div class="modechip" id="modechip"></div>
     <div class="badge" id="badge">1</div>
     <div id="picker" style="width:100%;display:flex;justify-content:center"></div>
+    <div id="orderBox" style="width:100%"></div>
   </div>
   <div class="bottombar">
     <button class="btn btn-out soup-btn" id="soupBtn">국물 모드</button>
@@ -773,10 +858,10 @@ textarea.inp{height:auto;min-height:4.2rem;padding:.5rem .6rem;line-height:1.45;
     <button class="iconbtn" data-act="fullscreen" aria-label="전체 화면"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3.5v8M7.2 6.3a7.5 7.5 0 1 0 9.6 0"/></svg></button>
   </div>
   <div class="dr-sec">모드</div>
-  <button class="dr-item" data-go="serve">서빙하기<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
-  <button class="dr-item" data-go="roam">돌아다니기<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
   <button class="dr-item" data-go="guide">안내하기<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
   <button class="dr-item" data-go="promo">홍보하기<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  <button class="dr-item" data-go="serve">서빙하기<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  <button class="dr-item" data-go="roam">돌아다니기<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
   <div class="dr-sec" style="margin-top:1rem">설정</div>
   <button class="dr-item" data-go="settings">설정<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
   <div class="dr-stat" id="drStat"></div>
@@ -791,8 +876,9 @@ textarea.inp{height:auto;min-height:4.2rem;padding:.5rem .6rem;line-height:1.45;
   <div class="acts" id="pzActs"></div>
 </div>
 
+<div class="intro" id="intro"></div>
 <div class="modal-wrap" id="modalWrap"><div class="modal" id="modal"></div></div>
-<div class="party" id="party"><div class="pt-in"><div class="pt-e">🎉</div><div class="pt-t">영업 완료!</div><div class="pt-s" id="ptSub"></div><div class="pt-gift"><span>🍪</span><div><b>진짜 간식을 드려요!</b><small>선생님께 가서 「영업 완료」 화면을 보여 주세요</small></div></div><button class="pt-ok" id="ptOk">고마워요! 🙌</button></div></div>
+<div class="party" id="party"><div class="pt-in"><div class="pt-e">🎉</div><div class="pt-t">영업 완료!</div><div class="pt-s" id="ptSub"></div><div class="pt-gift"><span>🍪</span><div><b>진짜 간식을 드려요!</b><small>선생님께 가서 「영업 완료」 화면을 보여 주세요</small></div></div><div class="pt-btns"><button class="pt-ok pt-more" id="ptMore"></button><button class="pt-ok" id="ptOk">고마워요! 🙌</button></div></div></div>
 <canvas id="confetti"></canvas>
 <div class="toast" id="toast"></div>
 
@@ -925,7 +1011,7 @@ function show(id){
   if(typeof renderStrip==='function') renderStrip();
 }
 let current = 'home';
-function waitPlace(){ const n = (typeof BZ!=='undefined' && BZ.fam!=null) ? BZ.fam+1 : S.guideStart; return n ? `가족 ${n} 대기 장소` : '대기 장소'; }   // 「출발지」 대신 쓰는 이름
+function waitPlace(){ const n = (typeof BZ!=='undefined' && BZ.fam!=null) ? BZ.fam+1 : S.guideStart; return n ? `${n}번 대기 장소` : '대기 장소'; }   // 「출발지」 대신 쓰는 이름
 function tableLabel(n){ const nm=(S.names[n]||'').trim(); return nm ? nm : n+'번 테이블'; }
 function fmtSec(s){ if(!s) return '무제한'; return s<60? s+'초' : (s%60? Math.floor(s/60)+'분 '+(s%60)+'초' : (s/60)+'분'); }
 function spritePos(i){ const r=Math.floor(i/5), c=i%5; return `${c*25}% ${r*100/3}%`; }
@@ -1072,6 +1158,7 @@ function renderHome(){
     $('#picker').innerHTML = `<div class="keypad" style="grid-template-columns:repeat(${S.perRow},1fr)">${
       Array.from({length:S.destCount},(_,i)=>i+1).map(n=>`<button class="key ${used.has(n)?'used':''}" data-dest="${n}">${n}${S.showDest&&S.names[n]?`<small>${esc(S.names[n])}</small>`:''}</button>`).join('')}</div>`;
   }
+  renderOrderBox();
   const sb=$('#soupBtn'); sb.classList.toggle('on',soup); sb.innerHTML = soup ? '🍲 국물 모드 켬' : '국물 모드';
   updateConfetti();
 }
@@ -1088,6 +1175,8 @@ $('#home').addEventListener('click', e=>{
   const c=e.target.closest('[data-clear]'); if(c){ const i=+c.dataset.clear; slots[i]=null; active=i; renderHome(); e.stopPropagation(); return; }
   const s=e.target.closest('[data-slot]'); if(s){ active=+s.dataset.slot; renderHome(); return; }
   const d=e.target.closest('[data-dest]'); if(d){ assign(+d.dataset.dest); return; }
+  const ok=e.target.closest('[data-okit]'); if(ok){ const v=ok.dataset.okit==='snack'?'snack':+ok.dataset.okit, o=kitPick.indexOf(v); if(o>=0) kitPick.splice(o,1); else kitPick.push(v); renderOrderBox(); return; }
+  if(e.target.closest('[data-okgo]')){ if(!kitPick.length){ toast('들를 주방을 먼저 눌러 주세요'); return; } const p=kitPick; kitPick=[]; goKitchen(p); return; }
   const np=e.target.closest('[data-np]'); if(np){ const v=np.dataset.np;
     if(v==='del') typed=typed.slice(0,-1); else if(v==='ok'){ if(typed){ assign(+typed); typed=''; } } else if(typed.length<2) typed+=v;
     renderHome(); return; }
@@ -1113,7 +1202,7 @@ function startTrip(k, stops){
   trip = {kind:k, stops, i:0, soup, slots:slots.slice(), returning:false};
   goMove();
 }
-function stopNow(){ if(trip.returning){ if((trip.kind==='guide'||trip.kind==='guideStart') && S.guideStart) return {type:'base', label:'가족 '+S.guideStart+' 대기'}; return {type:'base', label:S.baseName}; } return trip.stops[trip.i]; }
+function stopNow(){ if(trip.returning){ if((trip.kind==='guide'||trip.kind==='guideStart') && S.guideStart) return {type:'base', label:S.guideStart+'번 대기'}; return {type:'base', label:S.baseName}; } return trip.stops[trip.i]; }
 function goMove(){
   clearTimers(); stopSong();
   const st = stopNow();
@@ -1254,8 +1343,34 @@ function finishTrip(){
   if(hadStops) toast(k==='guide' ? `안내 완료! ${waitPlace()}로 돌아왔어요` : `서빙 완료! ${waitPlace()}로 돌아왔어요 🎉`);
 }
 // 상단 오른쪽: 퇴식구 바로 보내기 / 복귀
+function goKitchen(pick){ trip={kind:'kitchen', stops:pick.map(i=>({type:'kitchen', store:i, label:i==='snack'?'한글날 간식 매대':STORES[i].name, trays:[]})), i:0, soup:false, slots:[], returning:false}; goMove(); }
+/* 🧾 테이블오더 주문표 (서빙 화면 아래): 주문이 들어오면 가게·간식 매대 버튼이 밖에 나와 있어요
+   서빙 단계 = 주문 메뉴와 들를 가게 · 이벤트 단계(리뷰가 들어온 뒤) = 리뷰 + 간식 매대 */
+var kitPick=[];
+function renderOrderBox(){
+  const el=$('#orderBox'); if(!el) return;
+  let P=null, cur=null; try{ P=bizMine(); cur=bizCur(); }catch(e){}
+  const rev = cur && cur.id==='event' && ((BZ.mk||{}).review||0)>stageStart('event');
+  if(!P || !cur || kind!=='serve' || !(cur.id==='serve' || rev)){ el.innerHTML=''; kitPick=[]; return; }
+  const need = rev ? ['snack'] : bizStores(P), kd=sx=> sx==='snack' ? ((BZ.mk||{}).snackLoad||0)>stageStart('event') : ((BZ.kit||{})[sx]||0)>stageStart('serve');
+  const btn=(i,img,nm)=>{ const o=kitPick.indexOf(i), nd=need.includes(i), dn=nd&&kd(i);
+    return `<button class="ob-k ${o>=0?'on':''} ${nd?'need':'off'} ${dn?'done':''}" data-okit="${i}"><img src="${img}" alt="">${o>=0?`<span class="ord">${o+1}</span>`:''}${dn?'<span class="ck">실음 ✓</span>':''}<b>${nm}</b></button>`; };
+  const head = rev
+    ? `<div class="ob-h"><span class="ob-tag rv">⭐ 리뷰 도착</span><b>${P.table}번 테이블</b> 손님이 리뷰를 남겼어요 <small>→ 간식 선물!</small></div>
+       <div class="ob-rv">${'★'.repeat(5)} 「${esc(reviewText(P))}」</div>`
+    : `<div class="ob-h"><span class="ob-tag">🧾 테이블오더</span><b>${P.table}번 테이블</b> 주문 ${P.items.length}개${P.soup?' <small>🍲 국물 있음</small>':''}</div>
+       <div class="ob-items">${P.items.map(i=>`<div class="${kd(Math.floor(i/5))?'done':''}">${foodPic(i)}<span>${esc(menuName(i))}${isNew(i)?'<em>신메뉴</em>':''}<small>${STORES[Math.floor(i/5)].name}</small></span></div>`).join('')}</div>`;
+  if(need.every(kd)){ el.innerHTML = `<div class="ob">${head}<div class="ob-l" style="color:#178f86;font-weight:800;font-size:.95rem;margin-bottom:0">✓ 다 실었어요! 위에 <b style="color:var(--blue)">${P.table}번</b>이 있는지 보고 「보내기」</div></div>`; return; }   // 다 실으면 주방 버튼은 접어요
+  el.innerHTML = `<div class="ob">${head}
+    <div class="ob-l">들를 곳을 <b>순서대로</b> 누르고 「출발」 <small>(파란 테두리 = 이번에 들를 곳)</small></div>
+    <div class="ob-ks">${STORES.map((x,i)=>btn(i,x.img,x.name)).join('')}${btn('snack','img/snack.jpg','간식 매대')}</div>
+    <button class="btn btn-fill ob-go" data-okgo ${kitPick.length?'':'disabled'}>${kitPick.length?kitPick.map(i=>i==='snack'?'간식 매대':STORES[i].name).join(' → ')+' 출발':'들를 곳을 눌러 주세요'}</button></div>`;
+}
+function reviewText(P){ const nf=P.items.find(i=>isNew(i)), nm = nf!=null ? menuName(nf) : menuName(P.items[0]);
+  return [`${nm}! 이름도 예쁘고 맛도 최고예요`, `한글 이름 「${nm}」 너무 귀여워요. 또 올게요`, `로봇이 갖다줘서 신기했어요. ${nm} 맛있어요`][BZ.fam%3]; }
 /* 주방으로 보내기: 들를 가게를 순서대로 골라요 */
-document.querySelector('[data-act="toKitchen"]').onclick=()=>{
+const kitBtn=document.querySelector('[data-act="toKitchen"]');   // 주방 아이콘은 뺐어요 (실제 앱에 없음)
+if(kitBtn) kitBtn.onclick=()=>{
   let pick=[];
   const draw=()=>{ $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     <h4>어느 주방으로 갈까요?</h4><div class="m-sub" style="text-align:center;margin:-.3rem 0 .7rem">들를 순서대로 눌러 주세요</div>
@@ -1265,7 +1380,7 @@ document.querySelector('[data-act="toKitchen"]').onclick=()=>{
   $('#modal').onclick=e=>{ const k=e.target.closest('[data-kit]'), m=e.target.closest('[data-m]');
     if(k){ const i=k.dataset.kit==='snack'?'snack':+k.dataset.kit, o=pick.indexOf(i); if(o>=0) pick.splice(o,1); else pick.push(i); draw(); return; }
     if(!m) return; if(m.dataset.m==='x'){ closeModal(); return; }
-    if(m.dataset.m==='go' && pick.length){ closeModal(); trip={kind:'kitchen', stops:pick.map(i=>({type:'kitchen', store:i, label:i==='snack'?'한글날 간식 매대':STORES[i].name, trays:[]})), i:0, soup:false, slots:[], returning:false}; goMove(); } };
+    if(m.dataset.m==='go' && pick.length){ closeModal(); goKitchen(pick); } };
 };
 document.querySelector('[data-act="toDish"]').onclick=()=>{ startTrip('collect', [{type:'dish', label:S.dishName, trays:[]}]); };
 document.querySelector('[data-act="toBase"]').onclick=()=>{ trip={kind:'serve', stops:[], i:0, soup:false, slots:[], returning:true}; goMove(); };
@@ -1288,7 +1403,7 @@ function renderGuide(){
   else if(gstep==='setstart'){
     const v=gDraft;
     // 실제 앱: 목록에서 고른 번호는 위(안내 출발지)로 올라가고 목록에서 빠짐 · 위 번호를 누르면 다시 목록으로
-    const gwKey = (n, attr)=> `<button class="key" ${attr}="${n}">가족 ${n}<small>대기</small></button>`;   // 맵 아래 「가족 ○ 대기」 자리
+    const gwKey = (n, attr)=> `<button class="key" ${attr}="${n}">${n}번<small>대기 장소</small></button>`;   // 맵 아래 대기 자리 (가족 번호 = 대기 장소 번호)
     h = `<div class="gd set"><div class="gd-set-head"><h2>안내 출발지 설정</h2></div>
       <div class="gd-set-head" style="height:auto;justify-content:flex-end;margin:-.4rem 0 .8rem"><div class="two"><button class="btn btn-gray" data-g="setcancel" style="background:#fff">취소</button><button class="btn btn-fill" data-g="setapply">적용</button></div></div>
       <div class="gd-set-card">
@@ -1298,7 +1413,7 @@ function renderGuide(){
         <div class="grid4 gw-grid">${[1,2,3,4].filter(n=>n!==v).map(n=>gwKey(n,'data-gs')).join('')}</div></div></div>`;
   }
   else if(gstep==='ready'){
-    h = top + `<div class="gd"><div class="gd-center gd-start"><div class="n">가족 ${S.guideStart} 대기<small class="wp">장소로</small></div><div class="lb">이동합니다</div></div>
+    h = top + `<div class="gd"><div class="gd-center gd-start"><div class="n">${S.guideStart}번 대기<small class="wp">장소로</small></div><div class="lb">이동합니다</div></div>
       <div class="gd-cnt mv-state" style="font-size:inherit;font-weight:inherit;margin-top:0">이동중<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
       <div class="gd-btns"><button class="btn btn-fill" data-g="gostart">도착했어요</button><button class="btn btn-out" data-g="setstart">출발지 설정</button></div></div>`;
   }
@@ -1404,9 +1519,7 @@ let displayMode=null;
 function goDisplay(mode){
   displayMode=mode;
   const c=S.content[mode];
-  $('#display').innerHTML = contentHTML(c, imgOf(mode), false)
-    + (mode==='roam' && bizCur() && bizCur().id==='event' ? `<button class="roam-done" data-reviewdone style="background:${(BGS.find(x=>x.id===c.bg)||BGS[0]).btn}">✓ 리뷰 쓰기 완료</button>` : '')   // 이벤트 미션 중: 손님이 리뷰를 다 쓰면 화면에서 바로
-    + (mode==='roam' ? `<div class="roam-links"><a href="${LINK_POEM}" target="_blank" rel="noopener">✍️ n행시 짓기 ↗<small>구글 로그인 필요 · 새 탭</small></a><a href="${LINK_PADLET}" target="_blank" rel="noopener">📌 우리 패들렛 ↗<small>새 탭으로 열려요</small></a></div>` : '');   // 돌아다니는 동안 손님이 바로 리뷰·n행시
+  $('#display').innerHTML = contentHTML(c, imgOf(mode), false);
   show('display');
   const nf=MS().newFood; speak(mode==='promo' && c.tts===DEFAULTS.content.promo.tts && isNew(nf) ? `한글날 100주년 신메뉴, ${menuName(nf)} 출시 기념! 할인 이벤트를 진행해요.` : c.tts, c.ttsRate);
   startRepeat();
@@ -1416,7 +1529,6 @@ function startRepeat(){ clearInterval(repT); if(displayMode==='roam' || displayM
 function stopDisplay(){ clearInterval(repT); hush(); displayMode=null; }
 $('#display').addEventListener('click', e=>{
   if(e.target.closest('.roam-links')) return;   // 링크 버튼은 새 탭만 열고 일시정지하지 않아요
-  if(e.target.closest('[data-reviewdone]')){ bizMark('poem'); bizMark('roamEnd'); bizRoamToServe(); toast('리뷰 고마워요! 간식 매대로 로봇을 보내요', true); return; }
   clearInterval(repT); hush();
   if((displayMode==='roam' && roamRun) || (displayMode==='promo' && promoRun)){ roamPause(); return; }
   const roam = displayMode==='roam';
@@ -1460,74 +1572,37 @@ function showLicense(){
 // 관리자 페이지 QR로 들어오면 설정 화면부터
 if(location.hash==='#admin' || location.hash==='#settings') setTimeout(openAdmin, 0);
 
-/* 관리자 페이지: 로그인 → 꾸미고 싶은 모드 → (돌아다니기·홍보) 꾸밀 화면 → 화면 꾸미기
-   수업용이라 아이디·비밀번호는 아무거나 넣어도 들어가요 */
-let adView='login';
+/* 관리자 페이지: 설정을 누르면 바로 홍보모드 → 화면 꾸미기 (≡ 로 다른 모드) */
+let adView='promo';
 function bizMark(k){ BZ.mk=BZ.mk||{}; BZ.mk[k]=Date.now(); saveBZ(); }   // 영업 미션 줄 체크용 (관리자 로그인·포스터 업로드·동기화)
 /* 🌟 한글날 100주년 신메뉴: 이번 영업 우리 주문 메뉴 중에서만 고를 수 있어요 (그래서 네 태블릿이 겹치지 않아요) */
 // 홍보 준비에서 새 탭으로 여는 링크 (새 이름 짓기·포스터: 제미나이 공유 앱 · 우리 반 패들렛)
-const LINK_POSTER='https://gemini.google.com/share/ae3138dbbf49?social_preview=false&skid=21390b04-b78c-4dd7-b215-2768c12e827c';
+const LINK_POSTER='https://gemini.google.com/share/6a022e6f00bb?social_preview=false&skid=cb117393-9182-4f4f-872e-c9b713b32e87';
 const LINK_PADLET='https://padlet.com/aibus/padlet-8frpqu6p37gr2bgk';
 const LINK_POEM='https://gemini.google.com/share/44429b2578dc?social_preview=false&skid=28d3791a-c71c-46d4-84ea-27049e6671d0';   // n행시 짓기 앱
-function newMenuCard(){
-  const P=bizMine(), cand = P ? P.keep : [];
-  if(!cand.length) return `<div class="nm-card"><b>🌟 한글날 100주년 신메뉴</b><div class="m-sub">강사님이 가족 번호를 정하면 이번 손님 메뉴가 나와요</div></div>`;
-  const m=MS();
-  const st0=stageStart('promo'), posterDone=((BZ.mk||{}).poster||0)>st0, syncDone=((BZ.mk||{}).sync_promo||0)>st0, nameDone=cand.includes(m.newFood)&&!!m.newName;   // 3번: 포스터 올리고 동기화까지 하면 ✓
-  return `<div class="nm-card"><b>🌟 한글날 100주년 신메뉴 · 홍보 준비</b>
-    <div class="nm-links"><a href="${LINK_POSTER}" target="_blank" rel="noopener">✏️ 새 이름 짓기 ↗<small>구글 로그인 필요 · 새 탭</small></a><a href="${LINK_PADLET}" target="_blank" rel="noopener">📌 우리 패들렛 ↗<small>새 탭으로 열려요</small></a></div>
-    <div class="nm-step ${nameDone?'ok':''}"><span>${nameDone?'✓':'1'}</span><div><b>새 이름 짓기</b><small>오늘 손님이 주문할 메뉴 중 하나를 골라 한글날 100주년 기념 새 이름을 붙여요 · 앱 전체에 바로 적용돼요</small></div></div>
-    <div class="nm-pick">${cand.map(i=>`<button class="${m.newFood===i?'on':''}" data-nmf="${i}">${foodPic(i)}${FOODS[i]}</button>`).join('')}</div>
-    <input class="inp nm-inp" id="nmName" placeholder="새 이름 예: 바삭바삭 황금 튀김" value="${esc(cand.includes(m.newFood)?m.newName:'')}">
-    ${nameDone?`<div class="nm-ok">✓ 「${esc(FOODS[m.newFood])}」 → 「${esc(m.newName)}」로 바뀌었어요</div>`:''}
-    <div class="nm-step ${posterDone?'ok':''}"><span>${posterDone?'✓':'2'}</span><div><b>포스터 만들어 오기</b><small>포스터 만드는 앱에서 ${nameDone?'「'+esc(m.newName)+'」':'새 이름'}으로 포스터를 만들어 이 태블릿에 저장해 와요</small></div>
-      <button class="nm-btn" data-nmposter>${posterDone?'완료 ✓':'만들어 왔어요 ✓'}</button></div>
-    <div class="nm-step ${syncDone?'ok':''}"><span>${syncDone?'✓':'3'}</span><div><b>포스터 올리기</b><small>아래 미리보기를 눌러 「이미지/동영상 넣기」로 포스터를 올리고 「저장하기 → 동기화 적용」</small></div></div></div>`;
-}
-function openAdmin(){ adView = sessionStorage.getItem('srv_admin_in') ? 'modes' : 'login'; if(adView==='modes') bizMark('admin'); renderAdmin(); show('admin'); }
+function openAdmin(){ adView='promo'; bizMark('adPromo'); renderAdmin(); show('admin'); }   // 설정 = 로그인 없이 바로 홍보모드
 const AD_LOGO = `<div class="ad-logo">꿈트리 푸드테크 <span>서빙로봇</span></div>`;
-document.addEventListener('input', e=>{ if(e.target.id!=='nmName') return; const m=MS(); m.newName=e.target.value.trim(); save(); if(m.newName && m.newFood>=0) bizMark('name');
-  const card=e.target.parentNode; let ok=card.querySelector('.nm-ok'); if(!ok){ ok=document.createElement('div'); ok.className='nm-ok'; e.target.insertAdjacentElement('afterend', ok); }   // 다시 그리지 않고 글자만 바꿔요 (다음 버튼이 바로 눌리게)
-  ok.textContent = m.newFood>=0 && m.newName ? `✓ 「${FOODS[m.newFood]}」 → 「${m.newName}」로 바뀌었어요` : (m.newFood<0 ? '위에서 음식을 먼저 골라요' : ''); });
 function renderAdmin(){
   let h='';
-  if(adView==='login'){
-    const saved=LS.get('srv_admin_id')||'';   // 수업용 기본 계정이 미리 들어가 있어서 로그인만 누르면 돼요
-    h = `<div class="ad-login">${AD_LOGO}<h2>관리자 페이지</h2>
-      <div class="ad-field"><label>아이디 *</label><input id="adId" autocomplete="username" value="${esc(saved||'kumtreerobot')}" placeholder="아이디 *"></div>
-      <div class="ad-field"><label>비밀번호 *</label><input id="adPw" type="password" autocomplete="current-password" value="1234" placeholder="비밀번호 *"></div>
-      <div class="ad-row"><label><input type="checkbox" id="adSave" ${saved?'checked':''}>아이디 저장</label><button data-ad="reset">비밀번호 초기화</button></div>
-      <button class="ad-btn" data-ad="login">로그인</button>
-      <button data-ad="back" style="margin-top:1.4rem;font-size:.8rem;color:var(--ink3)">← 로봇 화면으로 돌아가기</button></div>`;
-  }else{
-    const top = `<div class="ad-top"><button class="iconbtn" data-ad="${adView==='modes'?'back':'modes'}" aria-label="메뉴"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>${AD_LOGO}<button class="out" data-ad="logout">로그아웃</button></div>`;
+  {
+    const top = `<div class="ad-top"><button class="iconbtn" data-act="drawer" aria-label="메뉴"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>${AD_LOGO}<button class="out" data-ad="back">← 로봇 화면</button></div>`;
     if(adView==='modes') h = top + `<div class="ad-body"><h3>꾸미고 싶은 모드를 눌러주세요.</h3>
-      <div class="ad-modes"><button data-adm="serve">서빙모드</button><button data-adm="roam">돌아다니기 모드</button><button data-adm="guide">안내모드</button><button class="fill" data-adm="promo">홍보모드</button><button data-adm="bgm">배경음</button><button data-adm="sync">로봇 동기화</button></div></div>`;
+      <div class="ad-modes"><button data-adm="serve">서빙모드</button><button data-adm="roam">돌아다니기 모드</button><button class="fill" data-adm="promo">홍보모드</button><button data-adm="bgm">배경음</button><button data-adm="sync">로봇 동기화</button></div></div>`;
     else { const m=adView, nm=m==='roam'?'돌아다니기모드':'홍보모드';
-      h = top + `<div class="ad-body">${m==='promo'?newMenuCard():''}<h3>${nm}에서 꾸미고 싶은<br>화면을 클릭해주세요.</h3>
+      h = top + `<div class="ad-body"><h3>${nm}에서 꾸미고 싶은<br>화면을 클릭해주세요.</h3>
       <div class="ad-pick" data-adedit="${m}"><span class="tagb">${m==='roam'?'돌아다니기':'홍보'}</span><div class="ph-frame" style="position:absolute;inset:0;border:0;border-radius:0;width:auto">${contentHTML(S.content[m], imgOf(m), false)}</div></div></div>`; }
   }
   $('#admin').innerHTML = h; fitFrames();
 }
 $('#admin').addEventListener('click', e=>{
   const T=q=>e.target.closest(q); let b;
-  if(T('[data-nmposter]')){ bizMark('poster'); renderAdmin(); return; }
-  if((b=T('[data-nmf]'))){ MS().newFood=+b.dataset.nmf; const v=($('#nmName')||{}).value||''; MS().newName=v.trim(); save(); if(MS().newName) bizMark('name'); renderAdmin(); return; }
   if((b=T('[data-ad]'))){ const a=b.dataset.ad;
-    if(a==='login'){ const id=$('#adId').value.trim(), pw=$('#adPw').value;
-      if(!id){ toast('아이디를 입력해 주세요'); $('#adId').focus(); return; }
-      if(!pw){ toast('비밀번호를 입력해 주세요'); $('#adPw').focus(); return; }
-      if($('#adSave').checked) LS.set('srv_admin_id', id); else LS.del('srv_admin_id');
-      try{ sessionStorage.setItem('srv_admin_in','1'); }catch(_){}
-      adView='modes'; bizMark('admin'); renderAdmin(); }
-    else if(a==='reset') toast('비밀번호는 로봇 전문가(선생님)에게 물어보세요');
-    else if(a==='logout'){ try{ sessionStorage.removeItem('srv_admin_in'); }catch(_){} adView='login'; renderAdmin(); }
-    else if(a==='modes'){ adView='modes'; renderAdmin(); }
+    if(a==='modes'){ adView='modes'; renderAdmin(); }
     else if(a==='back'){ history.replaceState(null,'',location.pathname+location.search); goServe(); }
     return; }
   if((b=T('[data-adm]'))){ const m=b.dataset.adm;
     if(m==='roam'||m==='promo'){ adView=m; if(m==='promo') bizMark('adPromo'); renderAdmin(); }
-    else if(m==='serve'||m==='guide'){ tab=m; renderSettings(); show('settings'); }
+    else if(m==='serve'){ tab=m; renderSettings(); show('settings'); }
     else if(m==='bgm') toast('배경음은 준비 중이에요');
     else if(m==='sync') toast('로봇 동기화 완료! 화면이 바뀌었어요', true);
     return; }
@@ -1588,7 +1663,7 @@ $('#promo').addEventListener('click', e=>{
 const PARTY=[0,2,2,3,3,3,2,4,3];      // 맵 테이블별 손님 수 (1~8번)
 const SOUP=[3,6,8,11,13,14];          // 국물 메뉴: 라면·된장찌개·냉면·라멘·짬뽕·마라탕
 const BIZ_MAX=4;
-const BSTEPS=[{id:'guide',e:'🙋',t:'자리 안내'},{id:'promo',e:'📣',t:'홍보'},{id:'serve',e:'🍽️',t:'서빙'},{id:'event',e:'🎉',t:'이벤트'},{id:'collect',e:'🥣',t:'퇴식'}];   // 손님이 먹는 동안 리뷰 이벤트 → 다 먹으면 퇴식
+const BSTEPS=[{id:'promo',e:'📣',t:'홍보'},{id:'serve',e:'🍽️',t:'서빙'},{id:'event',e:'🎉',t:'이벤트'},{id:'collect',e:'🥣',t:'퇴식'}];   // 손님이 먹는 동안 리뷰 이벤트 → 다 먹으면 퇴식
 var BZ={round:1, fam:null, done:{}, note:{}, loaded:{}, t0:0, rating:[]};
 try{ Object.assign(BZ, JSON.parse(LS.get('srv_biz')||'{}')); }catch(e){}
 function saveBZ(){ LS.set('srv_biz', JSON.stringify(BZ)); }
@@ -1602,8 +1677,8 @@ function bizPlan(round){
   const fams=[0,1,2,3].map(f=>{
     const table = round===1 ? f+5 : (r()<.5 ? f+5 : f+1);          // 가족 n → (n+4)번 또는 n번 · 영업 1은 가까운 아래 줄
     const party = PARTY[table];
-    const extra = round>=2 && party<4 && r()<1/3 ? 1 : 0;           // 영업 2부터 가끔 「하나 더!」 (최대 4개)
-    return {table, party, extra, count:Math.min(4, party+extra), wantSoup:r()<.6, bday:(r(), false), keep:keeps[f]};   // 생일은 미션 아님 · 선택
+    r();   // (예전 「하나 더!」 자리 · 다른 값이 바뀌지 않게 한 번 뽑아 둬요)
+    return {table, party, extra:0, count:party, wantSoup:r()<.6, bday:(r(), false), keep:keeps[f]};   // 생일은 미션 아님 · 선택
   });
   const mix=a=>{ for(let i=a.length-1;i>0;i--){ const j=r()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; };
   const used=new Set(keeps.flat());
@@ -1616,13 +1691,13 @@ function bizPlan(round){
 }
 function bizMine(){ return BZ.fam==null ? null : bizPlan(BZ.round)[BZ.fam]; }
 function bizCur(){ return BSTEPS.find(x=>!BZ.done[x.id]); }
-function bizStart(fam){ const pair=Math.ceil(BZ.round/2); if(BZ.namePair!==pair){ MS().newFood=-1; MS().newName=''; BZ.namePair=pair; }   // 영업 1·2 / 3·4 사이에만 신메뉴 유지
-  BZ.fam=fam; BZ.done={}; BZ.note={}; BZ.loaded={}; BZ.kit={}; BZ.li={}; BZ.rs={}; BZ.need=null; BZ.rating=[]; BZ.t0=Date.now(); saveBZ();
-  MS().family=fam; S.baseName='가족 '+(fam+1)+' 대기'; save(); renderStrip(); }
+function bizStart(fam){ BZ.xs=0; const pair=Math.ceil(BZ.round/2); if(BZ.namePair!==pair){ MS().newFood=-1; MS().newName=''; BZ.namePair=pair; }   // 영업 1·2 / 3·4 사이에만 신메뉴 유지
+  BZ.fam=fam; BZ.go=0; BZ.done={}; BZ.note={}; BZ.loaded={}; BZ.kit={}; BZ.li={}; BZ.rs={}; BZ.need=null; BZ.rating=[]; BZ.t0=Date.now(); saveBZ();
+  MS().family=fam; S.baseName=(fam+1)+'번 대기'; save(); renderStrip(); }
 function bizStores(P){ return [...new Set(P.items.map(i=>Math.floor(i/5)))].sort((a,b)=>a-b); }
 /* 할 일을 한 줄씩: 줄마다 앱 상태를 보고 자동으로 ✓ (손으로 하는 일만 버튼) · 마지막 줄은 단계 성공으로 끝나요 */
 var OPENED={}, lastShow=0;
-function stageStart(id){ const base={guide:BZ.t0, promo:BZ.done.guide, serve:BZ.done.promo, event:BZ.done.serve, collect:BZ.done.event}[id]||0; return Math.max(base, (BZ.rs||{})[id]||0); }   // 메뉴에서 그 화면을 실제로 연 시각 (영업·단계가 시작된 뒤에 열어야 첫 줄 ✓)
+function stageStart(id){ const base={guide:BZ.t0, promo:BZ.t0, serve:BZ.done.promo, event:BZ.done.serve, collect:BZ.done.event}[id]||0; return Math.max(base, (BZ.rs||{})[id]||0); }   // 메뉴에서 그 화면을 실제로 연 시각 (영업·단계가 시작된 뒤에 열어야 첫 줄 ✓)
 function bizLines(id, P){
   const T=P.table, tk=()=>trip&&trip.kind, ret=()=>trip&&trip.returning;
   const G=['welcome','reserve','people','confirm'], gAt=n=>current==='guide' && G.indexOf(gstep)>=n;
@@ -1636,24 +1711,21 @@ function bizLines(id, P){
     {t:`${T}번 테이블에 닿으면 「<b>도착했어요</b>」`, ok:()=>gt() && (current==='arrive'||ret())},
     {t:`「복귀하기」 → ${waitPlace()}에 오면 「<b>도착했어요</b>」`} ]; }
   if(id==='promo'){ const pt=()=>tk()==='promoGo', st0=stageStart('promo'), mk=k=>((BZ.mk||{})[k]||0)>st0, up=()=>mk('up_promo')||mk('sync_promo'), sy=()=>mk('sync_promo');
-    const kn=P.keep.map(i=>'「<b>'+FOODS[i]+'</b>」').join('·'), named=()=>P.keep.includes(MS().newFood) && !!(MS().newName||'').trim();
     return [
-    {t:'☰ 메뉴 → <b>설정</b> → 관리자 페이지 「<b>로그인</b>」', ok:()=>mk('admin')||up()},
-    {t:'「<b>홍보모드</b>」를 눌러요', ok:()=>mk('adPromo')||up()},
-    {t:'홍보모드 화면의 🌟 <b>①새 이름 짓기 → ②포스터 만들어 오기</b>를 해요', ok:()=>named() && (mk('name')||up()) && (mk('poster')||up())},
-    {t:'포스터 미리보기를 눌러 화면 꾸미기로 들어가요', ok:()=>(current==='editor'&&edMode==='promo')||up()},
-    {t:'「<b>이미지/동영상 넣기</b>」 → 「내 파일 업로드」로 우리가 만든 포스터를 골라요', ok:()=>mk('up_promo')},
+    {t:'☰ 메뉴 → <b>설정</b>을 눌러요', ok:()=>mk('adPromo')||up()},
+    {t:'포스터 미리보기 <b>화면 클릭</b>', ok:()=>(current==='editor'&&edMode==='promo')||up()},
+    {t:'「<b>이미지/동영상 넣기</b>」 → 「내 파일 업로드」로 내가 만든 포스터 열기', ok:()=>mk('up_promo')},
     {t:'「<b>저장하기</b>」 → 「<b>동기화 적용</b>」', ok:()=>sy()},
     {t:'☰ 메뉴 → <b>홍보하기</b>를 눌러요', ok:()=>(OPENED.promo||0)>((BZ.mk||{}).sync_promo||0) && sy()||pt()},
-    {t:`홍보 장소가 <b>${T}번</b>으로 정해져 있어요 · 「<b>홍보 시작</b>」을 눌러요`, ok:()=>pt()},
+    {t:'「<b>홍보 시작</b>」을 눌러요', ok:()=>pt()},
     {t:`${T}번 테이블에 닿으면 「<b>도착했어요</b>」 → 손님에게 포스터를 보여 줘요`} ]; }
   if(id==='serve'){ const st=()=>tk()==='serve'||tk()==='birthday';
     const ss=bizStores(P), kt=()=>tk()==='kitchen', kd=sx=>((BZ.kit||{})[sx]||0)>stageStart('serve');
     const a=[{t:'☰ 메뉴 → <b>서빙하기</b>를 눌러요', ok:()=>current==='home'||kt()||ss.some(kd)},
-      {t:`위쪽 <b>냄비 모양 주방 아이콘</b> → ${ss.map(sx=>'<b>'+STORES[sx].name+'</b>').join(' → ')} 순서로 고르고 「보내기」`, ok:()=>kt()||ss.some(kd)}];
+      {t:`아래 <b>🧾 주문표</b>에서 ${ss.map(sx=>'<b>'+STORES[sx].name+'</b>').join(' → ')} 순서로 누르고 「<b>출발</b>」`, ok:()=>kt()||ss.some(kd)}];
     ss.forEach(sx=>{ const its=P.items.filter(i=>Math.floor(i/5)===sx);
       a.push({t:`<b>${STORES[sx].name}</b> 주방에 닿으면 「도착했어요」 → ${its.map(i=>esc(menuName(i))).join('·')} 싣고 「<b>로봇 보내기</b>」`, ok:()=>kd(sx)}); });
-    a.push({t:`주방에서 기다려요. 서빙 화면에 <b>${T}번</b>이 들어가 있어요`, ok:()=>current==='home'||st()});
+    a.push({t:`<b>${T}번 테이블</b>로 이동`, ok:()=>current==='home'||st()});
     if(P.bday) a.push({t:'🎂 오늘 생일 손님! 위쪽 <b>케이크 아이콘</b>을 눌러요', ok:()=>kind==='birthday'||tk()==='birthday'});
     if(P.soup) a.push({t:'🍲 국물 메뉴가 있어요! 「<b>국물 모드</b>」를 켜요', ok:()=>soup||(st()&&trip.soup)});
     a.push({t:'「<b>보내기</b>」를 눌러요', ok:()=>st()},
@@ -1663,20 +1735,16 @@ function bizLines(id, P){
   if(id==='collect'){ const ct=()=>tk()==='collect'; return [
     {t:'☰ 메뉴 → <b>서빙하기</b>를 눌러요', ok:()=>current==='home'||ct()},
     {t:'위쪽 <b>🥣 그릇 회수</b> 아이콘을 눌러요', ok:()=>kind==='collect'||ct()},
-    {t:`<b>${T}번</b>이 들어가 있어요 · 「<b>보내기</b>」를 눌러요`, ok:()=>ct()},
+    {t:`「<b>보내기</b>」 → <b>${T}번 테이블</b>로 이동`, ok:()=>ct()},
     {t:'테이블에서 그릇을 싣고 「<b>로봇 보내기</b>」', ok:()=>ct() && (trip.i>=1||ret())},
     {t:'식기 반납대에서 그릇을 내리고 「<b>로봇 보내기</b>」', ok:()=>ct() && ret()},
     {t:`${waitPlace()}에 오면 「<b>도착했어요</b>」`} ]; }
   return [
-    {t:'☰ 메뉴 → <b>돌아다니기</b>를 눌러요', ok:()=>(OPENED.roam||0)>stageStart('event')},
-    {t:'「돌아다니기 경로 확인/수정」 → 「<b>+ 경로추가</b>」', ok:()=>current==='redit'||S.routes.some(r=>r.stops.some(x=>x.t===T))},
-    {t:`경로에 우리 테이블 <b>${T}번</b>이 들어가 있어요 · 「<b>확인</b>」을 눌러요`, ok:()=>S.routes.some(r=>r.stops.some(x=>x.t===T))},   // 경로명은 「경로1」로 이미 들어가 있어요
-    {t:'「<b>로봇 출발</b>」 → 리뷰 이벤트를 보여 주며 돌아다녀요', ok:()=>((BZ.mk||{}).roamGo||0)>stageStart('event')},
-    {t:'<b>n행시</b>를 짓고 돌아오세요', ok:()=>((BZ.mk||{}).poem||0)>stageStart('event')||((BZ.mk||{}).roamEnd||0)>stageStart('event')},
-    {t:'위쪽 <b>냄비 모양 주방 아이콘</b> → 「<b>한글날 간식 매대</b>」 고르고 「보내기」', ok:()=>(tk()==='kitchen' && trip.stops.some(x=>x.store==='snack'))||((BZ.mk||{}).snackLoad||0)>stageStart('event')},
+    {t:'🔔 손님 <b>리뷰</b>가 들어올 때까지 대기 장소에서 기다려요', ok:()=>((BZ.mk||{}).review||0)>stageStart('event')},
+    {t:'서빙 화면 아래 주문표에서 「<b>간식 매대</b>」 → 「<b>출발</b>」', ok:()=>(tk()==='kitchen' && trip.stops.some(x=>x.store==='snack'))||((BZ.mk||{}).snackLoad||0)>stageStart('event')},
     {t:'간식 매대에 닿으면 「도착했어요」 → 간식을 싣고 「<b>로봇 보내기</b>」', ok:()=>((BZ.mk||{}).snackLoad||0)>stageStart('event')},
-    {t:`서빙 화면에 <b>${T}번</b>이 들어가 있어요 · 「<b>보내기</b>」를 눌러요`, ok:()=>(tk()==='serve'||tk()==='birthday') && trip.stops.some(x=>x.num===T)},
-    {t:`${T}번 테이블에 닿으면 「도착했어요」 → 리뷰 쓴 손님에게 간식을 드리고 「로봇 보내기」 → ${waitPlace()}에 오면 「도착했어요」`} ];
+    {t:`「<b>보내기</b>」 → <b>${T}번 테이블</b>로 이동`, ok:()=>(tk()==='serve'||tk()==='birthday') && trip.stops.some(x=>x.num===T)},
+    {t:`${T}번 테이블에 닿으면 「도착했어요」 → 리뷰를 남긴 손님에게 간식을 드리고 「로봇 보내기」 → ${waitPlace()}에 오면 「도착했어요」`} ];
 }
 function bizLineIdx(id){ return (BZ.li||{})[id]||0; }
 function tick(){ if(Date.now()-lastChime < 1600) return;   // 출발 알림음과 겹치면 「띡」은 빼요
@@ -1705,10 +1773,21 @@ function fanfare(){ try{ actx = actx || new (window.AudioContext||window.webkitA
     const o=actx.createOscillator(), e=actx.createGain(); o.type=ty; o.frequency.value=f*m; e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(lv,t+.02); e.gain.exponentialRampToValueAtTime(.001,t+d+.35);
     o.connect(e); e.connect(g); o.start(t); o.stop(t+d+.4); }); t+=d; }); }catch(e){} }
 function bizParty(){ partyOn=true; bizToggle(false);
-  const P=bizMine(); $('#ptSub').textContent = `${P?P.table+'번 테이블 손님을 멋지게 모셨어요 · ':''}${fmtMS((BZ.done.collect||Date.now())-BZ.t0)}`;
+  const P=bizMine(), xs=BZ.xs||0, nx=(xs||1)+1;
+  $('#party .pt-t').textContent = xs ? `서빙 ${xs} 완료!` : '영업 완료!';
+  $('#ptSub').textContent = `${P?P.table+'번 테이블 손님을 멋지게 모셨어요 · ':''}${fmtMS(xs ? Date.now()-(BZ.xsT||Date.now()) : (BZ.done.collect||Date.now())-BZ.t0)}`;
+  $('#party .pt-gift').style.display = xs ? 'none' : '';
+  const mb=$('#ptMore'); mb.style.display = nx<=4 ? '' : 'none'; mb.textContent = `🍽️ 서빙 ${nx} 하기 · 새 손님 주문`;
+  $('#ptOk').textContent = xs ? '그만할래요' : '고마워요! 🙌';
   $('#party').classList.add('on'); updateConfetti(); fanfare();
-  setTimeout(()=>speak('영업 완료! 정말 수고했어요. 이제 진짜 간식을 받으러 가요!'), 900); }
+  setTimeout(()=>speak(xs ? `서빙 ${xs} 완료! 잘했어요.` : '영업 완료! 정말 수고했어요. 이제 진짜 간식을 받으러 가요!'), 900); }
+// 서빙만 더 하기: 다른 단계는 끝난 것으로 두고 서빙만 · 주문은 「서빙 번호 + 가족 번호」로 정해져서 같은 번호끼리 안 겹쳐요
+function bizServeMore(n){ const t=Date.now();
+  BZ.round=n; BZ.xs=n; BZ.xsT=t; BZ.done={guide:t, promo:t, event:t, collect:t}; BZ.li={}; BZ.loaded={}; BZ.kit={}; BZ.rs={}; BZ.need=null; BZ.note={}; saveBZ();
+  kind='serve'; soup=false; slots=[]; resetSlots(); goServe(); renderStrip();
+  setTimeout(()=>{ const P=bizMine(); if(!P) return; ding(); speak(`띵동! ${P.table}번 테이블에서 주문이 들어왔어요. ${P.items.map(menuName).join(', ')}.`); alertPop('order'); }, 1200); }
 $('#ptOk').onclick=()=>{ partyOn=false; $('#party').classList.remove('on'); updateConfetti(); bizToggle(true); };
+$('#ptMore').onclick=()=>{ partyOn=false; $('#party').classList.remove('on'); updateConfetti(); bizServeMore((BZ.xs||1)+1); };
 function bizManual(){ const P=bizMine(), cur=bizCur(); if(!P||!cur) return; const L=bizLines(cur.id,P), ln=L[bizLineIdx(cur.id)]; if(ln&&ln.act){ ln.act(); saveBZ(); renderStrip(); } }
 function bizBackTo(id, k){ BZ.li=BZ.li||{}; BZ.rs=BZ.rs||{}; BZ.li[id]=k; BZ.rs[id]=Date.now(); BZ.need={id, k, f:0, t:Date.now()}; saveBZ(); renderStrip(); }
 function bizBack(){ const cur=bizCur(); if(!cur) return; bizBackTo(cur.id, Math.max(0, bizLineIdx(cur.id)-1)); toast('한 줄 앞으로 돌아갔어요', true); }
@@ -1746,17 +1825,19 @@ function renderStrip(){
   if(P && cur) now = `<i class="mtag">미션</i>${now}`;   // 영업 번호·단계 이름은 빼고 할 일만 (판을 펼치면 다 보여요)
   $('#bsBar').innerHTML = `<span class="now">${now}</span>${man}<svg class="ico arw" viewBox="0 0 24 24" style="width:1.2rem;height:1.2rem"><path d="M6 9l6 6 6-6"/></svg>`;
   if(bzOpen) renderBizPanel();
+  renderIntro();
 }
 function renderBizPanel(){
   const P=bizMine(), cur=bizCur(); let h='';
   if(!P){
     h = `<div class="bs-card"><h4>👩‍🏫 강사님, 먼저 가족 번호를 정해 주세요</h4><ol class="bs-how">
-      <li>☰ 메뉴 → <b>안내하기</b> → 「출발지 설정」</li><li>이 태블릿의 <b>가족 1~4 대기</b>를 골라 「적용」 (태블릿끼리 겹치지 않게!)</li>
+      <li>☰ 메뉴 → <b>안내하기</b> → 「출발지 설정」</li><li>이 태블릿의 <b>1~4번 대기 장소</b>를 골라 「적용」 (태블릿끼리 겹치지 않게!)</li>
       <li>네 태블릿이 같은 <b>영업 번호</b>인지 확인해요 (지금 영업 ${BZ.round})</li></ol>
       <button class="btn btn-fill bs-go" data-bz="go-guide">안내하기 열기</button></div>`;
   }else{
     const k=cur?BSTEPS.indexOf(cur):4;
-    h = `<div class="bs-head"><div class="fn" style="background:${FAM_COL[BZ.fam]}">${BZ.fam+1}</div><div><div class="t">가족 ${BZ.fam+1} · ${P.table}번 테이블 손님 ${P.party}명</div><div class="s">영업 ${BZ.round} / ${BIZ_MAX} · 출발: 가족 ${BZ.fam+1} 대기</div></div></div>
+    h = `<div class="bs-head"><div class="fn" style="background:${FAM_COL[BZ.fam]}">${BZ.fam+1}</div><div><div class="t">가족 ${BZ.fam+1} · ${P.table}번 테이블 손님 ${P.party}명</div><div class="s">${BZ.xs?`서빙 ${BZ.xs} / 4 · `:''}출발: ${BZ.fam+1}번 대기 장소</div></div></div>
+      ${nameCard(P)}
       <div class="bs-steps">${BSTEPS.map((x,i)=>`<div class="${BZ.done[x.id]?'on':cur&&cur.id===x.id?'cur':''}"><b>${BZ.done[x.id]?'✓':x.e}</b>${i+1}. ${x.t}</div>`).join('')}</div>
       `;
     const orderCard = ()=>`<div class="bs-card"><h4>🧾 ${P.table}번 테이블오더 <small>${P.count}개 · 손님 ${P.party}명</small></h4>
@@ -1768,41 +1849,107 @@ function renderBizPanel(){
       h += `<div class="bs-card"><h4>${cur.e} ${BSTEPS.indexOf(cur)+1}. ${cur.t} </h4><ol class="bs-lines">${(()=>{ const L=bizLines(cur.id,P), i=Math.min(bizLineIdx(cur.id),L.length-1); return L.map((x,k)=>`<li class="${k<i?'ok':k===i?'now':''}"><b>${k<i?'✓':k+1}</b><span>${x.t}${k===i&&x.man?` <button class="bs-man2" data-bzman>${x.man} ✓</button>`:''}</span></li>`).join(''); })()}</ol>
         <div class="bs-ctl"><button data-bzback>◀ 이전 줄</button><button data-bzrestart>↺ 이 단계 처음부터</button><button data-bzskip>다음 줄 ▶</button></div>
         <div class="bs-ctl2">${BSTEPS.indexOf(cur)>0?`<button data-bzprev>⏮ 이전 단계(${BSTEPS[BSTEPS.indexOf(cur)-1].t})로</button>`:''}<button data-bznext>${BSTEPS[BSTEPS.indexOf(cur)+1]?`다음 단계(${BSTEPS[BSTEPS.indexOf(cur)+1].t})로 건너뛰기 ⏭`:'영업 끝내기 ⏭'}</button></div>
-        <button class="btn btn-fill bs-go" data-bz="go-${cur.id}">${cur.id==='guide'?'안내하기':cur.id==='promo'?(bizLineIdx('promo')<6?'관리자 페이지':'홍보하기'):cur.id==='event'?'돌아다니기':'서빙하기'} 열기</button></div>`;
+        <button class="btn btn-fill bs-go" data-bz="go-${cur.id}">${cur.id==='guide'?'안내하기':cur.id==='promo'?(bizLineIdx('promo')<4?'관리자 페이지':'홍보하기'):'서빙하기'} 열기</button></div>`;
       if(cur.id==='serve' || cur.id==='collect') h += orderCard();
     }else{
-      h += `<div class="bs-card bs-done"><div class="big">오늘 영업 끝! 🏆</div><div class="m-sub">${fmtMS((BZ.done.collect||Date.now())-BZ.t0)} 만에 손님 한 팀을 모셨어요</div>${noteHTML()}</div>`;
+      const nx=(BZ.xs||1)+1;
+      h += `<div class="bs-card bs-done"><div class="big">${BZ.xs?`서빙 ${BZ.xs} 끝! 🏆`:'오늘 영업 끝! 🏆'}</div><div class="m-sub">${BZ.xs?'새 손님 주문을 잘 날랐어요':fmtMS((BZ.done.collect||Date.now())-BZ.t0)+' 만에 손님 한 팀을 모셨어요'}</div>${noteHTML()}
+        ${nx<=4?`<button class="btn btn-fill bs-go" data-bzmore>🍽️ 서빙 ${nx} 하기 · 새 손님 주문</button>`:''}</div>`;
     }
   }
-  h += `<button class="bs-teacher" data-bz="teacher">👩‍🏫 강사님 메뉴 (영업 번호 · 가족 번호)</button>`;
+  h += `<button class="bs-teacher" data-bz="teacher">👩‍🏫 강사님 메뉴 (서빙 번호 · 가족 번호)</button>`;
+  const ae=document.activeElement, typing = ae && ae.id==='nmName' ? [ae.selectionStart, ae.selectionEnd] : null;
   $('#bizPanel').innerHTML = h;
+  if(typing){ const n=$('#nmName'); if(n){ n.focus(); n.setSelectionRange(...typing); } }
 }
+/* 🌟 우리 가족 미션 메뉴: 이번 손님 주문 메뉴 중 2개 (네 가족이 안 겹쳐요) → 바뀐 이름만 적으면 앱 전체(주문표·말소리)에 바로 적용 */
+function nameCard(P){ const m=MS(), c=P.keep, ok=c.includes(m.newFood) && !!(m.newName||'').trim();
+  return `<div class="bs-card nm-card" style="margin-bottom:.6rem"><b>🌟 우리 가족 미션 메뉴</b>
+    <div class="m-sub" style="margin-top:.2rem">한글날 100주년! 둘 중 하나를 골라 <b>새 이름</b>을 지어요 (포스터도 이 메뉴로)</div>
+    <div class="nm-pick">${c.map(i=>`<button class="${m.newFood===i?'on':''}" data-nmf="${i}">${foodPic(i)}${FOODS[i]}</button>`).join('')}</div>
+    <input class="inp nm-inp" id="nmName" placeholder="바뀐 이름 적기 (예: 바삭바삭 황금 튀김)" value="${esc(c.includes(m.newFood)?m.newName:'')}">
+    <div class="nm-ok">${ok?`✓ 「${esc(FOODS[m.newFood])}」 → 「${esc(m.newName)}」`:(m.newFood<0||!c.includes(m.newFood)?'메뉴를 먼저 골라요':'')}</div></div>`; }
+document.addEventListener('input', e=>{ if(e.target.id!=='nmName') return; const m=MS(); m.newName=e.target.value.trim(); save();
+  const ok=e.target.parentNode.querySelector('.nm-ok');   // 다시 그리지 않고 글자만 바꿔요 (입력 칸이 안 닫히게)
+  if(ok) ok.textContent = m.newFood>=0 && m.newName ? `✓ 「${FOODS[m.newFood]}」 → 「${m.newName}」` : (m.newFood<0 ? '메뉴를 먼저 골라요' : ''); });
+/* 📜 영업 시작 전 미션 안내 (전체 화면): 페르소나·미션 → 메뉴 고르기 → 포스터 만들러 다녀오기 → 바뀐 이름 적기 → 영업 시작 */
+var setDraft={fam:null, round:null};
+function renderSetup(el){ const f=setDraft.fam, r=setDraft.round||BZ.round||1;
+  el.innerHTML = `<span class="ttag" style="background:#2b2f36">👩‍🏫 강사님 설정</span>
+    <h2>이 태블릿은<br><em>몇 번 가족</em>인가요?</h2>
+    <div class="who">가족 번호 = 맵의 <b>대기 장소 번호</b>예요. 네 태블릿이 <b>겹치지 않게</b> 골라 주세요.</div>
+    <div class="msn"><b>가족 번호</b><small>로봇이 출발하고 돌아오는 곳 = ○번 대기 장소</small>
+      <div class="su-g">${[1,2,3,4].map(n=>`<button class="${f===n?'on':''}" data-suf="${n}" style="--c:${FAM_COL[n-1]}"><b>${n}</b><small>${n}번 대기 장소</small></button>`).join('')}</div></div>
+    <button class="gobtn" data-sugo ${f?'':'disabled'}>${f?`가족 ${f} → 오늘의 미션 보기`:'가족 번호를 골라 주세요'}</button>`;
+}
+function renderIntro(){
+  const el=$('#intro'); if(!el) return; let P=null; try{ P=bizMine(); }catch(e){}
+  if(BZ.fam==null){ el.classList.add('on'); renderSetup(el); return; }   // 가족 번호가 없으면 강사님 설정부터
+  const on = !!P && !BZ.go; el.classList.toggle('on', on); if(!on) return;
+  if(el.contains(document.activeElement) && document.activeElement.id==='inName') return;   // 이름을 적는 중엔 다시 그리지 않아요
+  const m=MS(), c=P.keep, picked=c.includes(m.newFood), named=picked && !!(m.newName||'').trim();
+  el.innerHTML = `<div class="msn mtop"><img class="msn-robot" src="img/intro-serving-robot.png" alt="" aria-hidden="true"><span class="fam">가족 ${BZ.fam+1}</span><b>🎉 한글날 100주년 기념 미션</b><small>원래 있던 메뉴에 <b>우리말 새 이름</b>을 지어 주세요!</small>
+      <div class="nm-pick">${c.map(i=>`<button class="${m.newFood===i?'on':''}" data-inf="${i}">${foodPic(i)}${FOODS[i]}</button>`).join('')}</div>
+      <a class="plink" href="${LINK_POSTER}" target="_blank" rel="noopener">✏️ 새 이름 지으러 가기 ↗ <small>새 탭</small></a>
+      <label class="nrow"><input class="inp nm-inp" id="inName" placeholder="${picked?`✏️ 「${FOODS[m.newFood]}」의 바뀐 이름을 입력하세요`:'위에서 메뉴를 먼저 골라요'}" value="${esc(picked?m.newName:'')}" ${picked?'':'disabled'}></label></div>
+    <button class="gobtn" data-ingo ${named?'':'disabled'}>${named?`「${esc(m.newName)}」로 영업 시작! 🚀`:'바뀐 이름을 적으면 영업 시작!'}</button>
+    <button class="tch" data-intch>👩‍🏫 강사님 메뉴</button>`;
+}
+$('#intro').addEventListener('click', e=>{
+  const T=q=>e.target.closest(q); let b;
+  if((b=T('[data-suf]'))){ setDraft.fam=+b.dataset.suf; renderIntro(); return; }
+  if((b=T('[data-sur]'))){ setDraft.round=+b.dataset.sur; renderIntro(); return; }
+  if(T('[data-sugo]')){ const f=setDraft.fam; if(!f) return; BZ.round=1; S.guideStart=f; save(); setDraft={fam:null, round:null}; bizStart(f-1); try{ unlockAudio(); }catch(_){} return; }
+  if((b=T('[data-inf]'))){ MS().newFood=+b.dataset.inf; MS().newName=''; save(); if(document.activeElement) document.activeElement.blur(); renderIntro(); return; }
+  if(T('[data-ingo]')){ const m=MS(); if(!(m.newName||'').trim()) return; BZ.go=Date.now(); BZ.t0=Date.now(); saveBZ(); renderIntro(); renderStrip(); try{ unlockAudio(); }catch(_){} speak(`한글날 신메뉴, ${m.newName}! 영업을 시작합니다.`); return; }
+  if(T('[data-intch]')){ bizTeacher(); return; }
+});
+$('#intro').addEventListener('input', e=>{ if(e.target.id!=='inName') return; const m=MS(); m.newName=e.target.value.trim(); save();
+  const g=$('#intro [data-ingo]'); g.disabled=!m.newName; g.textContent = m.newName ? `「${m.newName}」로 영업 시작! 🚀` : '바뀐 이름을 적으면 영업 시작!'; });
 function noteHTML(){ const n=Object.values(BZ.note||{}).flat(); return n.length?`<div class="bs-note">${n.map(esc).join('<br>')}</div>`:''; }
 function bizToggle(v){ bzOpen = v==null ? !bzOpen : v; renderStrip(); }
 function bizOk(id, notes){
   BZ.li=BZ.li||{}; BZ.done[id]=Date.now(); if(notes && notes.length) BZ.note[id]=notes; saveBZ();
   const nx=bizCur();
-  if(id==='collect'){ bizParty(); }
-  else if(id==='promo'){ setTimeout(()=>{ const P=bizMine(); ding(); speak(`띵동! ${P.table}번 테이블에서 주문이 들어왔어요. ${P.items.map(menuName).join(', ')}.`); bizToggle(true); }, 6000); }
+  if(id==='collect' || (id==='serve' && BZ.xs)){ bizParty(); renderStrip(); return; }
+  else if(id==='promo'){ setTimeout(()=>{ const P=bizMine(); if(!P) return; ding(); speak(`띵동! ${P.table}번 테이블에서 주문이 들어왔어요. ${P.items.map(menuName).join(', ')}.`); alertPop('order'); }, 6000); }
   toast(`${BSTEPS.find(x=>x.id===id).e} ${BSTEPS.find(x=>x.id===id).t} 성공!` + (nx && id!=='collect' && id!=='promo' ? ` 다음은 ${nx.e} ${nx.t}` : ''), true);
   renderStrip();
 }
+/* 🔔 알림 창: 테이블오더 주문 도착 / 손님 리뷰 도착 → 확인을 누르면 서빙 화면(아래 주문표) */
+function alertPop(type){ const P=bizMine(); if(!P) return;
+  const rv = type==='review';
+  $('#modal').innerHTML = `<div style="text-align:center"><div style="font-size:3rem;line-height:1">${rv?'⭐':'🔔'}</div>
+    <h4 style="font-size:1.25rem;margin:.4rem 0 .2rem">${rv?`${P.table}번 테이블 손님이<br>리뷰를 남겼어요!`:`${P.table}번 테이블<br>주문이 들어왔어요!`}</h4>
+    <div class="m-sub" style="margin-bottom:.8rem">${rv?'리뷰 이벤트 선물로 <b>간식</b>을 갖다 드려요':'테이블오더 · 손님 '+P.party+'명'}</div></div>
+    ${rv ? `<div class="ob-rv" style="font-size:1rem">★★★★★<br>「${esc(reviewText(P))}」</div>`
+      : `<div class="ob-items" style="flex-direction:column">${P.items.map(i=>`<div>${foodPic(i)}<span>${esc(menuName(i))}${isNew(i)?'<em>신메뉴</em>':''}<small>${STORES[Math.floor(i/5)].name}</small></span></div>`).join('')}</div>`}
+    <div class="stack" style="margin-top:1rem"><button class="btn btn-fill" data-m="ok">확인 → 서빙 화면</button></div>`;
+  openModal();
+  $('#modal').onclick=e=>{ if(!e.target.closest('[data-m="ok"]')) return; closeModal(); kind='serve'; soup=false; goServe(); };
+}
+// 리뷰는 손님이 써요: 로봇이 이벤트 화면을 보여 주며 돌아다니면 잠시 뒤 리뷰가 들어와요 (로봇이 움직이는 중이면 끝날 때까지 기다려요)
+setInterval(()=>{ let P, cur; try{ P=bizMine(); cur=bizCur(); }catch(e){ return; } if(!P||!cur||cur.id!=='event') return;
+  const mk=BZ.mk||{}, st=stageStart('event'); if(!st || (mk.review||0)>st) return;   // 서빙을 마치고 대기 장소에 오면 8초쯤 뒤 리뷰 도착
+  if(Date.now()-st < 8000 || current==='moving' || current==='arrive' || $('#modalWrap').classList.contains('on') || $('#party').classList.contains('on')) return;
+  if(roamRun || current==='display'){ if($('#rpause').classList.contains('on')) roamClose(); roamRun=false; stopDisplay(); }
+  bizMark('review'); ding(); speak(`띵동! ${P.table}번 테이블 손님이 리뷰를 남겼어요.`); alertPop('review'); }, 1000);
 // 실제 앱에서 한 일을 보고 미션을 체크해요
 function bizEvent(ev){
   const P=bizMine(); if(!P) return; const cur=bizCur(); if(!cur) return;
   const T=P.table, turn=()=>toast(`지금은 ${cur.e} ${cur.t} 차례예요`, true);
-  if(ev.kind==='guide'){ if(cur.id!=='guide') return turn(); if(ev.table!==T) return toast(`안내할 테이블은 ${T}번이에요!`, true); bizOk('guide', ev.count!=null && ev.count!==P.party ? [`👥 ${T}번 테이블 손님은 ${P.party}명이었어요 (${ev.count}명으로 골랐어요)`] : []); }
+  if(ev.kind==='guide'){ return; }   // 안내하기·돌아다니기는 미션 밖 (자유롭게 써 봐요)
   else if(ev.kind==='promoArrive'){ if(cur.id!=='promo') return turn(); if(ev.table!==T) return toast(`홍보 장소는 ${T}번 테이블이에요!`, true); bizOk('promo'); }
   else if(ev.kind==='serve' || ev.kind==='birthday'){
     if(cur.id==='event'){ if(!ev.tables.includes(T)) return toast(`간식은 우리 테이블 ${T}번으로 가져가요!`, true);
       if(!(((BZ.mk||{}).snackLoad||0)>stageStart('event'))) return toast('간식 매대에서 간식을 먼저 실어요', true);
-      return bizOk('event', ((BZ.mk||{}).poem||0)>stageStart('event') ? [] : ['✍️ n행시·리뷰를 올렸는지 확인해요']); }
+      return bizOk('event'); }
     if(cur.id!=='serve') return turn(); if(!ev.tables.includes(T)) return toast(`주문한 테이블은 ${T}번이에요!`, true);
     const n=[]; if(P.soup && !ev.soup) n.push('🍲 국물 메뉴였는데 국물 모드를 안 켰어요'); if(P.bday && ev.kind!=='birthday') n.push('🎂 생일 손님인데 케이크 아이콘을 안 눌렀어요');
     if(P.items.some(i=>!BZ.loaded[i])) n.push('🧾 주문서에서 싣기 체크를 다 안 했어요');
     bizOk('serve', n); }
   else if(ev.kind==='collect'){ if(cur.id!=='collect') return turn(); if(!ev.tables.includes(T) || !ev.dish) return toast(`${T}번 테이블 그릇을 식기 반납대까지 가져가요!`, true); bizOk('collect'); }
-  else if(ev.kind==='roamStart'){ if(cur.id==='event') bizMark('roamGo'); else turn(); }
+  else if(ev.kind==='roamStart'){ return; }
   else if(ev.kind==='roamEnd'){ if(cur.id==='event' && ((BZ.mk||{}).roamGo||0)>stageStart('event')) bizMark('roamEnd'); }   // 다 돌아다니면 → 간식 매대로
 }
 function bizTrip(t){
@@ -1814,18 +1961,25 @@ function bizTrip(t){
   else if(t.kind==='roam') bizEvent({kind:'roamEnd'});   // 돌아다니기 → 출발지로 보내기 → 도착
 }
 function bizTeacher(){
-  $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  // 서빙 번호와 가족 번호를 한 화면에서 골라 「적용」 (서빙 1 = 영업 처음부터 · 서빙 2~4 = 서빙만)
+  let sv=BZ.fam==null ? 1 : (BZ.xs||1), fm=BZ.fam==null ? null : BZ.fam+1;
+  const draw=()=>{ $('#modal').innerHTML = `<button class="iconbtn close" data-m="x" aria-label="닫기"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     <h4>👩‍🏫 강사님 메뉴</h4>
-    <div class="m-sub" style="text-align:center;margin-bottom:.5rem">네 태블릿 모두 <b>같은 영업 번호</b>로 맞춰 주세요</div>
-    <div class="gw-grid" style="margin-bottom:.8rem">${[1,2,3,4].map(n=>`<button class="key ${BZ.round===n?'used':''}" data-bzr="${n}" style="${BZ.round===n?'background:var(--blue);color:#fff':''}">영업 ${n}</button>`).join('')}</div>
-    <div class="stack"><button class="btn btn-out" data-bzr="fam">가족 번호(안내 출발지) 다시 정하기</button></div>`;
-  openModal();
-  $('#modal').onclick=e=>{ const b=e.target.closest('[data-bzr],[data-m]'); if(!b) return;
+    <div class="tm-lb">서빙 번호 <small>같은 번호끼리 테이블·메뉴가 안 겹쳐요</small></div>
+    <div class="tm-g">${[1,2,3,4].map(n=>`<button class="${sv===n?'on':''}" data-tms="${n}">서빙 ${n}${n===1?'<small>영업 처음부터</small>':''}</button>`).join('')}</div>
+    <div class="tm-lb">가족 번호 <small>= ○번 대기 장소 · 태블릿끼리 겹치지 않게</small></div>
+    <div class="tm-g">${[1,2,3,4].map(n=>`<button class="${fm===n?'on':''}" data-tmf="${n}" style="--c:${FAM_COL[n-1]}">가족 ${n}</button>`).join('')}</div>
+    <div class="two" style="margin-top:1rem"><button class="btn btn-gray" data-m="x">취소</button><button class="btn btn-fill" data-m="ok" ${fm?'':'disabled'}>서빙 ${sv} · 가족 ${fm||'?'} 적용</button></div>`; };
+  draw(); openModal();
+  $('#modal').onclick=e=>{ const b=e.target.closest('[data-tms],[data-tmf],[data-m]'); if(!b) return;
+    if(b.dataset.tms){ sv=+b.dataset.tms; draw(); return; }
+    if(b.dataset.tmf){ fm=+b.dataset.tmf; draw(); return; }
     if(b.dataset.m==='x'){ closeModal(); return; }
-    const v=b.dataset.bzr;
-    if(v==='fam'){ closeModal(); BZ.fam=null; BZ.done={}; saveBZ(); S.guideStart=null; save(); bzOpen=false; openGuide(); renderStrip(); toast('안내 출발지를 다시 골라 주세요', true); return; }
-    const n=+v;   // 같은 번호를 다시 눌러도 그 영업을 처음부터 다시 시작해요
-    BZ.round=n; if(BZ.fam!=null) bizStart(BZ.fam); else saveBZ(); closeModal(); renderStrip(); toast(`영업 ${n} 시작! 새 손님이 와요`, true); };
+    if(!fm) return; closeModal(); bzOpen=false;
+    const famChanged = BZ.fam!==fm-1;
+    if(famChanged || sv===1){ BZ.round=1; S.guideStart=fm; save(); bizStart(fm-1); }
+    if(sv===1){ BZ.go=0; saveBZ(); renderStrip(); return; }   // 서빙 1 = 영업 처음부터 → 미션 화면부터 (같은 가족이면 지어 둔 이름이 칸에 남아 있어요)
+    BZ.go=BZ.go||Date.now(); saveBZ(); bizServeMore(sv); toast(`가족 ${fm} · 서빙 ${sv} 시작!`, true); };
 }
 $('#bizStrip').addEventListener('click', e=>{
   const T=q=>e.target.closest(q); let b;
@@ -1835,17 +1989,19 @@ $('#bizStrip').addEventListener('click', e=>{
   if(T('[data-bzrestart]')){ bizRestart(); return; }
   if(T('[data-bzprev]')){ bizPrevStage(); return; }
   if(T('[data-bznext]')){ bizSkipStage(); return; }
+  if(T('[data-bzmore]')){ bizToggle(false); bizServeMore((BZ.xs||1)+1); return; }
   if(T('#bsBar')){ bizToggle(); return; }
   if(T('.bs-dim')){ bizToggle(false); return; }
+  if((b=T('[data-nmf]'))){ MS().newFood=+b.dataset.nmf; MS().newName=(($('#nmName')||{}).value||'').trim(); save(); renderBizPanel(); return; }
   if((b=T('[data-bzload]'))){ const i=+b.dataset.bzload; BZ.loaded[i]=!BZ.loaded[i]; saveBZ(); renderBizPanel(); return; }
   if((b=T('[data-bz]'))){ const a=b.dataset.bz;
     if(a==='teacher'){ bizTeacher(); return; }
     bizToggle(false);
     if(a==='go-guide') openGuide();
-    else if(a==='go-promo'){ const P=bizMine(); if(P && bizLineIdx('promo')<6) openAdmin(); else openPromo(); }
+    else if(a==='go-promo'){ const P=bizMine(); if(P && bizLineIdx('promo')<4) openAdmin(); else openPromo(); }
     else if(a==='go-serve'){ kind='serve'; soup=false; goServe(); }
     else if(a==='go-collect'){ kind='collect'; soup=false; goServe(); }
-    else if(a==='go-event') openRoam();
+    else if(a==='go-event'){ kind='serve'; soup=false; goServe(); }
   }
 });
 
@@ -1934,13 +2090,13 @@ addEventListener('resize', fitFrames);
 /* ═════════ 사이드 메뉴 ═════════ */
 function openDrawer(){
   $('#drLogo').innerHTML = `<svg class="face" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="3" fill="#e6f8f6"/><circle cx="9.3" cy="13" r="1.6"/><circle cx="14.7" cy="13" r="1.6"/><path d="M12 7V4.5M10.5 4.5h3"/></svg><span class="a">${esc(S.storeName)}</span><span class="b">서빙로봇</span>`;
-  $('#drStat').innerHTML = `서빙 <b>${stats.served}</b>번 · 생일 축하 <b>${stats.birthday}</b>번 · 안내 <b>${stats.guided}</b>번`;
+  $('#drStat').innerHTML = `서빙 <b>${stats.served}</b>번 · 생일 축하 <b>${stats.birthday}</b>번`;
   const cur = current==='display' ? displayMode : (current==='roam'||current==='rpath'||current==='redit') ? 'roam' : current==='promo' ? 'promo' : current==='guide' ? 'guide' : current==='settings'||current==='editor'||current==='admin' ? 'settings' : 'serve';
   document.querySelectorAll('.dr-item').forEach(b=>b.classList.toggle('cur', b.dataset.go===cur));
   $('#dim').classList.add('on'); $('#drawer').classList.add('on');
 }
 function closeDrawer(){ $('#dim').classList.remove('on'); $('#drawer').classList.remove('on'); }
-function goServe(){ const T=myTable(); if(T && slots.every(x=>x==null)){ slots[0]=T; active=Math.min(1,S.trays-1); } renderHome(); show('home'); }
+function goServe(){ const T=myTable(); if(T && slots.every(x=>x==null)){ slots[0]=T; active=Math.min(1,S.trays-1); } renderHome(); show('home'); const hb=$('#home .home-body'); if(hb) hb.scrollTop=0; }   // 트레이(목적지)가 늘 보이게 맨 위부터
 document.addEventListener('click', e=>{
   const a=e.target.closest('[data-act]'); if(!a) return;
   const act=a.dataset.act;
@@ -1957,7 +2113,7 @@ document.querySelectorAll('.dr-item').forEach(b=>b.onclick=()=>{
   else if(g==='roam') openRoam();
   else if(g==='promo') openPromo();
   else if(g==='guide'){ openGuide(); }
-  else if(g==='settings') openAdmin();   // 설정 = 관리자 페이지 (로그인 → 꾸미고 싶은 모드)
+  else if(g==='settings') openAdmin();   // 설정 = 관리자 페이지 홍보모드
 });
 
 /* ═════════ 비밀번호 ═════════ */
@@ -1987,7 +2143,7 @@ function closeModal(){ $('#modalWrap').classList.remove('on'); $('#modal').oncli
 $('#modalWrap').addEventListener('click', e=>{ if(e.target.id==='modalWrap') closeModal(); });
 
 /* ═════════ 설정 ═════════ */
-const TABS=[['serve','서빙하기'],['roam','돌아다니기'],['guide','안내하기'],['promo','홍보하기'],['sound','소리'],['robot','로봇']];
+const TABS=[['guide','안내하기'],['promo','홍보하기'],['serve','서빙하기'],['roam','돌아다니기'],['sound','소리'],['robot','로봇']];
 let tab='serve', groupsDraft=null, groupTab=0;
 function getPath(p){ return p.split('.').reduce((o,k)=>o?.[k], S); }
 function setPath(p,v){ const ks=p.split('.'); let o=S; ks.slice(0,-1).forEach(k=>o=o[k]); o[ks.at(-1)]=v; save(); }
@@ -2026,7 +2182,7 @@ function renderSettings(){
     ${tab==='roam'||tab==='promo'?'':`<div class="card"><h3>로봇 멘트 반복</h3><div class="box"><span class="chip">멘트를 다시 말하는 간격</span>${steps('content.'+tab+'.repeat',[[0,'끄기'],[10,'10초'],[20,'20초'],[30,'30초'],[60,'1분']])}</div></div>`}`;
   }
   if(tab==='guide'){
-    h += `<div class="card"><h3>안내 출발지 <span class="r">${S.guideStart?'가족 '+S.guideStart+' 대기':'설정 안 됨'}</span></h3><div class="box"><span class="chip">안내를 시작할 때 손님을 기다리는 곳</span>
+    h += `<div class="card"><h3>안내 출발지 <span class="r">${S.guideStart?S.guideStart+'번 대기 장소':'설정 안 됨'}</span></h3><div class="box"><span class="chip">안내를 시작할 때 손님을 기다리는 곳</span>
       <div class="btnrow"><button class="btn btn-out" data-guideset>안내 출발지 설정하러 가기</button></div></div></div>
     <div class="card"><h3>손님 맞이 멘트</h3><div class="box ment"><div class="lb">어서오세요 화면 <button class="mini" data-hearg>미리듣기</button></div><input class="inp" data-input="guideMent" value="${esc(S.guideMent)}"></div></div>
     <div class="card"><h3>안내 멘트</h3>
