@@ -1218,7 +1218,7 @@ function goMove(){
   if(trip.soup && !trip.returning){ chip.style.display=''; chip.textContent='🍲 국물 모드 · 천천히 이동해요'; } else chip.style.display='none';
   const rest = trip.returning ? [] : trip.stops.slice(trip.i+1).map(s=>s.type==='table'?s.num:s.label);
   $('#mvNext').innerHTML = rest.length ? '다음 ' + rest.map(r=>`<b>${esc(r)}</b>`).join('<span>›</span>') : '';
-  if(trip.kind==='promoGo'){ num.className='mv-num ret sm'; num.textContent='홍보 장소로'; nm.textContent=''; }
+  if(trip.kind==='promoGo'){ num.className='mv-num'; num.textContent=st.num; nm.textContent='📣 홍보 장소'; }   // 몇 번 테이블로 홍보 가는지 크게
   // 수동 도착일 때: 이동 중·출발지로 갈 때 모두 「도착했어요」 버튼
   // 서빙(안내 제외)은 일시정지 없음 → 도착 버튼은 항상 보여 줌
   const noPause = trip.kind!=='guide' && trip.kind!=='guideStart' && trip.kind!=='promoGo';   // 홍보 장소로 갈 땐 터치하면 일시정지
