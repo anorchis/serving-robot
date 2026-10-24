@@ -118,6 +118,9 @@ svg{display:block}
 .mv-done{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 1.2rem);left:0;right:0;display:none;flex-direction:column;align-items:center;gap:.5rem}
 .mv-done .btn{height:3.1rem;padding:0 2.2rem;font-weight:700;font-size:1.05rem}
 .mv-done .hint2{font-size:.8rem;color:var(--ink2)}
+#soupBtn.nudge{animation:nudge .5s 2}@keyframes nudge{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.mv-kami{background:#2ac1bc;color:#fff;border-radius:.8rem;padding:.55rem 1rem;font-size:.95rem;font-weight:700;text-align:center;line-height:1.4;word-break:keep-all;max-width:92%;box-shadow:0 3px 10px rgba(42,193,188,.3)}
+.mv-kami b{background:linear-gradient(transparent 62%,rgba(0,80,78,.28) 62%)}.mv-kami small{display:block;font-size:.75rem;font-weight:600;opacity:.9}
 #moving.manual .mv-done{display:flex}#moving.nopause .mv-done .hint2{display:none}#moving.manual #mvHint{display:none}
 .hint{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 1.4rem);left:0;right:0;text-align:center;font-size:.85rem;color:var(--ink2)}
 
@@ -790,7 +793,7 @@ textarea.inp{height:auto;min-height:4.2rem;padding:.5rem .6rem;line-height:1.45;
   <div class="mv-name" id="mvName"></div>
   <div class="mv-state"><span id="mvState">이동중</span><span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
   <div class="mv-next" id="mvNext"></div>
-  <div class="mv-done"><button class="btn btn-fill" id="mvDone">도착했어요</button><div class="hint2">화면을 터치하면 일시정지해요</div></div>
+  <div class="mv-done"><div class="mv-kami" id="mvKami"></div><button class="btn btn-fill" id="mvDone">도착했어요</button><div class="hint2">화면을 터치하면 일시정지해요</div></div>
   <div class="hint" id="mvHint">화면을 터치하면 일시정지해요</div>
 </section>
 
@@ -1185,6 +1188,10 @@ $('#soupBtn').onclick=()=>{ soup=!soup; toast(soup?'국물 모드: 천천히 조
 $('#sendBtn').onclick=()=>{
   const filled = slots.map((t,i)=>({t,i})).filter(x=>x.t!=null);
   if(!filled.length){ toast('목적지를 먼저 선택해 주세요'); return; }
+  try{ const P=bizMine(), cur=bizCur();   // 미션: 국물 메뉴를 나를 땐 국물 모드를 켜야 출발
+    if(P && cur && cur.id==='serve' && P.soup && !soup && kind!=='collect' && filled.some(x=>x.t===P.table)){
+      ding(); speak('국물 메뉴가 있어요. 국물 모드를 켜 주세요.'); toast('🍲 국물 메뉴가 있어요! 「국물 모드」를 켜야 출발할 수 있어요', true);
+      const sb=$('#soupBtn'); sb.classList.remove('nudge'); void sb.offsetWidth; sb.classList.add('nudge'); return; } }catch(e){}
   const order=[]; filled.forEach(x=>{ if(!order.includes(x.t)) order.push(x.t); });
   const stops = order.map(n=>({type:'table', num:n, label:tableLabel(n), trays:filled.filter(x=>x.t===n).map(x=>x.i)}));
   if(kind==='collect') stops.push({type:'dish', label:S.dishName, trays:filled.map(x=>x.i)});
@@ -1225,6 +1232,8 @@ function goMove(){
   $('#moving').classList.toggle('nopause', noPause);
   $('#moving').classList.toggle('manual', noPause || trip.kind==='promoGo' || S.arriveMode==='manual');
   $('#mvDone').textContent = '도착했어요';
+  { const dest = st.type==='base' ? (trip.returning ? waitPlace() : st.label) : st.type==='table' ? `${st.num}번 테이블` : st.type==='dish' ? S.dishName : st.label;   // 진짜 로봇(카미봇)은 조종기로 움직여요
+    $('#mvKami').innerHTML = `🎮 조종기로 카미봇을 <b>${esc(dest)}</b>까지 움직여요<small>닿으면 아래 「도착했어요」를 눌러요</small>`; }
   show('moving');
   // 출발 안내
   if(trip.returning){ hush(); chime(); }   // 대기 장소로 돌아갈 때: 말은 안 하고 출발 알림음만
