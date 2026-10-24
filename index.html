@@ -1967,6 +1967,11 @@ function bizTrip(t){
   else if(t.kind==='collect') bizEvent({kind:'collect', tables, dish:(t.stops||[]).some(x=>x.type==='dish')});
   else if(t.kind==='roam') bizEvent({kind:'roamEnd'});   // 돌아다니기 → 출발지로 보내기 → 도착
 }
+// 강사님 메뉴로 바꿀 때: 하던 이동·홍보·돌아다니기를 모두 멈추고 서빙 화면으로 (예전 이동 화면이 남지 않게)
+function bizHalt(){ try{ clearTimers(); stopSong(); hush(); }catch(e){}
+  try{ if($('#rpause').classList.contains('on')) roamClose(); }catch(e){} try{ closePause(); }catch(e){}
+  if(roamRun||promoRun||current==='display'){ roamRun=false; promoRun=false; try{ stopDisplay(); }catch(e){} }
+  trip=null; paused=false; kind='serve'; soup=false; kitPick=[]; resetSlots(); renderHome(); show('home'); }
 function bizTeacher(){
   // 서빙 번호와 가족 번호를 한 화면에서 골라 「적용」 (서빙 1 = 영업 처음부터 · 서빙 2~4 = 서빙만)
   let sv=BZ.fam==null ? 1 : (BZ.xs||1), fm=BZ.fam==null ? null : BZ.fam+1;
@@ -1982,7 +1987,7 @@ function bizTeacher(){
     if(b.dataset.tms){ sv=+b.dataset.tms; draw(); return; }
     if(b.dataset.tmf){ fm=+b.dataset.tmf; draw(); return; }
     if(b.dataset.m==='x'){ closeModal(); return; }
-    if(!fm) return; closeModal(); bzOpen=false;
+    if(!fm) return; closeModal(); bzOpen=false; bizHalt();
     const famChanged = BZ.fam!==fm-1;
     if(famChanged || sv===1){ BZ.round=1; S.guideStart=fm; save(); bizStart(fm-1); }
     if(sv===1){ BZ.go=0; saveBZ(); renderStrip(); return; }   // 서빙 1 = 영업 처음부터 → 미션 화면부터 (같은 가족이면 지어 둔 이름이 칸에 남아 있어요)
